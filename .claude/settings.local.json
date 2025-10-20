@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(tree \"C:\\dev\\front-end\\my-healthcare-app\" -L 2)",
+      "Bash(mvn clean compile)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

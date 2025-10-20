@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Healthcare color system variables */
+    --primary-dark: #1e3e72;
+    --primary: #23408e;
+    --primary-light: #63c8f2;
+    --primary-bright: #16c2d5;
+
+    --wellness: #5aba4a;
+    --wellness-sage: #c7d0c4;
+
+    --neutral-navy: #10217d;
+    --neutral-blue-gray: #527c88;
+    --neutral-light: #f5f7f9;
+
+    --success: #5aba4a;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #16c2d5;
+
+    /* Base settings for accessibility */
+    --background: #ffffff;
+    --foreground: #10217d;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Open Sans', 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    min-height: 100vh;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* WCAG 2.1 AA Compliant focus indicators */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2;
+  }
+
+  /* Skip to main content link for accessibility */
+  .skip-to-main {
+    @apply absolute left-0 top-0 z-50 -translate-y-full bg-primary px-4 py-2 text-white transition-transform;
+  }
+
+  .skip-to-main:focus {
+    @apply translate-y-0;
+  }
+
+  /* Healthcare-specific heading styles */
+  h1 {
+    @apply text-h1 text-neutral-navy font-bold;
+  }
+
+  h2 {
+    @apply text-h2 text-neutral-navy font-bold;
+  }
+
+  h3 {
+    @apply text-h3 text-neutral-navy font-semibold;
+  }
+
+  h4 {
+    @apply text-h4 text-neutral-navy font-semibold;
+  }
+
+  /* Ensure minimum touch target sizes (WCAG 2.5.5) */
+  button, a, input[type="checkbox"], input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Accessible form elements */
+  input, select, textarea {
+    @apply text-body;
+  }
+
+  /* Print styles for medical records */
+  @media print {
+    body {
+      @apply bg-white text-black;
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+
+    .no-print {
+      display: none !important;
+    }
+  }
+}
+
+@layer components {
+  /* Healthcare card component */
+  .healthcare-card {
+    @apply rounded-lg border border-neutral-light bg-white p-6 shadow-sm transition-shadow hover:shadow-md;
+  }
+
+  /* Status badge styles */
+  .badge-success {
+    @apply inline-flex items-center rounded-full bg-wellness/10 px-3 py-1 text-small font-medium text-wellness;
+  }
+
+  .badge-warning {
+    @apply inline-flex items-center rounded-full bg-warning/10 px-3 py-1 text-small font-medium text-warning;
+  }
+
+  .badge-error {
+    @apply inline-flex items-center rounded-full bg-error/10 px-3 py-1 text-small font-medium text-error;
+  }
+
+  .badge-info {
+    @apply inline-flex items-center rounded-full bg-info/10 px-3 py-1 text-small font-medium text-info;
+  }
+
+  /* Alert component for medical notifications */
+  .alert {
+    @apply rounded-lg border p-4;
+  }
+
+  .alert-success {
+    @apply border-wellness bg-wellness/10 text-wellness;
+  }
+
+  .alert-warning {
+    @apply border-warning bg-warning/10 text-warning;
+  }
+
+  .alert-error {
+    @apply border-error bg-error/10 text-error;
+  }
+
+  .alert-info {
+    @apply border-info bg-info/10 text-info;
+  }
+}
+
+@layer utilities {
+  /* Text utilities for healthcare content */
+  .text-medical {
+    @apply font-secondary;
+  }
+
+  /* Accessibility utility classes */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* HIPAA-compliant masked text */
+  .masked {
+    filter: blur(4px);
+    user-select: none;
+  }
+
+  .masked:hover {
+    filter: none;
+  }
+}
