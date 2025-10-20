@@ -19,7 +19,7 @@ import { useAuthStore } from '@/stores/authStore'
  */
 export default function Verify2FA() {
   const navigate = useNavigate()
-  const { setUser, requires2FA, setPending2FA } = useAuthStore()
+  const { login, requires2FA, tempToken, isAuthenticated } = useAuthStore()
   const [verifyError, setVerifyError] = useState<string | null>(null)
   const [resendSuccess, setResendSuccess] = useState(false)
   const [countdown, setCountdown] = useState(0)
@@ -28,12 +28,13 @@ export default function Verify2FA() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const [codeDigits, setCodeDigits] = useState(['', '', '', '', '', ''])
 
-  // Redirect if 2FA not required
+  // Redirect if 2FA not required AND user is not authenticated
+  // (If authenticated, it means verification succeeded, so don't redirect)
   useEffect(() => {
-    if (!requires2FA) {
+    if (!requires2FA && !isAuthenticated) {
       navigate('/login')
     }
-  }, [requires2FA, navigate])
+  }, [requires2FA, isAuthenticated, navigate])
 
   // React Hook Form
   const {
@@ -53,9 +54,9 @@ export default function Verify2FA() {
     mutationFn: authApi.verify2FA,
     onSuccess: (response) => {
       setVerifyError(null)
-      if (response.data?.user) {
-        setUser(response.data.user)
-        setPending2FA(false)
+      if (response.user) {
+        // Use login() to atomically set all auth state
+        login(response.user)
         navigate('/dashboard')
       }
     },
@@ -116,7 +117,19 @@ export default function Verify2FA() {
   // Form submit
   const onSubmit = async (data: TwoFactorFormData) => {
     setVerifyError(null)
-    verify2FAMutation.mutate(data)
+
+    // Check if tempToken exists
+    if (!tempToken) {
+      setVerifyError('Session expired. Please log in again.')
+      navigate('/login')
+      return
+    }
+
+    // Include tempToken in the verification request
+    verify2FAMutation.mutate({
+      code: data.code,
+      tempToken: tempToken,
+    })
   }
 
   // Resend code (placeholder - implement backend endpoint)

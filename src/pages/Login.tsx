@@ -19,7 +19,7 @@ import { useAuthStore } from '@/stores/authStore'
  */
 export default function Login() {
   const navigate = useNavigate()
-  const { setUser, setRequires2FA } = useAuthStore()
+  const { setUser, setRequires2FA, setTempToken } = useAuthStore()
   const [showPassword, setShowPassword] = useState(false)
   const [loginError, setLoginError] = useState<string | null>(null)
 
@@ -44,8 +44,11 @@ export default function Login() {
       setLoginError(null)
 
       if (response.requires2FA) {
-        // User needs 2FA verification
+        // User needs 2FA verification - store tempToken
         setRequires2FA(true)
+        if (response.tempToken) {
+          setTempToken(response.tempToken)
+        }
         navigate('/verify-2fa')
       } else if (response.user) {
         // Login successful

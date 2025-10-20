@@ -20,11 +20,13 @@ interface AuthState {
   // 2FA state
   requires2FA: boolean
   pending2FA: boolean
+  tempToken: string | null
 
   // Actions
   setUser: (user: User | null) => void
   setRequires2FA: (requires: boolean) => void
   setPending2FA: (pending: boolean) => void
+  setTempToken: (token: string | null) => void
   login: (user: User) => void
   logout: () => void
   updateLastActivity: () => void
@@ -66,6 +68,7 @@ export const useAuthStore = create<AuthState>()(
         lastActivity: Date.now(),
         requires2FA: false,
         pending2FA: false,
+        tempToken: null,
 
         /**
          * Set user data
@@ -95,6 +98,14 @@ export const useAuthStore = create<AuthState>()(
           }),
 
         /**
+         * Set temporary 2FA token
+         */
+        setTempToken: (token) =>
+          set({
+            tempToken: token,
+          }),
+
+        /**
          * Login user
          */
         login: (user) =>
@@ -105,6 +116,7 @@ export const useAuthStore = create<AuthState>()(
             lastActivity: Date.now(),
             requires2FA: false,
             pending2FA: false,
+            tempToken: null,
           }),
 
         /**
@@ -117,6 +129,7 @@ export const useAuthStore = create<AuthState>()(
             sessionExpiry: null,
             requires2FA: false,
             pending2FA: false,
+            tempToken: null,
           }),
 
         /**

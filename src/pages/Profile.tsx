@@ -105,9 +105,16 @@ export default function Profile() {
   // Enable 2FA mutation
   const enable2FAMutation = useMutation({
     mutationFn: authApi.enable2FA,
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       setQrCodeUrl(response.qrCodeDataUrl)
       setTwoFactorError(null)
+      // Refresh user data to get the temporary secret stored on backend
+      try {
+        const updatedUser = await authApi.getCurrentUser()
+        setUser(updatedUser)
+      } catch (error) {
+        console.error('Failed to refresh user data:', error)
+      }
     },
     onError: (error: any) => {
       setTwoFactorError(error.response?.data?.message || 'Failed to enable 2FA')
