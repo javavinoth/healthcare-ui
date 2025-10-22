@@ -72,10 +72,16 @@ export const useAuthStore = create<AuthState>()(
 
         /**
          * Set user data
+         * Normalizes role to lowercase for consistent role checking
          */
         setUser: (user) =>
           set({
-            user,
+            user: user
+              ? {
+                  ...user,
+                  role: user.role.toLowerCase() as UserRole,
+                }
+              : null,
             isAuthenticated: !!user,
             sessionExpiry: user ? Date.now() + SESSION_TIMEOUT : null,
             lastActivity: Date.now(),
@@ -197,19 +203,22 @@ export const useAuthStore = create<AuthState>()(
 
         /**
          * RBAC Helper: Check if user has a specific role
+         * Case-insensitive comparison for backend compatibility
          */
         hasRole: (role) => {
           const state = get()
-          return state.user?.role === role
+          return state.user?.role?.toLowerCase() === role.toLowerCase()
         },
 
         /**
          * RBAC Helper: Check if user has any of the specified roles
+         * Case-insensitive comparison for backend compatibility
          */
         hasAnyRole: (roles) => {
           const state = get()
           if (!state.user) return false
-          return roles.includes(state.user.role)
+          const userRole = state.user.role.toLowerCase()
+          return roles.some((role) => role.toLowerCase() === userRole)
         },
       }),
       {

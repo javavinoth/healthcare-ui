@@ -53,7 +53,18 @@ export default function Login() {
       } else if (response.user) {
         // Login successful
         setUser(response.user)
-        navigate('/dashboard')
+
+        // Role-based redirect to appropriate dashboard
+        const role = response.user.role.toLowerCase()
+        if (role === 'patient') {
+          navigate('/patient/dashboard')
+        } else if (role === 'doctor' || role === 'nurse') {
+          navigate('/provider/dashboard')
+        } else if (role === 'admin') {
+          navigate('/admin/dashboard')
+        } else {
+          navigate('/dashboard')
+        }
       }
     },
     onError: (error: any) => {

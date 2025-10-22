@@ -174,6 +174,32 @@ export const authApi = {
 }
 
 /**
+ * Helper function to map backend appointment response to frontend format
+ */
+function mapAppointmentResponse(backendAppointment: any): any {
+  if (!backendAppointment) return null
+
+  return {
+    ...backendAppointment,
+    // Map provider object to provider name strings
+    providerName: backendAppointment.provider
+      ? `${backendAppointment.provider.firstName} ${backendAppointment.provider.lastName}`
+      : 'Unknown Provider',
+    providerSpecialty: backendAppointment.provider?.specialty,
+
+    // Map single time field to startTime/endTime
+    startTime: backendAppointment.time || '',
+    endTime: backendAppointment.time || '', // Could calculate end time based on duration
+
+    // Map uppercase status to lowercase
+    status: backendAppointment.status?.toLowerCase() || 'scheduled',
+
+    // Type is already uppercase (already matches)
+    type: backendAppointment.type,
+  }
+}
+
+/**
  * Appointments API
  */
 export const appointmentsApi = {
@@ -181,35 +207,105 @@ export const appointmentsApi = {
     status?: string
     startDate?: string
     endDate?: string
-  }): Promise<ApiResponse<PaginatedResponse<Appointment>>> => {
+  }): Promise<Appointment[]> => {
     const response = await apiClient.get('/appointments', { params })
-    return response.data
+    // Backend returns array directly, map each appointment
+    const appointments = Array.isArray(response.data) ? response.data : []
+    return appointments.map(mapAppointmentResponse)
   },
 
-  getById: async (id: string): Promise<ApiResponse<Appointment>> => {
+  getById: async (id: string): Promise<Appointment> => {
     const response = await apiClient.get(`/appointments/${id}`)
-    return response.data
+    return mapAppointmentResponse(response.data)
   },
 
-  create: async (data: Partial<Appointment>): Promise<ApiResponse<Appointment>> => {
+  create: async (data: Partial<Appointment>): Promise<Appointment> => {
     const response = await apiClient.post('/appointments', data)
-    return response.data
+    return mapAppointmentResponse(response.data)
   },
 
-  update: async (id: string, data: Partial<Appointment>): Promise<ApiResponse<Appointment>> => {
+  update: async (id: string, data: Partial<Appointment>): Promise<Appointment> => {
     const response = await apiClient.put(`/appointments/${id}`, data)
+    return mapAppointmentResponse(response.data)
+  },
+
+  cancel: async (id: string, reason?: string): Promise<void> => {
+    const response = await apiClient.delete(`/appointments/${id}/cancel`, { data: { reason } })
     return response.data
   },
 
-  cancel: async (id: string, reason?: string): Promise<ApiResponse<void>> => {
-    const response = await apiClient.post(`/appointments/${id}/cancel`, { reason })
-    return response.data
+  reschedule: async (id: string, newDate: string, newTime: string): Promise<Appointment> => {
+    const response = await apiClient.put(`/appointments/${id}/reschedule`, {
+      date: newDate,
+      time: newTime
+    })
+    return mapAppointmentResponse(response.data)
   },
+}
 
-  reschedule: async (id: string, newDate: string, newTime: string): Promise<ApiResponse<Appointment>> => {
-    const response = await apiClient.post(`/appointments/${id}/reschedule`, { newDate, newTime })
-    return response.data
-  },
+/**
+ * Helper function to map backend medical record response to frontend format
+ */
+function mapMedicalRecordResponse(backendRecord: any): any {
+  if (!backendRecord) return null
+
+  // Map type from uppercase to lowercase with underscores
+  const typeMapping: Record<string, string> = {
+    'LAB_RESULT': 'lab_result',
+    'IMAGING': 'imaging',
+    'VISIT_NOTE': 'visit_note',
+    'PRESCRIPTION': 'prescription',
+    'IMMUNIZATION': 'immunization',
+    'PROCEDURE_NOTE': 'procedure_note',
+    'DISCHARGE_SUMMARY': 'discharge_summary',
+    'REFERRAL': 'visit_note', // Map REFERRAL to visit_note as fallback
+  }
+
+  // Derive category from type
+  const categoryMapping: Record<string, string> = {
+    'lab_result': 'Lab & Diagnostics',
+    'imaging': 'Imaging & Radiology',
+    'visit_note': 'Clinical Notes',
+    'prescription': 'Medications',
+    'immunization': 'Preventive Care',
+    'procedure_note': 'Procedures',
+    'discharge_summary': 'Hospital Records',
+  }
+
+  const mappedType = typeMapping[backendRecord.type] || backendRecord.type.toLowerCase()
+
+  return {
+    ...backendRecord,
+    // Map provider object to provider name string
+    provider: backendRecord.provider
+      ? `${backendRecord.provider.firstName} ${backendRecord.provider.lastName}`
+      : 'Unknown Provider',
+
+    // Map type to lowercase with underscores
+    type: mappedType,
+
+    // Map recordDate to date
+    date: backendRecord.recordDate || backendRecord.date,
+
+    // Map description to both content and summary
+    content: backendRecord.description || backendRecord.content || '',
+    summary: backendRecord.description || backendRecord.summary || '',
+
+    // Add category based on type
+    category: categoryMapping[mappedType] || 'Other',
+
+    // Default status to 'final' if not provided
+    status: backendRecord.status?.toLowerCase() || 'final',
+
+    // Map attachment field names
+    attachments: backendRecord.attachments?.map((att: any) => ({
+      id: att.id,
+      name: att.fileName || att.name,
+      type: att.fileType || att.type,
+      size: att.fileSize || att.size,
+      url: att.url,
+    })) || [],
+  }
 }
 
 /**
@@ -221,14 +317,16 @@ export const medicalRecordsApi = {
     startDate?: string
     endDate?: string
     category?: string
-  }): Promise<ApiResponse<PaginatedResponse<MedicalRecord>>> => {
+  }): Promise<MedicalRecord[]> => {
     const response = await apiClient.get('/medical-records', { params })
-    return response.data
+    // Backend returns array directly, map each record
+    const records = Array.isArray(response.data) ? response.data : []
+    return records.map(mapMedicalRecordResponse)
   },
 
-  getById: async (id: string): Promise<ApiResponse<MedicalRecord>> => {
+  getById: async (id: string): Promise<MedicalRecord> => {
     const response = await apiClient.get(`/medical-records/${id}`)
-    return response.data
+    return mapMedicalRecordResponse(response.data)
   },
 
   markAsRead: async (id: string): Promise<ApiResponse<void>> => {
@@ -287,13 +385,9 @@ export const providersApi = {
     specialty?: string
     location?: string
     acceptingNewPatients?: boolean
-  }): Promise<ApiResponse<PaginatedResponse<User>>> => {
-    const response = await apiClient.get('/providers', { params })
-    return response.data
-  },
-
-  getById: async (id: string): Promise<ApiResponse<User>> => {
-    const response = await apiClient.get(`/providers/${id}`)
+    search?: string
+  }): Promise<any[]> => {
+    const response = await apiClient.post('/appointments/search-providers', params)
     return response.data
   },
 
@@ -301,7 +395,7 @@ export const providersApi = {
     providerId: string,
     date: string
   ): Promise<ApiResponse<{ slots: string[] }>> => {
-    const response = await apiClient.get(`/providers/${providerId}/available-slots`, {
+    const response = await apiClient.get(`/appointments/providers/${providerId}/available-slots`, {
       params: { date },
     })
     return response.data

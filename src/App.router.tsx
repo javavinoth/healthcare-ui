@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { queryClient } from '@/lib/queryClient'
+import { Toaster } from '@/components/ui/toaster'
 
 // Auth Pages
 import Login from '@/pages/Login'
@@ -18,6 +19,11 @@ import { lazy, Suspense } from 'react'
 
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const PatientDashboard = lazy(() => import('@/pages/patient/Dashboard'))
+const PatientAppointments = lazy(() => import('@/pages/patient/Appointments'))
+const PatientBookAppointment = lazy(() => import('@/pages/patient/BookAppointment'))
+const PatientAppointmentDetail = lazy(() => import('@/pages/patient/AppointmentDetail'))
+const PatientMedicalRecords = lazy(() => import('@/pages/patient/MedicalRecords'))
+const PatientMedicalRecordDetail = lazy(() => import('@/pages/patient/MedicalRecordDetail'))
 const ProviderDashboard = lazy(() => import('@/pages/provider/Dashboard'))
 const AdminDashboard = lazy(() => import('@/pages/admin/Dashboard'))
 
@@ -75,12 +81,56 @@ function AppRouter() {
 
             {/* Protected Routes - Patient Portal */}
             <Route
-              path="/patient/*"
+              path="/patient/dashboard"
               element={
                 <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
                   <PatientDashboard />
                 </ProtectedRoute>
               }
+            />
+            <Route
+              path="/patient/appointments"
+              element={
+                <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                  <PatientAppointments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/patient/appointments/book"
+              element={
+                <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                  <PatientBookAppointment />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/patient/appointments/:id"
+              element={
+                <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                  <PatientAppointmentDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/patient/medical-records"
+              element={
+                <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                  <PatientMedicalRecords />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/patient/medical-records/:id"
+              element={
+                <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                  <PatientMedicalRecordDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/patient/*"
+              element={<Navigate to="/patient/dashboard" replace />}
             />
 
             {/* Protected Routes - Provider Dashboard */}
@@ -122,6 +172,9 @@ function AppRouter() {
       {import.meta.env.VITE_ENABLE_REACT_QUERY_DEVTOOLS === 'true' && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}
+
+      {/* Toast Notifications */}
+      <Toaster />
     </QueryClientProvider>
   )
 }

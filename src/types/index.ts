@@ -37,6 +37,37 @@ export interface Provider extends User {
   acceptingNewPatients?: boolean
 }
 
+/**
+ * Provider Search Result (matches backend ProviderResponse)
+ */
+export interface ProviderSearchResult {
+  id: string
+  firstName: string
+  lastName: string
+  title?: string
+  specialty: string
+  specialties?: string[]
+  npi?: string
+  photoUrl?: string
+  bio?: string
+  languages?: string[]
+  yearsOfExperience?: number
+  education?: string
+  certifications?: string[]
+  acceptingNewPatients: boolean
+  rating?: number
+  reviewCount?: number
+  nextAvailableDate?: string
+  location?: {
+    address: string
+    city: string
+    state: string
+    zipCode: string
+  }
+  phone?: string
+  email?: string
+}
+
 export interface Admin extends User {
   role: 'admin' | 'billing_staff' | 'receptionist'
   department?: string
@@ -102,14 +133,14 @@ export interface Appointment {
 }
 
 export type AppointmentType =
-  | 'routine_checkup'
-  | 'follow_up'
-  | 'consultation'
-  | 'urgent_care'
-  | 'procedure'
-  | 'lab_work'
-  | 'vaccination'
-  | 'telehealth'
+  | 'ROUTINE_CHECKUP'
+  | 'FOLLOW_UP'
+  | 'CONSULTATION'
+  | 'URGENT_CARE'
+  | 'PROCEDURE'
+  | 'LAB_WORK'
+  | 'VACCINATION'
+  | 'TELEHEALTH'
 
 export type AppointmentStatus =
   | 'scheduled'
