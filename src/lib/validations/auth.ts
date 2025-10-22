@@ -135,39 +135,41 @@ export const registrationSchema = z
   .object({
     email: z
       .string()
-      .min(1, 'Email is required')
-      .email('Please enter a valid email address')
-      .max(255, 'Email is too long')
+      .min(1, "Email is required")
+      .email("Please enter a valid email address")
+      .max(255, "Email is too long")
       .trim()
       .toLowerCase(),
     password: z
       .string()
-      .min(8, 'Password must be at least 8 characters')
-      .max(100, 'Password is too long')
+      .min(8, "Password must be at least 8 characters")
+      .max(100, "Password is too long")
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)'
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)"
       ),
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
     firstName: z
       .string()
-      .min(1, 'First name is required')
-      .max(100, 'First name is too long')
+      .min(1, "First name is required")
+      .max(100, "First name is too long")
       .trim(),
     lastName: z
       .string()
-      .min(1, 'Last name is required')
-      .max(100, 'Last name is too long')
+      .min(1, "Last name is required")
+      .max(100, "Last name is too long")
       .trim(),
     phoneNumber: z
       .string()
-      .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number (E.164 format)')
-      .optional()
-      .or(z.literal('')),
+      .min(1, "Phone number is required")
+      .regex(
+        /^\+?[1-9]\d{1,14}$/,
+        "Please enter a valid phone number in E.164 format (e.g. +919876543210)"
+      ),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  })
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export type RegistrationFormData = z.infer<typeof registrationSchema>

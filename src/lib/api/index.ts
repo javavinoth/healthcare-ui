@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * API Functions
  * Centralized API calls for the healthcare application
@@ -63,7 +65,11 @@ export const authApi = {
    * Creates a new user with PATIENT role
    */
   register: async (data: RegisterFormData): Promise<User> => {
-    const { confirmPassword, ...requestData } = data
+  const { confirmPassword, ...requestData } = {
+    ...data,
+    phoneNumber: `+91${data.phoneNumber}`,
+  };
+
     const response = await apiClient.post<User>('/auth/register', requestData)
     return response.data
   },
