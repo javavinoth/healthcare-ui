@@ -427,6 +427,100 @@ export const patientsApi = {
 }
 
 /**
+ * Provider API (for providers/doctors)
+ */
+export const providerApi = {
+  getDashboard: async (): Promise<any> => {
+    const response = await apiClient.get('/provider/dashboard')
+    return response.data
+  },
+
+  getStats: async (): Promise<any> => {
+    const response = await apiClient.get('/provider/stats')
+    return response.data
+  },
+
+  getTodayAppointments: async (): Promise<any[]> => {
+    const response = await apiClient.get('/provider/appointments/today')
+    return response.data
+  },
+}
+
+/**
+ * Admin API (for administrators)
+ */
+export const adminApi = {
+  // User Management
+  createUser: async (data: {
+    email: string
+    password?: string
+    firstName: string
+    lastName: string
+    phoneNumber?: string
+    role: string
+    sendInvitation?: boolean
+  }): Promise<any> => {
+    const response = await apiClient.post('/admin/users', data)
+    return response.data
+  },
+
+  getAllUsers: async (params?: {
+    page?: number
+    size?: number
+    role?: string
+    search?: string
+    sortBy?: string
+    sortDir?: string
+  }): Promise<any> => {
+    const response = await apiClient.get('/admin/users', { params })
+    return response.data
+  },
+
+  getUserById: async (id: string): Promise<any> => {
+    const response = await apiClient.get(`/admin/users/${id}`)
+    return response.data
+  },
+
+  updateUser: async (
+    id: string,
+    data: {
+      firstName: string
+      lastName: string
+      phoneNumber?: string
+      active?: boolean
+    }
+  ): Promise<any> => {
+    const response = await apiClient.put(`/admin/users/${id}`, data)
+    return response.data
+  },
+
+  changeUserRole: async (id: string, role: string): Promise<any> => {
+    const response = await apiClient.put(`/admin/users/${id}/role`, { role })
+    return response.data
+  },
+
+  activateUser: async (id: string): Promise<any> => {
+    const response = await apiClient.post(`/admin/users/${id}/activate`)
+    return response.data
+  },
+
+  deactivateUser: async (id: string): Promise<any> => {
+    const response = await apiClient.post(`/admin/users/${id}/deactivate`)
+    return response.data
+  },
+
+  sendInvitation: async (id: string): Promise<any> => {
+    const response = await apiClient.post(`/admin/users/${id}/send-invitation`)
+    return response.data
+  },
+
+  getStats: async (): Promise<any> => {
+    const response = await apiClient.get('/admin/stats')
+    return response.data
+  },
+}
+
+/**
  * Audit Logging (HIPAA Compliance)
  * Logs all PHI access events
  */
@@ -453,5 +547,7 @@ export default {
   messages: messagesApi,
   providers: providersApi,
   patients: patientsApi,
+  provider: providerApi,
+  admin: adminApi,
   audit: auditApi,
 }
