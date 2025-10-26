@@ -189,13 +189,7 @@ export default function PatientDashboard() {
           <Button
             variant="outline"
             className="h-auto py-4 flex-col gap-2"
-            onClick={() =>
-              toast({
-                title: 'Messages',
-                description: 'Messaging feature coming soon!',
-                variant: 'info',
-              })
-            }
+            onClick={() => navigate('/patient/messages')}
           >
             <MessageSquare className="h-6 w-6" />
             <span>Message Provider</span>
