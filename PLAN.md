@@ -353,55 +353,379 @@
 
 ## Phase 2: Provider Portal 📋
 
-**Status**: PLANNED
-**Duration**: TBD
+**Status**: READY TO START
+**Target Duration**: 4-6 weeks
 **Progress**: 0%
+**Priority**: Provider Dashboard → Patient Management → Messaging
 
-### 2.1 Provider Dashboard 📋
-- 📋 Today's schedule view
-- 📋 Patient appointments (upcoming, checked-in, completed)
-- 📋 Quick stats (patients today, no-shows, cancellations)
-- 📋 Notifications (new appointments, messages, urgent)
+---
 
-### 2.2 Patient Management 📋
-- 📋 Patient list with search/filters
-- 📋 Patient detail view
-- 📋 Medical history timeline
-- 📋 Appointment history
-- 📋 Prescribed medications
-- 📋 Lab results
-- 📋 Visit notes
+### 🎯 Phase 2 Goals
 
-### 2.3 Appointment Management 📋
-- 📋 Calendar view (day/week/month)
-- 📋 Drag-and-drop reschedule
-- 📋 Check-in patients
-- 📋 Complete appointments
-- 📋 Add visit notes
-- 📋 Block time slots
+Build a comprehensive provider portal enabling healthcare providers (doctors, nurses) to:
+- View daily schedules and manage appointments
+- Access patient records and medical history
+- Document visit notes and create prescriptions
+- Respond to patient messages
+- Manage their availability and schedule
 
-### 2.4 Medical Records 📋
-- 📋 Create visit notes
-- 📋 Add lab results
-- 📋 Upload imaging
-- 📋 E-prescribing
-- 📋 Add referrals
-- 📋 Document templates
-- 📋 Digital signature
+### 📊 Phase 2 Breakdown
 
-### 2.5 Messaging 📋
-- 📋 Patient messages inbox
-- 📋 Reply to patient inquiries
-- 📋 Message templates
-- 📋 Priority marking
-- 📋 Archive conversations
+#### Phase 2.1: Provider Dashboard (Week 1) 🔄
+**Goal**: Central hub for provider's daily workflow
 
-### 2.6 Schedule Management 📋
-- 📋 Set availability hours
-- 📋 Set break times
-- 📋 Vacation/time-off
-- 📋 Multiple locations
-- 📋 Appointment types & durations
+**Backend:**
+- 📋 GET /api/provider/dashboard - Dashboard stats and summary
+- 📋 GET /api/provider/appointments/today - Today's appointments
+- 📋 GET /api/provider/stats - Provider statistics (patients today, completed, pending)
+- 📋 Extend Appointment entity: Add `checkedInAt`, `completedAt` fields
+- 📋 Create ProviderStats DTO
+
+**Frontend:**
+- 📋 `/provider/dashboard` page with:
+  - 📋 Today's schedule card (upcoming appointments)
+  - 📋 Quick stats cards (appointments today, messages, pending tasks)
+  - 📋 Recent notifications list
+  - 📋 Quick actions (check-in patient, view messages, add note)
+- 📋 ProviderLayout component (navbar, sidebar)
+- 📋 TodaySchedule component
+- 📋 ProviderStatsCards component
+
+**Features:**
+- ✅ Protected route (requires doctor/nurse role)
+- ✅ Real-time appointment count
+- ✅ Unread message count
+- ✅ Quick patient search
+
+---
+
+#### Phase 2.2: Patient Management (Week 2) 🔄
+**Goal**: View and manage patient information
+
+**Backend:**
+- 📋 GET /api/provider/patients - List all patients for provider
+- 📋 GET /api/provider/patients/{id} - Patient detail with full history
+- 📋 GET /api/provider/patients/{id}/timeline - Medical history timeline
+- 📋 Create PatientTimelineEvent DTO (combines appointments, records, notes)
+- 📋 PatientSummary DTO with recent activity
+
+**Frontend:**
+- 📋 `/provider/patients` page with:
+  - 📋 Patient list with search/filter
+  - 📋 Patient card with basic info
+  - 📋 Pagination
+- 📋 `/provider/patients/:id` page with:
+  - 📋 Patient overview (demographics, contact info)
+  - 📋 Tabs: History, Records, Appointments, Medications, Notes
+  - 📋 Medical history timeline
+  - 📋 Allergies and conditions
+- 📋 PatientList component
+- 📋 PatientCard component
+- 📋 MedicalTimeline component
+- 📋 PatientOverview component
+
+**Features:**
+- ✅ Search by name, MRN, phone
+- ✅ Filter by recent activity, conditions
+- ✅ View full medical history
+- ✅ HIPAA audit logging
+
+---
+
+#### Phase 2.3: Appointment Management (Week 3) 🔄
+**Goal**: Manage provider's appointment schedule
+
+**Backend:**
+- 📋 GET /api/provider/appointments - All provider appointments with filters
+- 📋 GET /api/provider/calendar - Calendar view data (day/week/month)
+- 📋 POST /api/provider/appointments/{id}/check-in - Check in patient
+- 📋 POST /api/provider/appointments/{id}/complete - Mark appointment complete
+- 📋 POST /api/provider/appointments/{id}/no-show - Mark as no-show
+- 📋 POST /api/provider/schedule/block - Block time slot
+- 📋 Add appointment workflow states: WAITING → CHECKED_IN → IN_PROGRESS → COMPLETED
+
+**Frontend:**
+- 📋 `/provider/appointments` page with:
+  - 📋 Calendar view (day/week/month toggle)
+  - 📋 Appointment list view
+  - 📋 Filter by status (waiting, checked-in, completed)
+  - 📋 Quick actions (check-in, complete, reschedule)
+- 📋 `/provider/appointments/:id` detail page
+- 📋 ProviderCalendar component (FullCalendar or custom)
+- 📋 AppointmentActions component
+- 📋 CheckInDialog component
+- 📋 CompleteAppointmentDialog component
+
+**Features:**
+- ✅ Check-in workflow
+- ✅ Time blocking for breaks/admin time
+- ✅ No-show tracking
+- ✅ Appointment completion with notes
+
+---
+
+#### Phase 2.4: Clinical Documentation (Week 4) 🔄
+**Goal**: Create and manage clinical notes and prescriptions
+
+**Backend:**
+- 📋 Database: V14__create_clinical_notes_table.sql
+  - visit_notes (id, appointment_id, provider_id, patient_id, subjective, objective, assessment, plan, created_at)
+  - prescriptions (id, patient_id, provider_id, medication_name, dosage, frequency, quantity, refills, instructions, status, prescribed_date, expires_at)
+- 📋 POST /api/provider/notes - Create visit note
+- 📋 GET /api/provider/patients/{id}/notes - Get patient notes
+- 📋 POST /api/provider/prescriptions - Create prescription
+- 📋 GET /api/provider/patients/{id}/prescriptions - Get patient prescriptions
+- 📋 VisitNote entity (SOAP format: Subjective, Objective, Assessment, Plan)
+- 📋 Prescription entity
+
+**Frontend:**
+- 📋 `/provider/patients/:id/notes/new` - Create visit note
+- 📋 `/provider/patients/:id/prescriptions/new` - Create prescription
+- 📋 VisitNoteForm component (SOAP format fields)
+- 📋 PrescriptionForm component
+- 📋 NotesList component
+- 📋 PrescriptionsList component
+
+**Features:**
+- ✅ SOAP note template
+- ✅ Medication search/autocomplete
+- ✅ E-signature placeholder
+- ✅ Link notes to appointments
+- ✅ Print prescription
+
+---
+
+#### Phase 2.5: Provider Messaging (Week 5) 🔄
+**Goal**: Enable providers to respond to patient messages
+
+**Backend:**
+- ✅ Already implemented in Phase 1!
+- 📋 Add provider-specific filters:
+  - GET /api/messages/conversations?unreadOnly=true
+  - GET /api/messages/conversations?urgent=true
+- 📋 Add message priority field
+- 📋 Message templates for common responses
+
+**Frontend:**
+- 📋 `/provider/messages` page (reuse Phase 1 components):
+  - 📋 Provider-focused layout
+  - 📋 Filter by patient, unread, urgent
+  - 📋 Quick reply templates
+  - 📋 Mark as urgent/important
+- 📋 Reuse: ConversationList, MessageThread, SendMessageForm
+- 📋 New: MessageTemplates component
+- 📋 New: UrgentMessageBadge component
+
+**Features:**
+- ✅ Reuse Phase 1 messaging infrastructure
+- ✅ Provider-specific filters
+- ✅ Message templates
+- ✅ Urgent message flagging
+
+---
+
+#### Phase 2.6: Schedule Management (Week 6) 🔄
+**Goal**: Manage provider availability and time-off
+
+**Backend:**
+- ✅ Already have: provider_availability, provider_locations tables (V8)
+- 📋 Database: V15__create_time_off_requests.sql
+  - time_off_requests (id, provider_id, start_date, end_date, reason, status, approved_by, approved_at)
+- 📋 GET /api/provider/availability - Get current availability settings
+- 📋 PUT /api/provider/availability - Update availability
+- 📋 POST /api/provider/time-off - Request time-off
+- 📋 GET /api/provider/time-off - Get time-off requests
+- 📋 TimeOffRequest entity
+
+**Frontend:**
+- 📋 `/provider/schedule` page:
+  - 📋 Weekly availability editor
+  - 📋 Time-off request form
+  - 📋 Time-off calendar view
+  - 📋 Break time configuration
+- 📋 AvailabilityEditor component
+- 📋 TimeOffRequestForm component
+- 📋 TimeOffCalendar component
+
+**Features:**
+- ✅ Set weekly working hours
+- ✅ Configure break times
+- ✅ Request time-off
+- ✅ Block specific dates
+- ✅ Multiple location support
+
+---
+
+### 🗄️ Database Changes Required
+
+**New Tables:**
+- `visit_notes` - SOAP clinical notes
+- `prescriptions` - Medication prescriptions
+- `time_off_requests` - Provider time-off
+
+**Modified Tables:**
+- `appointments` - Add `checked_in_at`, `completed_at`, `no_show` fields
+- `messages` - Add `priority` field (LOW, NORMAL, HIGH, URGENT)
+
+**Migrations:**
+- V14__create_clinical_notes_prescriptions.sql
+- V15__create_time_off_requests.sql
+- V16__add_appointment_workflow_fields.sql
+- V17__add_message_priority.sql
+
+---
+
+### 🔌 API Endpoints Summary
+
+**Provider Dashboard:**
+- GET /api/provider/dashboard
+- GET /api/provider/stats
+
+**Patient Management:**
+- GET /api/provider/patients
+- GET /api/provider/patients/{id}
+- GET /api/provider/patients/{id}/timeline
+
+**Appointments:**
+- GET /api/provider/appointments
+- GET /api/provider/calendar
+- POST /api/provider/appointments/{id}/check-in
+- POST /api/provider/appointments/{id}/complete
+- POST /api/provider/schedule/block
+
+**Clinical Documentation:**
+- POST /api/provider/notes
+- GET /api/provider/patients/{id}/notes
+- POST /api/provider/prescriptions
+- GET /api/provider/patients/{id}/prescriptions
+
+**Messaging:**
+- ✅ Reuse /api/messages/* endpoints from Phase 1
+
+**Schedule:**
+- GET /api/provider/availability
+- PUT /api/provider/availability
+- POST /api/provider/time-off
+- GET /api/provider/time-off
+
+---
+
+### 🎨 Frontend Pages & Components
+
+**New Pages:**
+- `/provider/dashboard` - Provider Dashboard
+- `/provider/patients` - Patient List
+- `/provider/patients/:id` - Patient Detail
+- `/provider/appointments` - Appointment Management
+- `/provider/messages` - Provider Messages
+- `/provider/schedule` - Schedule Management
+- `/provider/patients/:id/notes/new` - Create Visit Note
+- `/provider/patients/:id/prescriptions/new` - Create Prescription
+
+**New Components:**
+- `ProviderLayout` - Provider portal layout with sidebar
+- `TodaySchedule` - Today's appointments widget
+- `ProviderStatsCards` - Stats dashboard cards
+- `PatientList` - Searchable patient list
+- `PatientCard` - Patient summary card
+- `MedicalTimeline` - Patient history timeline
+- `ProviderCalendar` - Calendar view for appointments
+- `AppointmentActions` - Quick actions (check-in, complete)
+- `CheckInDialog` - Patient check-in modal
+- `VisitNoteForm` - SOAP note form
+- `PrescriptionForm` - Prescription creation form
+- `MessageTemplates` - Quick reply templates
+- `AvailabilityEditor` - Weekly schedule editor
+- `TimeOffRequestForm` - Time-off request form
+
+**Reused from Phase 1:**
+- ConversationList, MessageThread, SendMessageForm (messaging)
+- All UI components (Button, Card, Input, etc.)
+
+---
+
+### 🔐 Security & Authorization
+
+**Role Requirements:**
+- All provider endpoints: `@PreAuthorize("hasAnyRole('DOCTOR', 'NURSE')")`
+- Clinical documentation: `@PreAuthorize("hasRole('DOCTOR')")` (nurses view-only)
+- Prescriptions: `@PreAuthorize("hasRole('DOCTOR')")`
+
+**Audit Logging:**
+- Log all patient record access
+- Log all prescription creation
+- Log all clinical note creation
+- Log message reads/replies
+
+**HIPAA Compliance:**
+- No PHI in logs
+- Audit all patient data access
+- Secure file storage for attachments
+- Session timeout (15 minutes)
+
+---
+
+### 📝 Implementation Order
+
+**Week 1: Provider Dashboard** 🚀 START HERE
+1. Create ProviderLayout with navigation
+2. Build dashboard page with stats
+3. Implement today's schedule widget
+4. Add quick actions
+
+**Week 2: Patient Management**
+1. Patient list with search
+2. Patient detail page
+3. Medical history timeline
+4. Patient overview tabs
+
+**Week 3: Appointments**
+1. Calendar view integration
+2. Appointment check-in workflow
+3. Appointment completion
+4. Time blocking
+
+**Week 4: Clinical Documentation**
+1. Visit note creation (SOAP format)
+2. Prescription form
+3. Notes/prescriptions display
+
+**Week 5: Messaging**
+1. Adapt Phase 1 messaging for providers
+2. Add message templates
+3. Priority/urgent flagging
+
+**Week 6: Schedule Management**
+1. Availability editor
+2. Time-off requests
+3. Break time configuration
+
+---
+
+### ✅ Success Criteria
+
+Phase 2 is complete when:
+- ✅ Providers can view their daily schedule
+- ✅ Providers can access patient records
+- ✅ Providers can check-in and complete appointments
+- ✅ Providers can create visit notes (SOAP format)
+- ✅ Providers can create prescriptions
+- ✅ Providers can respond to patient messages
+- ✅ Providers can manage their availability
+- ✅ All features are HIPAA compliant
+- ✅ All features have audit logging
+- ✅ No TypeScript errors
+- ✅ Responsive design works on tablets
+
+---
+
+### 🚀 Ready to Start!
+
+**First Task: Phase 2.1 - Provider Dashboard**
+1. Create backend endpoints for dashboard data
+2. Create ProviderLayout component
+3. Build dashboard page
+4. Test with provider user login
 
 ---
 

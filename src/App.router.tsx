@@ -27,6 +27,7 @@ const PatientMedicalRecordDetail = lazy(() => import('@/pages/patient/MedicalRec
 const PatientMessages = lazy(() => import('@/pages/patient/Messages'))
 const ProviderDashboard = lazy(() => import('@/pages/provider/Dashboard'))
 const AdminDashboard = lazy(() => import('@/pages/admin/Dashboard'))
+const AdminUserManagement = lazy(() => import('@/pages/admin/UserManagement'))
 
 // Permissions
 import { ROLES, PERMISSIONS } from '@/lib/constants/roles'
@@ -157,7 +158,7 @@ function AppRouter() {
 
             {/* Protected Routes - Admin System */}
             <Route
-              path="/admin/*"
+              path="/admin/dashboard"
               element={
                 <ProtectedRoute
                   allowedRoles={[ROLES.ADMIN]}
@@ -166,6 +167,21 @@ function AppRouter() {
                   <AdminDashboard />
                 </ProtectedRoute>
               }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute
+                  allowedRoles={[ROLES.ADMIN]}
+                  requiredPermissions={[PERMISSIONS.MANAGE_USERS]}
+                >
+                  <AdminUserManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/*"
+              element={<Navigate to="/admin/dashboard" replace />}
             />
 
             {/* Root redirect */}
