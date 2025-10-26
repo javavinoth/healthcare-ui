@@ -14,6 +14,7 @@ export interface User {
   avatar?: string
   phone?: string
   dateOfBirth?: string
+  twoFactorEnabled?: boolean
   createdAt: string
   updatedAt: string
 }

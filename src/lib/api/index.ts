@@ -343,36 +343,116 @@ export const medicalRecordsApi = {
 }
 
 /**
+ * Helper function to convert Spring Boot Page to PaginatedResponse
+ */
+function mapSpringPageToResponse<T>(springPage: any): PaginatedResponse<T> {
+  return {
+    data: springPage.content || springPage.data || springPage,
+    total: springPage.totalElements || springPage.total || (springPage.content?.length || 0),
+    page: springPage.number !== undefined ? springPage.number : (springPage.page || 0),
+    pageSize: springPage.size || springPage.pageSize || (springPage.content?.length || 0),
+    totalPages: springPage.totalPages || 1
+  }
+}
+
+/**
  * Messages API
  */
 export const messagesApi = {
-  getConversations: async (): Promise<ApiResponse<PaginatedResponse<Conversation>>> => {
-    const response = await apiClient.get('/messages/conversations')
-    return response.data
+  /**
+   * Get all conversations for the current user
+   * @param page - Page number (0-indexed)
+   * @param pageSize - Number of items per page
+   */
+  getConversations: async (
+    page: number = 0,
+    pageSize: number = 20
+  ): Promise<PaginatedResponse<Conversation>> => {
+    const response = await apiClient.get('/messages/conversations', {
+      params: { page, size: pageSize, sort: 'updatedAt,desc' }
+    })
+    return mapSpringPageToResponse(response.data)
   },
 
-  getConversation: async (id: string): Promise<ApiResponse<Conversation>> => {
+  /**
+   * Get a specific conversation by ID
+   * @param id - Conversation ID
+   */
+  getConversation: async (id: string): Promise<Conversation> => {
     const response = await apiClient.get(`/messages/conversations/${id}`)
     return response.data
   },
 
-  getMessages: async (conversationId: string): Promise<ApiResponse<PaginatedResponse<Message>>> => {
-    const response = await apiClient.get(`/messages/conversations/${conversationId}/messages`)
-    return response.data
+  /**
+   * Get all messages in a conversation
+   * @param conversationId - Conversation ID
+   * @param page - Page number (0-indexed)
+   * @param pageSize - Number of items per page
+   */
+  getMessages: async (
+    conversationId: string,
+    page: number = 0,
+    pageSize: number = 50
+  ): Promise<PaginatedResponse<Message>> => {
+    const response = await apiClient.get(
+      `/messages/conversations/${conversationId}/messages`,
+      { params: { page, size: pageSize, sort: 'sentAt,asc' } }
+    )
+    return mapSpringPageToResponse(response.data)
   },
 
+  /**
+   * Send a new message or reply to a conversation
+   * @param data - Message data (recipientId, subject, body, conversationId)
+   */
   sendMessage: async (data: {
     recipientId: string
     subject?: string
-    content: string
+    body: string
     conversationId?: string
-  }): Promise<ApiResponse<Message>> => {
+  }): Promise<Message> => {
     const response = await apiClient.post('/messages', data)
     return response.data
   },
 
-  markAsRead: async (messageId: string): Promise<ApiResponse<void>> => {
-    const response = await apiClient.post(`/messages/${messageId}/mark-read`)
+  /**
+   * Mark a message as read
+   * @param messageId - Message ID
+   */
+  markAsRead: async (messageId: string): Promise<void> => {
+    await apiClient.post(`/messages/${messageId}/mark-read`)
+  },
+
+  /**
+   * Upload an attachment to a message
+   * @param messageId - Message ID
+   * @param file - File to upload
+   */
+  uploadAttachment: async (
+    messageId: string,
+    file: File
+  ): Promise<Attachment> => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await apiClient.post(
+      `/messages/${messageId}/attachments`,
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      }
+    )
+    return response.data
+  },
+
+  /**
+   * Download an attachment
+   * Uses authenticated API client to download with proper auth headers
+   * @param attachmentId - Attachment ID
+   */
+  downloadAttachment: async (attachmentId: string): Promise<any> => {
+    const response = await apiClient.get(
+      `/messages/attachments/${attachmentId}/download`
+    )
     return response.data
   },
 }
