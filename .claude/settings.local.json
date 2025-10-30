@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(tree \"C:\\dev\\front-end\\my-healthcare-app\" -L 2)",
+      "Bash(mvn clean compile)",
+      "Bash(npm run dev)",
+      "Bash(tree:*)",
+      "Bash(dir /B /AD \"C:\\dev\\front-end\\my-healthcare-app\")",
+      "Bash(npm run build:*)",
+      "Read(//c/dev/back-end/healthcare-api/**)",
+      "Bash(mvn clean compile:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

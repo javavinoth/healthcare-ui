@@ -1,0 +1,1 @@
+import{t as i,c as o,n as u,i as n}from"./format-BLBLR528.js";function c(t,a,e){const s=i(t,e?.in);return isNaN(a)?o(t,NaN):(a&&s.setDate(s.getDate()+a),s)}function D(t,a,e){const[s,r]=u(e?.in,t,a);return+n(s)==+n(r)}function d(t,a,e){return c(t,-1,e)}export{c as a,D as i,d as s};
