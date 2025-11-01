@@ -4,14 +4,24 @@ import { clearActiveSessionId } from '@/lib/utils/sessionSync'
 /**
  * HIPAA-Compliant API Client
  *
+ * Backend Architecture:
+ * - Spring Boot servlet context-path: /api (all endpoints prefixed with /api)
+ * - Base URL configured via VITE_API_URL (includes /api suffix)
+ * - Public endpoints: No authentication required (login, register, csrf-token, etc.)
+ * - Protected endpoints: Require JWT Bearer token (automatically added by interceptor)
+ *
  * Security Features:
  * - HTTPS-only in production
- * - HTTP-only cookies for authentication
- * - CSRF token protection
+ * - JWT Bearer token authentication (sessionStorage)
+ * - CSRF token protection for mutating requests (POST/PUT/DELETE/PATCH)
  * - Request/response logging (PHI-filtered in production)
- * - Automatic token refresh
+ * - Automatic 401 handling (logout + redirect to login)
  * - Session timeout handling
  * - Single-session enforcement across tabs
+ *
+ * Environment Configuration:
+ * - Development: VITE_API_URL=http://localhost:8080/api
+ * - Production:  VITE_API_URL=/api (relative) or https://api.domain.com/api (absolute)
  */
 
 // CSRF Token management
@@ -25,9 +35,19 @@ export function setCsrfToken(token: string): void {
   csrfToken = token
 }
 
-// Create axios instance with default configuration
+/**
+ * Axios Client Instance
+ *
+ * Base URL includes /api prefix (servlet context path)
+ * All endpoint paths in ENDPOINTS constants are relative to this base
+ *
+ * Example:
+ *   baseURL = http://localhost:8080/api
+ *   endpoint = '/auth/login'
+ *   final URL = http://localhost:8080/api/auth/login
+ */
 const apiClient: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
   timeout: 30000, // 30 seconds
   withCredentials: true, // Include HTTP-only cookies in requests
   headers: {
@@ -187,6 +207,9 @@ apiClient.interceptors.response.use(
 /**
  * Initialize API client
  * Fetches CSRF token on app start
+ *
+ * Note: CSRF token is a public endpoint that uses standard /api prefix
+ * (Backend servlet context-path is /api, so /csrf-token -> /api/csrf-token)
  */
 export async function initializeApiClient(): Promise<void> {
   try {

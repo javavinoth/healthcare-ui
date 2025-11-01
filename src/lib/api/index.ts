@@ -2,9 +2,12 @@
  * API Functions
  * Centralized API calls for the healthcare application
  * All API interactions should go through these functions
+ *
+ * Uses endpoint constants from './endpoints' for maintainability and type safety
  */
 
 import apiClient, { setAccessToken, setRefreshToken, clearTokens, getRefreshToken } from './client'
+import { ENDPOINTS } from './endpoints'
 import type { LoginFormData, ProviderRegistrationFormData } from '@/lib/validations/auth'
 import type {
   User,
@@ -41,7 +44,7 @@ export const authApi = {
    * Returns either 2FA requirement or full auth response
    */
   login: async (data: LoginFormData): Promise<LoginResponse> => {
-    const response = await apiClient.post<LoginResponse>('/auth/login', data)
+    const response = await apiClient.post<LoginResponse>(ENDPOINTS.AUTH.LOGIN, data)
 
     // Store tokens if no 2FA required
     if (response.data.accessToken && response.data.refreshToken) {
@@ -57,7 +60,7 @@ export const authApi = {
    * Returns full auth response with tokens
    */
   verify2FA: async (data: TwoFactorFormData): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>('/auth/verify-2fa', data)
+    const response = await apiClient.post<AuthResponse>(ENDPOINTS.AUTH.VERIFY_2FA, data)
 
     // Store tokens after successful 2FA
     if (response.data.accessToken && response.data.refreshToken) {
@@ -74,7 +77,7 @@ export const authApi = {
    */
   register: async (data: RegisterFormData): Promise<User> => {
     const { confirmPassword, ...requestData } = data
-    const response = await apiClient.post<User>('/auth/register', requestData)
+    const response = await apiClient.post<User>(ENDPOINTS.AUTH.REGISTER, requestData)
     return response.data
   },
 
@@ -85,7 +88,7 @@ export const authApi = {
    */
   registerProvider: async (data: ProviderRegistrationFormData): Promise<User> => {
     const { confirmPassword, ...requestData } = data
-    const response = await apiClient.post<User>('/auth/register/provider', requestData)
+    const response = await apiClient.post<User>(ENDPOINTS.AUTH.REGISTER_PROVIDER, requestData)
     return response.data
   },
 
@@ -96,7 +99,7 @@ export const authApi = {
     const refreshToken = getRefreshToken()
 
     try {
-      const response = await apiClient.post<MessageResponse>('/auth/logout', { refreshToken })
+      const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.LOGOUT, { refreshToken })
       return response.data
     } finally {
       // Always clear tokens even if API call fails
@@ -108,7 +111,7 @@ export const authApi = {
    * Get current user profile
    */
   getCurrentUser: async (): Promise<User> => {
-    const response = await apiClient.get<User>('/users/me')
+    const response = await apiClient.get<User>(ENDPOINTS.USER.CURRENT_USER)
     return response.data
   },
 
@@ -116,7 +119,7 @@ export const authApi = {
    * Update current user profile
    */
   updateProfile: async (data: { firstName: string; lastName: string; phoneNumber?: string }): Promise<User> => {
-    const response = await apiClient.put<User>('/users/me', data)
+    const response = await apiClient.put<User>(ENDPOINTS.USER.UPDATE_PROFILE, data)
     return response.data
   },
 
@@ -129,7 +132,7 @@ export const authApi = {
       throw new Error('No refresh token available')
     }
 
-    const response = await apiClient.post<AuthResponse>('/auth/refresh', { refreshToken })
+    const response = await apiClient.post<AuthResponse>(ENDPOINTS.AUTH.REFRESH, { refreshToken })
 
     // Update stored tokens
     if (response.data.accessToken) {
@@ -146,7 +149,7 @@ export const authApi = {
    * Request password reset email
    */
   requestPasswordReset: async (email: string): Promise<MessageResponse> => {
-    const response = await apiClient.post<MessageResponse>('/auth/forgot-password', { email })
+    const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.FORGOT_PASSWORD, { email })
     return response.data
   },
 
@@ -154,7 +157,7 @@ export const authApi = {
    * Reset password with token
    */
   resetPassword: async (token: string, password: string): Promise<MessageResponse> => {
-    const response = await apiClient.post<MessageResponse>('/auth/reset-password', { token, password })
+    const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.RESET_PASSWORD, { token, password })
     return response.data
   },
 
@@ -162,7 +165,7 @@ export const authApi = {
    * Change password (authenticated users)
    */
   changePassword: async (currentPassword: string, newPassword: string): Promise<MessageResponse> => {
-    const response = await apiClient.post<MessageResponse>('/auth/change-password', {
+    const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.CHANGE_PASSWORD, {
       currentPassword,
       newPassword,
     })
@@ -173,7 +176,7 @@ export const authApi = {
    * Enable 2FA - Get QR code
    */
   enable2FA: async (): Promise<Enable2FAResponse> => {
-    const response = await apiClient.post<Enable2FAResponse>('/auth/enable-2fa')
+    const response = await apiClient.post<Enable2FAResponse>(ENDPOINTS.AUTH.ENABLE_2FA)
     return response.data
   },
 
@@ -181,7 +184,7 @@ export const authApi = {
    * Verify 2FA setup with code
    */
   verify2FASetup: async (code: string): Promise<MessageResponse> => {
-    const response = await apiClient.post<MessageResponse>('/auth/verify-2fa-setup', { code })
+    const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.VERIFY_2FA_SETUP, { code })
     return response.data
   },
 
@@ -189,7 +192,7 @@ export const authApi = {
    * Disable 2FA
    */
   disable2FA: async (code: string): Promise<MessageResponse> => {
-    const response = await apiClient.post<MessageResponse>('/auth/disable-2fa', { code })
+    const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.DISABLE_2FA, { code })
     return response.data
   },
 }

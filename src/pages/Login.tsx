@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label'
 import { loginSchema, type LoginFormData } from '@/lib/validations/auth'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
+import { getRoleDashboardPath } from '@/lib/utils/routing'
 
 /**
  * Login Page Component
@@ -54,17 +55,9 @@ export default function Login() {
         // Login successful - start new session
         login(response.user)
 
-        // Role-based redirect to appropriate dashboard
-        const role = response.user.role.toLowerCase()
-        if (role === 'patient') {
-          navigate('/patient/dashboard')
-        } else if (role === 'doctor' || role === 'nurse') {
-          navigate('/provider/dashboard')
-        } else if (role === 'admin') {
-          navigate('/admin/dashboard')
-        } else {
-          navigate('/dashboard')
-        }
+        // Redirect to role-specific dashboard
+        const dashboardPath = getRoleDashboardPath(response.user.role)
+        navigate(dashboardPath)
       }
     },
     onError: (error: any) => {

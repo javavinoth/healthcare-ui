@@ -19,6 +19,7 @@ import ResetPassword from '@/pages/ResetPassword'
 import Profile from '@/pages/Profile'
 import { ProtectedRoute, AccessDenied } from '@/components/shared/ProtectedRoute'
 import SessionTimeoutModal from '@/components/shared/SessionTimeoutModal'
+import SmartRedirect from '@/components/shared/SmartRedirect'
 
 // Lazy-loaded pages (for code splitting)
 
@@ -37,7 +38,9 @@ const ProviderPatientDetail = lazy(() => import('@/pages/provider/PatientDetail'
 const ProviderAppointments = lazy(() => import('@/pages/provider/Appointments'))
 const ProviderAppointmentDetail = lazy(() => import('@/pages/provider/AppointmentDetail'))
 const ProviderSchedule = lazy(() => import('@/pages/provider/Schedule'))
+const ReceptionistDashboard = lazy(() => import('@/pages/receptionist/Dashboard'))
 const ReceptionistMessages = lazy(() => import('@/pages/receptionist/Messages'))
+const BillingDashboard = lazy(() => import('@/pages/billing/Dashboard'))
 const BillingMessages = lazy(() => import('@/pages/billing/Messages'))
 const AdminDashboard = lazy(() => import('@/pages/admin/Dashboard'))
 const AdminUserManagement = lazy(() => import('@/pages/admin/UserManagement'))
@@ -92,7 +95,14 @@ function AppRouter() {
         >
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<Home />} />
+            <Route
+              path="/"
+              element={
+                <SmartRedirect unauthenticatedBehavior="children">
+                  <Home />
+                </SmartRedirect>
+              }
+            />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/verify-2fa" element={<Verify2FA />} />
@@ -100,14 +110,10 @@ function AppRouter() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/access-denied" element={<AccessDenied />} />
 
-            {/* Protected Routes - General Dashboard */}
+            {/* Protected Routes - Generic Dashboard (redirects to role-specific) */}
             <Route
               path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
+              element={<SmartRedirect unauthenticatedBehavior="/" />}
             />
 
             {/* Protected Routes - Profile */}
@@ -292,6 +298,14 @@ function AppRouter() {
 
             {/* Protected Routes - Receptionist */}
             <Route
+              path="/receptionist/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={[ROLES.RECEPTIONIST]}>
+                  <ReceptionistDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/receptionist/messages"
               element={
                 <ProtectedRoute allowedRoles={[ROLES.RECEPTIONIST]}>
@@ -301,10 +315,18 @@ function AppRouter() {
             />
             <Route
               path="/receptionist/*"
-              element={<Navigate to="/receptionist/messages" replace />}
+              element={<Navigate to="/receptionist/dashboard" replace />}
             />
 
             {/* Protected Routes - Billing Staff */}
+            <Route
+              path="/billing/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={[ROLES.BILLING_STAFF]}>
+                  <BillingDashboard />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/billing/messages"
               element={
@@ -315,11 +337,11 @@ function AppRouter() {
             />
             <Route
               path="/billing/*"
-              element={<Navigate to="/billing/messages" replace />}
+              element={<Navigate to="/billing/dashboard" replace />}
             />
 
-            {/* 404 Not Found */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            {/* 404 Not Found - Smart redirect based on auth status */}
+            <Route path="*" element={<SmartRedirect unauthenticatedBehavior="/" />} />
           </Routes>
         </Suspense>
         </SessionMonitorWrapper>
