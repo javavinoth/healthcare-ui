@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import EmptyState from './EmptyState'
+import EmptyState from '@/components/patient/EmptyState'
 import type { Conversation } from '@/types'
 import { cn } from '@/lib/utils'
 

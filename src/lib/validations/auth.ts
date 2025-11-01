@@ -21,7 +21,7 @@ export const loginSchema = z.object({
     .min(1, 'Password is required')
     .min(8, 'Password must be at least 8 characters')
     .max(128, 'Password is too long'),
-  rememberMe: z.boolean().optional().default(false),
+  rememberMe: z.boolean(),
 })
 
 export type LoginFormData = z.infer<typeof loginSchema>
@@ -171,3 +171,81 @@ export const registrationSchema = z
   })
 
 export type RegistrationFormData = z.infer<typeof registrationSchema>
+
+/**
+ * Provider Registration Schema
+ * Includes all registration fields plus professional credentials
+ * Matches backend RegisterProviderRequest DTO
+ */
+export const providerRegistrationSchema = z
+  .object({
+    // Basic registration fields
+    email: z
+      .string()
+      .min(1, 'Email is required')
+      .email('Please enter a valid email address')
+      .max(255, 'Email is too long')
+      .trim()
+      .toLowerCase(),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .max(100, 'Password is too long')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)'
+      ),
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
+    firstName: z
+      .string()
+      .min(1, 'First name is required')
+      .max(100, 'First name is too long')
+      .trim(),
+    lastName: z
+      .string()
+      .min(1, 'Last name is required')
+      .max(100, 'Last name is too long')
+      .trim(),
+    phoneNumber: z
+      .string()
+      .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number (E.164 format)')
+      .optional()
+      .or(z.literal('')),
+    // Provider-specific fields
+    specialty: z
+      .string()
+      .min(1, 'Specialty is required')
+      .max(100, 'Specialty is too long')
+      .trim(),
+    npi: z
+      .string()
+      .min(1, 'NPI number is required')
+      .regex(/^\d{10}$/, 'NPI must be exactly 10 digits')
+      .trim(),
+    title: z
+      .string()
+      .min(1, 'Title/Credentials are required')
+      .regex(
+        /^(MD|DO|NP|PA|RN|LPN|PharmD|DDS|DMD|DPM|DC|OD|PhD|PsyD|LCSW|LPC|DPT|OT|SLP)$/,
+        'Please select a valid credential'
+      ),
+    licenseNumber: z
+      .string()
+      .min(1, 'License number is required')
+      .max(50, 'License number is too long')
+      .trim(),
+    licenseState: z
+      .string()
+      .min(2, 'License state is required')
+      .max(2, 'License state must be 2 characters')
+      .regex(
+        /^(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY|DC)$/,
+        'Please select a valid US state'
+      ),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })
+
+export type ProviderRegistrationFormData = z.infer<typeof providerRegistrationSchema>

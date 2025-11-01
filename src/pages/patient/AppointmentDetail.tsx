@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import {
-  ArrowLeft,
   Calendar,
   Clock,
   MapPin,
@@ -21,6 +20,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import AppHeader from '@/components/shared/AppHeader'
 import { appointmentsApi } from '@/lib/api'
 import { useToast } from '@/components/ui/use-toast'
 import type { AppointmentStatus } from '@/types'
@@ -179,14 +179,12 @@ export default function AppointmentDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-neutral-light">
-        <div className="bg-white border-b border-neutral-blue-gray/10">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <Skeleton className="h-8 w-64" />
+      <div className="h-screen flex flex-col bg-neutral-light">
+        <AppHeader title="Appointment Details" showBackButton backPath="/patient/appointments" />
+        <div className="flex-1 overflow-auto">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <Skeleton className="h-96" />
           </div>
-        </div>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Skeleton className="h-96" />
         </div>
       </div>
     )
@@ -194,15 +192,18 @@ export default function AppointmentDetail() {
 
   if (error || !appointment) {
     return (
-      <div className="min-h-screen bg-neutral-light flex items-center justify-center">
-        <Card className="max-w-md">
-          <CardContent className="p-12 text-center">
-            <p className="text-error mb-4">Failed to load appointment details.</p>
-            <Button onClick={() => navigate('/patient/appointments')}>
-              Back to Appointments
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="h-screen flex flex-col bg-neutral-light">
+        <AppHeader title="Appointment Details" showBackButton backPath="/patient/appointments" />
+        <div className="flex-1 overflow-auto flex items-center justify-center">
+          <Card className="max-w-md">
+            <CardContent className="p-12 text-center">
+              <p className="text-error mb-4">Failed to load appointment details.</p>
+              <Button onClick={() => navigate('/patient/appointments')}>
+                Back to Appointments
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     )
   }
@@ -214,15 +215,13 @@ export default function AppointmentDetail() {
   const canJoinVideo = appointment.isVirtual && appointment.videoLink && canReschedule
 
   return (
-    <div className="min-h-screen bg-neutral-light">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-blue-gray/10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/patient/appointments')}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
+    <div className="h-screen flex flex-col bg-neutral-light">
+      <AppHeader title="Appointment Details" showBackButton backPath="/patient/appointments" />
+
+      <div className="flex-1 overflow-auto">
+        {/* Page Header */}
+        <div className="bg-white border-b border-neutral-blue-gray/10">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div>
               <h1 className="text-h1 text-neutral-blue-gray">Appointment Details</h1>
             </div>

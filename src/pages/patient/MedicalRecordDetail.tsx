@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import {
-  ArrowLeft,
   Calendar,
   User,
   Download,
@@ -12,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import AppHeader from '@/components/shared/AppHeader'
 import { medicalRecordsApi } from '@/lib/api'
 import { useToast } from '@/components/ui/use-toast'
 import type { MedicalRecordType } from '@/types'
@@ -100,14 +100,12 @@ export default function MedicalRecordDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-neutral-light">
-        <div className="bg-white border-b border-neutral-blue-gray/10">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <Skeleton className="h-8 w-64" />
+      <div className="h-screen flex flex-col bg-neutral-light">
+        <AppHeader title="Medical Record" showBackButton backPath="/patient/medical-records" />
+        <div className="flex-1 overflow-auto">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <Skeleton className="h-96" />
           </div>
-        </div>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Skeleton className="h-96" />
         </div>
       </div>
     )
@@ -115,15 +113,18 @@ export default function MedicalRecordDetail() {
 
   if (error || !medicalRecord) {
     return (
-      <div className="min-h-screen bg-neutral-light flex items-center justify-center">
-        <Card className="max-w-md">
-          <CardContent className="p-12 text-center">
-            <p className="text-error mb-4">Failed to load medical record details.</p>
-            <Button onClick={() => navigate('/patient/medical-records')}>
-              Back to Medical Records
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="h-screen flex flex-col bg-neutral-light">
+        <AppHeader title="Medical Record" showBackButton backPath="/patient/medical-records" />
+        <div className="flex-1 overflow-auto flex items-center justify-center">
+          <Card className="max-w-md">
+            <CardContent className="p-12 text-center">
+              <p className="text-error mb-4">Failed to load medical record details.</p>
+              <Button onClick={() => navigate('/patient/medical-records')}>
+                Back to Medical Records
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     )
   }
@@ -132,15 +133,13 @@ export default function MedicalRecordDetail() {
   const typeConfig = recordTypeConfig[medicalRecord.type]
 
   return (
-    <div className="min-h-screen bg-neutral-light">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-blue-gray/10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/patient/medical-records')}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
+    <div className="h-screen flex flex-col bg-neutral-light">
+      <AppHeader title="Medical Record" showBackButton backPath="/patient/medical-records" />
+
+      <div className="flex-1 overflow-auto">
+        {/* Page Header */}
+        <div className="bg-white border-b border-neutral-blue-gray/10">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div>
               <h1 className="text-h1 text-neutral-blue-gray">Medical Record</h1>
             </div>

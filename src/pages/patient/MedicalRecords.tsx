@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'
+import AppHeader from '@/components/shared/AppHeader'
 import MedicalRecordCard from '@/components/patient/MedicalRecordCard'
 import EmptyState from '@/components/patient/EmptyState'
 import { medicalRecordsApi } from '@/lib/api'
@@ -75,23 +76,26 @@ export default function MedicalRecords() {
   const existingRecords = medicalRecords.filter((record) => !record.isNew)
 
   return (
-    <div className="min-h-screen bg-neutral-light">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-blue-gray/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-h1 text-neutral-blue-gray">Medical Records</h1>
-              <p className="text-body text-neutral-blue-gray/70 mt-1">
-                View your lab results, imaging reports, and visit notes
-              </p>
+    <div className="h-screen flex flex-col bg-neutral-light">
+      <AppHeader title="Medical Records" />
+
+      <div className="flex-1 overflow-auto">
+        {/* Page Header */}
+        <div className="bg-white border-b border-neutral-blue-gray/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-h1 text-neutral-blue-gray">Medical Records</h1>
+                <p className="text-body text-neutral-blue-gray/70 mt-1">
+                  View your lab results, imaging reports, and visit notes
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Filters */}
         <Card className="mb-6">
           <CardContent className="p-6">
@@ -196,6 +200,7 @@ export default function MedicalRecords() {
             )}
           </div>
         )}
+        </div>
       </div>
     </div>
   )

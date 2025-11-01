@@ -4,6 +4,11 @@ import type { UserRole, Permission } from '../lib/constants/roles'
  * Core User types for the healthcare application
  */
 
+/**
+ * Account Status for user approval workflow
+ */
+export type AccountStatus = 'PENDING' | 'ACTIVE' | 'SUSPENDED' | 'REJECTED'
+
 export interface User {
   id: string
   email: string
@@ -11,6 +16,7 @@ export interface User {
   lastName: string
   role: UserRole
   permissions: Permission[]
+  accountStatus?: AccountStatus
   avatar?: string
   phone?: string
   dateOfBirth?: string
@@ -111,6 +117,11 @@ export interface Medication {
 
 /**
  * Appointment types
+ *
+ * Date/Time Format Standards (ISO 8601):
+ * - date: YYYY-MM-DD (e.g., "2024-10-28")
+ * - startTime/endTime: HH:mm (24-hour format, e.g., "14:30")
+ * - createdAt/updatedAt: ISO 8601 timestamp (e.g., "2024-10-28T14:30:00Z")
  */
 export interface Appointment {
   id: string
@@ -276,12 +287,6 @@ export interface PaginatedResponse<T> {
 /**
  * Form types
  */
-export interface LoginFormData {
-  email: string
-  password: string
-  rememberMe?: boolean
-}
-
 export interface TwoFactorFormData {
   code: string
   tempToken?: string
@@ -351,4 +356,230 @@ export interface Enable2FAResponse {
 
 export interface CsrfTokenResponse {
   csrfToken: string
+}
+
+/**
+ * Patient Management Types (Phase 2.2)
+ * For provider patient management functionality
+ */
+
+export interface PatientSummary {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  phoneNumber?: string
+  dateOfBirth?: string
+  gender?: string
+  medicalRecordNumber?: string
+  lastAppointmentDate?: string
+  upcomingAppointmentDate?: string
+  hasUnreadRecords?: boolean
+  age?: number
+}
+
+export interface AddressInfo {
+  line1?: string
+  line2?: string
+  city?: string
+  state?: string
+  zipCode?: string
+}
+
+export interface EmergencyContactInfo {
+  name?: string
+  phone?: string
+  relationship?: string
+}
+
+export interface PatientDetail {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  phoneNumber?: string
+  dateOfBirth?: string
+  gender?: string
+  medicalRecordNumber?: string
+  age?: number
+  address?: AddressInfo
+  insurance?: InsuranceInfo
+  emergencyContact?: EmergencyContactInfo
+  allergies?: string[]
+  currentMedications?: string[]
+  totalAppointments?: number
+  totalRecords?: number
+  lastAppointmentDate?: string
+  upcomingAppointmentDate?: string
+}
+
+export interface PatientTimelineEvent {
+  id: string
+  type: 'APPOINTMENT' | 'MEDICAL_RECORD' | 'PRESCRIPTION' | 'LAB_RESULT'
+  date: string
+  title: string
+  description?: string
+  providerName?: string
+  status?: string
+  category?: string
+}
+
+export interface PaginatedPatients {
+  patients: PatientSummary[]
+  totalElements: number
+  totalPages: number
+  currentPage: number
+  pageSize: number
+  hasNext: boolean
+  hasPrevious: boolean
+}
+
+export interface UpdatePatientData {
+  firstName: string
+  lastName: string
+  phoneNumber?: string
+  dateOfBirth?: string
+  gender?: string
+  addressLine1?: string
+  addressLine2?: string
+  city?: string
+  state?: string
+  zipCode?: string
+  insuranceProvider?: string
+  insurancePolicyNumber?: string
+  insuranceGroupNumber?: string
+  emergencyContactName?: string
+  emergencyContactPhone?: string
+  emergencyContactRelationship?: string
+  allergies?: string[]
+  currentMedications?: string[]
+}
+
+/**
+ * Clinical Documentation Types (Phase 2.4)
+ * For provider clinical notes and prescriptions
+ */
+
+/**
+ * Visit Note (SOAP Format)
+ * Subjective, Objective, Assessment, Plan
+ */
+export interface VisitNote {
+  id: string
+  patientId: string
+  patient: {
+    id: string
+    firstName: string
+    lastName: string
+    email: string
+  }
+  providerId: string
+  provider: {
+    id: string
+    firstName: string
+    lastName: string
+    specialty?: string
+  }
+  appointmentId?: string
+  // SOAP Format Fields
+  subjective?: string    // Patient's description (symptoms, concerns, history)
+  objective?: string     // Provider's observations (exam findings, vitals)
+  assessment: string     // Diagnosis, clinical impression
+  plan: string           // Treatment plan, next steps, follow-up
+  // Additional Details
+  chiefComplaint?: string    // Brief summary of visit reason
+  diagnosisCodes?: string    // ICD-10 codes (comma-separated)
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * Prescription
+ */
+export interface Prescription {
+  id: string
+  patientId: string
+  patient: {
+    id: string
+    firstName: string
+    lastName: string
+    email: string
+  }
+  providerId: string
+  provider: {
+    id: string
+    firstName: string
+    lastName: string
+    specialty?: string
+  }
+  visitNoteId?: string
+  // Medication Details
+  medicationName: string
+  dosage: string
+  route?: MedicationRoute
+  frequency: string
+  duration?: string
+  quantity: number
+  refills: number
+  instructions?: string
+  // Status and Dates
+  status: PrescriptionStatus
+  prescribedDate: string
+  expiresAt?: string
+  discontinuedAt?: string
+  discontinuedReason?: string
+  // Clinical Information
+  diagnosis?: string
+  pharmacyNotes?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type MedicationRoute =
+  | 'ORAL'
+  | 'TOPICAL'
+  | 'INJECTION'
+  | 'INTRAVENOUS'
+  | 'SUBLINGUAL'
+  | 'RECTAL'
+  | 'TRANSDERMAL'
+  | 'INHALATION'
+  | 'OPHTHALMIC'
+  | 'OTIC'
+  | 'NASAL'
+
+export type PrescriptionStatus =
+  | 'ACTIVE'
+  | 'COMPLETED'
+  | 'CANCELLED'
+  | 'DISCONTINUED'
+
+/**
+ * Form Data for Clinical Documentation
+ */
+export interface VisitNoteFormData {
+  patientId?: string
+  appointmentId?: string
+  subjective?: string
+  objective?: string
+  assessment: string
+  plan: string
+  chiefComplaint?: string
+  diagnosisCodes?: string
+}
+
+export interface PrescriptionFormData {
+  patientId?: string
+  visitNoteId?: string
+  medicationName: string
+  dosage: string
+  route?: MedicationRoute
+  frequency: string
+  duration?: string
+  quantity: number
+  refills: number
+  instructions?: string
+  diagnosis?: string
+  pharmacyNotes?: string
+  expiresAt?: string
 }

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import {
   Calendar,
   CheckCircle2,
@@ -8,11 +9,13 @@ import {
   ClipboardList,
   Video,
   User,
+  Settings,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import StatsCard from '@/components/patient/StatsCard'
+import AppHeader from '@/components/shared/AppHeader'
 import { providerApi } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/components/ui/use-toast'
@@ -22,6 +25,7 @@ import { useToast } from '@/components/ui/use-toast'
  * Shows today's stats, appointments, and quick actions
  */
 export default function ProviderDashboard() {
+  const navigate = useNavigate()
   const { user } = useAuthStore()
   const { toast } = useToast()
 
@@ -41,26 +45,18 @@ export default function ProviderDashboard() {
   const specialty = dashboardData?.specialty || 'Healthcare Provider'
 
   // Handle appointment actions
-  const handleViewPatient = () => {
-    toast({
-      title: 'Patient Profile',
-      description: 'Patient profile viewer coming soon!',
-      variant: 'info',
-    })
+  const handleViewPatient = (patientId: string) => {
+    navigate(`/provider/patients/${patientId}`)
+  }
+
+  const handleViewAppointment = (appointmentId: string) => {
+    navigate(`/provider/appointments/${appointmentId}`)
   }
 
   const handleJoinVirtual = () => {
     toast({
       title: 'Virtual Appointment',
       description: 'Virtual appointment integration coming soon!',
-      variant: 'info',
-    })
-  }
-
-  const handleCompleteAppointment = () => {
-    toast({
-      title: 'Complete Appointment',
-      description: 'Appointment completion feature coming soon!',
       variant: 'info',
     })
   }
@@ -103,24 +99,18 @@ export default function ProviderDashboard() {
 
   return (
     <div className="min-h-screen bg-neutral-light">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-blue-gray/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* App Header */}
+      <AppHeader title={`Welcome back, Dr. ${providerName}!`} />
+
+      {/* Page Subheader */}
+      <div className="bg-white border-b border-neutral-blue-gray/10 px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-h1 text-neutral-blue-gray">Welcome back, Dr. {providerName}!</h1>
-              <p className="text-body text-neutral-blue-gray/70 mt-1">{specialty}</p>
-            </div>
+            <p className="text-body text-neutral-blue-gray/70">{specialty}</p>
             <div className="flex gap-3">
               <Button
                 variant="outline"
-                onClick={() =>
-                  toast({
-                    title: 'Messages',
-                    description: 'Messaging feature coming soon!',
-                    variant: 'info',
-                  })
-                }
+                onClick={() => navigate('/provider/messages')}
               >
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Messages
@@ -131,13 +121,21 @@ export default function ProviderDashboard() {
                 )}
               </Button>
               <Button
-                onClick={() =>
-                  toast({
-                    title: 'Appointments',
-                    description: 'Appointments management coming soon!',
-                    variant: 'info',
-                  })
-                }
+                variant="outline"
+                onClick={() => navigate('/provider/patients')}
+              >
+                <Users className="h-4 w-4 mr-2" />
+                My Patients
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate('/provider/schedule')}
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Manage Schedule
+              </Button>
+              <Button
+                onClick={() => navigate('/provider/appointments')}
               >
                 <Calendar className="h-4 w-4 mr-2" />
                 View Schedule
@@ -253,7 +251,8 @@ export default function ProviderDashboard() {
                 {todayAppointments.map((appointment: any) => (
                   <div
                     key={appointment.id}
-                    className="flex items-center gap-4 p-4 rounded-lg border border-neutral-blue-gray/10 hover:border-primary/30 hover:bg-primary/5 transition-colors"
+                    className="flex items-center gap-4 p-4 rounded-lg border border-neutral-blue-gray/10 hover:border-primary/30 hover:bg-primary/5 transition-colors cursor-pointer"
+                    onClick={() => handleViewAppointment(appointment.id)}
                   >
                     {/* Time */}
                     <div className="flex flex-col items-center justify-center w-20 text-center">
@@ -282,20 +281,27 @@ export default function ProviderDashboard() {
 
                     {/* Actions */}
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={handleViewPatient}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleViewPatient(appointment.patientId)
+                        }}
+                      >
                         <User className="h-4 w-4 mr-1" />
                         View Patient
                       </Button>
                       {appointment.isVirtual && appointment.status === 'SCHEDULED' && (
-                        <Button size="sm" onClick={handleJoinVirtual}>
+                        <Button
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleJoinVirtual()
+                          }}
+                        >
                           <Video className="h-4 w-4 mr-1" />
                           Join
-                        </Button>
-                      )}
-                      {appointment.status === 'IN_PROGRESS' && (
-                        <Button size="sm" variant="default" onClick={handleCompleteAppointment}>
-                          <CheckCircle2 className="h-4 w-4 mr-1" />
-                          Complete
                         </Button>
                       )}
                     </div>

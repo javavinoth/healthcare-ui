@@ -2,11 +2,12 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { MessageSquare, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import ConversationList from '@/components/patient/ConversationList'
-import MessageThread from '@/components/patient/MessageThread'
-import SendMessageForm from '@/components/patient/SendMessageForm'
+import ConversationList from '@/components/shared/messaging/ConversationList'
+import MessageThread from '@/components/shared/messaging/MessageThread'
+import SendMessageForm from '@/components/shared/messaging/SendMessageForm'
 import EmptyState from '@/components/patient/EmptyState'
-import NewMessageDialog from '@/components/patient/NewMessageDialog'
+import NewMessageDialog from '@/components/shared/messaging/NewMessageDialog'
+import AppHeader from '@/components/shared/AppHeader'
 import { messagesApi } from '@/lib/api'
 
 /**
@@ -26,7 +27,6 @@ export default function MessagesPage() {
   const {
     data: conversationsData,
     isLoading: conversationsLoading,
-    error: conversationsError,
   } = useQuery({
     queryKey: ['conversations'],
     queryFn: () => messagesApi.getConversations(),
@@ -42,21 +42,19 @@ export default function MessagesPage() {
 
   return (
     <div className="h-screen flex flex-col bg-white">
-      {/* Page Header */}
-      <div className="border-b border-neutral-blue-gray/10 bg-white">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-h1 text-neutral-blue-gray">Messages</h1>
-              <p className="text-body text-neutral-blue-gray/70 mt-1">
-                Secure communication with your healthcare providers
-              </p>
-            </div>
-            <Button onClick={() => setIsNewMessageDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Message
-            </Button>
-          </div>
+      {/* App Header */}
+      <AppHeader title="Messages" />
+
+      {/* Page Subheader */}
+      <div className="border-b border-neutral-blue-gray/10 bg-white px-6 py-3">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-neutral-blue-gray/70">
+            Secure communication with your healthcare providers
+          </p>
+          <Button onClick={() => setIsNewMessageDialogOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            New Message
+          </Button>
         </div>
       </div>
 

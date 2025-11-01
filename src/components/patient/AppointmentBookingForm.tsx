@@ -17,6 +17,8 @@ interface AppointmentBookingFormProps {
   onSubmit: (data: AppointmentBookingFormData) => void
   onCancel?: () => void
   isLoading?: boolean
+  isLoadingSlots?: boolean
+  onDateChange?: (date: string) => void
 }
 
 const appointmentTypes: { value: AppointmentType; label: string; description: string }[] = [
@@ -37,6 +39,8 @@ export default function AppointmentBookingForm({
   onSubmit: onSubmitProp,
   onCancel,
   isLoading = false,
+  isLoadingSlots = false,
+  onDateChange,
 }: AppointmentBookingFormProps) {
   const {
     register,
@@ -119,7 +123,13 @@ export default function AppointmentBookingForm({
               id="date"
               type="date"
               min={format(new Date(), 'yyyy-MM-dd')}
-              {...register('date')}
+              {...register('date', {
+                onChange: (e) => {
+                  if (onDateChange) {
+                    onDateChange(e.target.value)
+                  }
+                },
+              })}
               className={errors.date ? 'border-error' : ''}
             />
             {errors.date && (
@@ -132,7 +142,11 @@ export default function AppointmentBookingForm({
             <Label htmlFor="time">
               Time Slot <span className="text-error">*</span>
             </Label>
-            {availableSlots.length > 0 ? (
+            {isLoadingSlots ? (
+              <div className="text-sm text-neutral-blue-gray/70 p-3 border rounded-md bg-neutral-light">
+                Loading available time slots...
+              </div>
+            ) : availableSlots.length > 0 ? (
               <Select
                 value={selectedTime}
                 onValueChange={(value) => setValue('time', value)}

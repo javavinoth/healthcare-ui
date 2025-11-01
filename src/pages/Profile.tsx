@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import {
   User as UserIcon,
   Shield,
-  ChevronLeft,
   AlertCircle,
   CheckCircle,
   Eye,
@@ -19,6 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import AppHeader from '@/components/shared/AppHeader'
 import { profileSchema, changePasswordSchema, type ProfileFormData, type ChangePasswordFormData } from '@/lib/validations/auth'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
@@ -191,26 +191,12 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-light">
-      {/* Header */}
-      <header className="bg-primary text-white py-4 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/dashboard')}
-              className="text-white hover:bg-primary-dark"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <h1 className="text-h2 font-bold">Profile & Settings</h1>
-          </div>
-        </div>
-      </header>
+    <div className="h-screen flex flex-col bg-neutral-light">
+      <AppHeader title="Profile & Settings" />
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="flex-1 overflow-auto">
+        {/* Main Content */}
+        <main className="container mx-auto px-4 py-8 max-w-4xl">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="profile">
@@ -516,7 +502,8 @@ export default function Profile() {
             </Card>
           </TabsContent>
         </Tabs>
-      </main>
+        </main>
+      </div>
     </div>
   )
 }

@@ -5,21 +5,31 @@
  */
 
 import apiClient, { setAccessToken, setRefreshToken, clearTokens, getRefreshToken } from './client'
+import type { LoginFormData, ProviderRegistrationFormData } from '@/lib/validations/auth'
 import type {
   User,
-  LoginFormData,
   TwoFactorFormData,
   RegisterFormData,
   Appointment,
   MedicalRecord,
   Message,
   Conversation,
+  Attachment,
   ApiResponse,
   PaginatedResponse,
   LoginResponse,
   AuthResponse,
   MessageResponse,
   Enable2FAResponse,
+  PatientSummary,
+  PatientDetail,
+  PatientTimelineEvent,
+  UpdatePatientData,
+  VisitNote,
+  VisitNoteFormData,
+  Prescription,
+  PrescriptionFormData,
+  PrescriptionStatus,
 } from '@/types'
 
 /**
@@ -65,6 +75,17 @@ export const authApi = {
   register: async (data: RegisterFormData): Promise<User> => {
     const { confirmPassword, ...requestData } = data
     const response = await apiClient.post<User>('/auth/register', requestData)
+    return response.data
+  },
+
+  /**
+   * Register new provider account
+   * Creates a new user with DOCTOR role in PENDING status
+   * Requires admin approval before account activation
+   */
+  registerProvider: async (data: ProviderRegistrationFormData): Promise<User> => {
+    const { confirmPassword, ...requestData } = data
+    const response = await apiClient.post<User>('/auth/register/provider', requestData)
     return response.data
   },
 
@@ -240,6 +261,16 @@ export const appointmentsApi = {
       time: newTime
     })
     return mapAppointmentResponse(response.data)
+  },
+
+  getAvailableSlots: async (
+    providerId: string,
+    date: string
+  ): Promise<{ slots: string[] }> => {
+    const response = await apiClient.get(`/appointments/providers/${providerId}/available-slots`, {
+      params: { date },
+    })
+    return response.data
   },
 }
 
@@ -455,6 +486,25 @@ export const messagesApi = {
     )
     return response.data
   },
+
+  /**
+   * Get users that the current user can message
+   * Returns list of users based on role permissions
+   * @param params - Optional filters (role, search)
+   */
+  getMessageableUsers: async (params?: {
+    role?: string
+    search?: string
+  }): Promise<any[]> => {
+    // For now, use a simple approach to fetch all active users
+    // Filter will be applied client-side using messaging permissions
+    const response = await apiClient.get('/admin/users', {
+      params: { ...params, size: 1000, page: 0, active: true }
+    })
+    // Safely extract users array with multiple fallback checks
+    const users = response.data?.users || response.data || []
+    return Array.isArray(users) ? users : []
+  },
 }
 
 /**
@@ -468,17 +518,9 @@ export const providersApi = {
     search?: string
   }): Promise<any[]> => {
     const response = await apiClient.post('/appointments/search-providers', params)
-    return response.data
-  },
-
-  getAvailableSlots: async (
-    providerId: string,
-    date: string
-  ): Promise<ApiResponse<{ slots: string[] }>> => {
-    const response = await apiClient.get(`/appointments/providers/${providerId}/available-slots`, {
-      params: { date },
-    })
-    return response.data
+    // Backend returns array directly, ensure it's an array with safety check
+    const providers = Array.isArray(response.data) ? response.data : []
+    return providers
   },
 }
 
@@ -522,6 +564,234 @@ export const providerApi = {
 
   getTodayAppointments: async (): Promise<any[]> => {
     const response = await apiClient.get('/provider/appointments/today')
+    // Backend returns array directly, ensure it's an array with safety check
+    const appointments = Array.isArray(response.data) ? response.data : []
+    return appointments
+  },
+
+  // Patient Management
+  getPatients: async (params?: {
+    page?: number
+    size?: number
+    search?: string
+  }): Promise<PaginatedResponse<PatientSummary>> => {
+    const response = await apiClient.get('/provider/patients', { params })
+    return response.data
+  },
+
+  getPatientDetail: async (patientId: string): Promise<PatientDetail> => {
+    const response = await apiClient.get(`/provider/patients/${patientId}`)
+    return response.data
+  },
+
+  getPatientTimeline: async (patientId: string): Promise<PatientTimelineEvent[]> => {
+    const response = await apiClient.get(`/provider/patients/${patientId}/timeline`)
+    return response.data
+  },
+
+  updatePatient: async (patientId: string, data: UpdatePatientData): Promise<PatientDetail> => {
+    const response = await apiClient.put(`/provider/patients/${patientId}`, data)
+    return response.data
+  },
+
+  // Appointment Management
+  getAppointments: async (params: {
+    startDate: string
+    endDate: string
+    status?: string
+  }): Promise<any[]> => {
+    const response = await apiClient.get('/provider/appointments', { params })
+    // Backend returns array directly, ensure it's an array with safety check
+    const appointments = Array.isArray(response.data) ? response.data : []
+    return appointments
+  },
+
+  getCalendar: async (params: {
+    startDate: string
+    endDate: string
+  }): Promise<any[]> => {
+    const response = await apiClient.get('/provider/calendar', { params })
+    // Backend returns array directly, ensure it's an array with safety check
+    const calendar = Array.isArray(response.data) ? response.data : []
+    return calendar
+  },
+
+  checkInAppointment: async (appointmentId: string, data: {
+    notes?: string
+    isLateArrival?: boolean
+    minutesLate?: number
+  }): Promise<any> => {
+    const response = await apiClient.post(`/provider/appointments/${appointmentId}/check-in`, data)
+    return response.data
+  },
+
+  completeAppointment: async (appointmentId: string, data: {
+    notes: string
+    followUpRequired?: boolean
+    followUpInstructions?: string
+    followUpDays?: number
+  }): Promise<any> => {
+    const response = await apiClient.post(`/provider/appointments/${appointmentId}/complete`, data)
+    return response.data
+  },
+
+  markNoShow: async (appointmentId: string, data: {
+    notes?: string
+    patientContacted?: boolean
+  }): Promise<any> => {
+    const response = await apiClient.post(`/provider/appointments/${appointmentId}/no-show`, data)
+    return response.data
+  },
+
+  // Time Blocking
+  createTimeBlock: async (data: {
+    blockDate: string
+    startTime: string
+    endTime: string
+    reason: string
+    notes?: string
+    isRecurring?: boolean
+  }): Promise<any> => {
+    const response = await apiClient.post('/provider/schedule/block', data)
+    return response.data
+  },
+
+  getTimeBlocks: async (params: {
+    startDate: string
+    endDate: string
+  }): Promise<any[]> => {
+    const response = await apiClient.get('/provider/schedule/blocks', { params })
+    // Backend returns array directly, ensure it's an array with safety check
+    const timeBlocks = Array.isArray(response.data) ? response.data : []
+    return timeBlocks
+  },
+
+  deleteTimeBlock: async (timeBlockId: string): Promise<any> => {
+    const response = await apiClient.delete(`/provider/schedule/blocks/${timeBlockId}`)
+    return response.data
+  },
+
+  // Schedule Management
+  getProviderSettings: async (): Promise<{
+    slotDuration: number
+    availability: Array<{
+      dayOfWeek: string
+      startTime: string
+      endTime: string
+      isActive: boolean
+    }>
+  }> => {
+    const response = await apiClient.get('/provider/settings')
+    return response.data
+  },
+
+  updateProviderSettings: async (data: {
+    slotDuration: number
+  }): Promise<any> => {
+    const response = await apiClient.put('/provider/settings', data)
+    return response.data
+  },
+
+  updateAvailability: async (data: {
+    availability: Array<{
+      dayOfWeek: string
+      startTime: string
+      endTime: string
+      isActive: boolean
+    }>
+  }): Promise<any> => {
+    const response = await apiClient.put('/provider/availability', data)
+    return response.data
+  },
+
+  requestTimeOff: async (data: {
+    startDate: string
+    endDate: string
+    reason: string
+    notes?: string
+  }): Promise<{
+    id: string
+    startDate: string
+    endDate: string
+    reason: string
+    notes?: string
+    status: string
+    durationDays: number
+    createdAt: string
+    updatedAt: string
+  }> => {
+    const response = await apiClient.post('/provider/time-off', data)
+    return response.data
+  },
+
+  getTimeOffRequests: async (): Promise<Array<{
+    id: string
+    startDate: string
+    endDate: string
+    reason: string
+    notes?: string
+    status: string
+    durationDays: number
+    approvedBy?: string
+    approvedByName?: string
+    approvedAt?: string
+    createdAt: string
+    updatedAt: string
+  }>> => {
+    const response = await apiClient.get('/provider/time-off')
+    // Backend returns array directly, ensure it's an array with safety check
+    const timeOffRequests = Array.isArray(response.data) ? response.data : []
+    return timeOffRequests
+  },
+
+  cancelTimeOffRequest: async (requestId: string): Promise<any> => {
+    const response = await apiClient.delete(`/provider/time-off/${requestId}`)
+    return response.data
+  },
+
+  // Clinical Documentation
+  // Visit Notes (SOAP format)
+  createVisitNote: async (patientId: string, data: VisitNoteFormData): Promise<VisitNote> => {
+    const response = await apiClient.post(`/provider/patients/${patientId}/notes`, data)
+    return response.data
+  },
+
+  getPatientVisitNotes: async (patientId: string): Promise<VisitNote[]> => {
+    const response = await apiClient.get(`/provider/patients/${patientId}/notes`)
+    // Backend returns array directly, ensure it's an array with safety check
+    const notes = Array.isArray(response.data) ? response.data : []
+    return notes
+  },
+
+  getVisitNoteById: async (noteId: string): Promise<VisitNote> => {
+    const response = await apiClient.get(`/provider/notes/${noteId}`)
+    return response.data
+  },
+
+  // Prescriptions
+  createPrescription: async (patientId: string, data: PrescriptionFormData): Promise<Prescription> => {
+    const response = await apiClient.post(`/provider/patients/${patientId}/prescriptions`, data)
+    return response.data
+  },
+
+  getPatientPrescriptions: async (patientId: string, status?: string): Promise<Prescription[]> => {
+    const params = status ? { status } : {}
+    const response = await apiClient.get(`/provider/patients/${patientId}/prescriptions`, { params })
+    // Backend returns array directly, ensure it's an array with safety check
+    const prescriptions = Array.isArray(response.data) ? response.data : []
+    return prescriptions
+  },
+
+  getPrescriptionById: async (prescriptionId: string): Promise<Prescription> => {
+    const response = await apiClient.get(`/provider/prescriptions/${prescriptionId}`)
+    return response.data
+  },
+
+  updatePrescriptionStatus: async (
+    prescriptionId: string,
+    data: { status: PrescriptionStatus; reason?: string }
+  ): Promise<Prescription> => {
+    const response = await apiClient.put(`/provider/prescriptions/${prescriptionId}/status`, data)
     return response.data
   },
 }
@@ -631,3 +901,4 @@ export default {
   admin: adminApi,
   audit: auditApi,
 }
+

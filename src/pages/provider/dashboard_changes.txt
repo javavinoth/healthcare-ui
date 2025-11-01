@@ -1,0 +1,6 @@
+# Changes to make:
+# 1. Fix View Schedule button (line 138-148)
+# 2. Fix handleViewPatient to accept patientId
+# 3. Add handleViewAppointment function
+# 4. Remove handleCompleteAppointment
+# 5. Update button onClick handlers

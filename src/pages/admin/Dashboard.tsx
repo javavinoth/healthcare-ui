@@ -14,6 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import StatsCard from '@/components/patient/StatsCard'
+import AppHeader from '@/components/shared/AppHeader'
 import { adminApi } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -68,18 +69,16 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-neutral-light">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-blue-gray/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* App Header */}
+      <AppHeader title={`Welcome, ${user?.firstName || 'Admin'}!`} />
+
+      {/* Page Subheader */}
+      <div className="bg-white border-b border-neutral-blue-gray/10 px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-h1 text-neutral-blue-gray">
-                Welcome, {user?.firstName || 'Admin'}!
-              </h1>
-              <p className="text-body text-neutral-blue-gray/70 mt-1">
-                System Administration Dashboard
-              </p>
-            </div>
+            <p className="text-body text-neutral-blue-gray/70">
+              System Administration Dashboard
+            </p>
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => navigate('/admin/users')}>
                 <Users className="h-4 w-4 mr-2" />

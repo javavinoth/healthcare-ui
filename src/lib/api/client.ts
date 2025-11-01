@@ -1,4 +1,5 @@
 import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios'
+import { clearActiveSessionId } from '@/lib/utils/sessionSync'
 
 /**
  * HIPAA-Compliant API Client
@@ -10,6 +11,7 @@ import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestCo
  * - Request/response logging (PHI-filtered in production)
  * - Automatic token refresh
  * - Session timeout handling
+ * - Single-session enforcement across tabs
  */
 
 // CSRF Token management
@@ -30,6 +32,7 @@ const apiClient: AxiosInstance = axios.create({
   withCredentials: true, // Include HTTP-only cookies in requests
   headers: {
     'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 'true', // Bypass ngrok browser warning
   },
 })
 
@@ -62,12 +65,13 @@ export function setRefreshToken(token: string): void {
 }
 
 /**
- * Clear all tokens
+ * Clear all tokens and session ID
  */
 export function clearTokens(): void {
   sessionStorage.removeItem('accessToken')
   sessionStorage.removeItem('refreshToken')
   setCsrfToken('')
+  clearActiveSessionId()
 }
 
 /**

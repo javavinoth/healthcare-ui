@@ -3,6 +3,8 @@ import { devtools, persist } from 'zustand/middleware'
 import type { User } from '@/types'
 import type { Permission, UserRole } from '@/lib/constants/roles'
 import { hasPermission, hasAnyPermission, hasAllPermissions } from '@/lib/constants/roles'
+import { startNewSession, endSession, getCurrentSessionId } from '@/lib/utils/sessionSync'
+import { clearTokens } from '@/lib/api/client'
 
 /**
  * Authentication Store State
@@ -14,8 +16,10 @@ interface AuthState {
   isLoading: boolean
 
   // Session management
+  sessionId: string | null
   sessionExpiry: number | null
   lastActivity: number
+  isLoggingOut: boolean // Guard to prevent recursive logout calls
 
   // 2FA state
   requires2FA: boolean
@@ -31,6 +35,7 @@ interface AuthState {
   logout: () => void
   updateLastActivity: () => void
   checkSession: () => boolean
+  validateSession: () => boolean
 
   // RBAC helpers
   hasPermission: (permission: Permission) => boolean
@@ -64,8 +69,10 @@ export const useAuthStore = create<AuthState>()(
         user: null,
         isAuthenticated: false,
         isLoading: false,
+        sessionId: null,
         sessionExpiry: null,
         lastActivity: Date.now(),
+        isLoggingOut: false,
         requires2FA: false,
         pending2FA: false,
         tempToken: null,
@@ -113,30 +120,56 @@ export const useAuthStore = create<AuthState>()(
 
         /**
          * Login user
+         * Starts a new session and invalidates all other tabs
          */
-        login: (user) =>
+        login: (user) => {
+          const sessionId = startNewSession()
           set({
             user,
             isAuthenticated: true,
+            sessionId,
             sessionExpiry: Date.now() + SESSION_TIMEOUT,
             lastActivity: Date.now(),
             requires2FA: false,
             pending2FA: false,
             tempToken: null,
-          }),
+          })
+        },
 
         /**
          * Logout user and clear all state
+         * Ends the current session and clears all tokens
          */
-        logout: () =>
+        logout: () => {
+          const state = get()
+
+          // Guard: Prevent recursive logout calls
+          if (state.isLoggingOut) {
+            if (import.meta.env.DEV) {
+              console.warn('[Auth] Logout already in progress, skipping')
+            }
+            return
+          }
+
+          // Set logout flag
+          set({ isLoggingOut: true })
+
+          // Clear tokens from sessionStorage (access token, refresh token, CSRF token)
+          clearTokens()
+          // End the session (clear session ID from localStorage)
+          endSession()
+          // Clear auth state
           set({
             user: null,
             isAuthenticated: false,
+            sessionId: null,
             sessionExpiry: null,
+            isLoggingOut: false,
             requires2FA: false,
             pending2FA: false,
             tempToken: null,
-          }),
+          })
+        },
 
         /**
          * Update last activity timestamp
@@ -167,6 +200,35 @@ export const useAuthStore = create<AuthState>()(
 
           if (!isValid) {
             // Session expired - logout
+            get().logout()
+            return false
+          }
+
+          return true
+        },
+
+        /**
+         * Validate that this tab's session is still the active session
+         * Returns true if valid, false if another user logged in
+         */
+        validateSession: () => {
+          const state = get()
+
+          // Don't validate if already logging out
+          if (state.isLoggingOut) {
+            return false
+          }
+
+          if (!state.isAuthenticated || !state.sessionId) {
+            return false
+          }
+
+          const currentSessionId = getCurrentSessionId()
+          const isValid = currentSessionId === state.sessionId
+
+          if (!isValid) {
+            // Session invalidated by another tab - logout
+            console.warn('[Auth] Session invalidated - another user logged in')
             get().logout()
             return false
           }
@@ -237,12 +299,14 @@ export const useAuthStore = create<AuthState>()(
           },
         },
         // Only persist non-sensitive data
+        // Note: isLoggingOut is intentionally excluded as it's transient state
         partialize: (state) => ({
           user: state.user,
           isAuthenticated: state.isAuthenticated,
+          sessionId: state.sessionId,
           sessionExpiry: state.sessionExpiry,
           lastActivity: state.lastActivity,
-        }),
+        } as AuthState),
       }
     ),
     {

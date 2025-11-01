@@ -19,7 +19,7 @@ import { useAuthStore } from '@/stores/authStore'
  */
 export default function Login() {
   const navigate = useNavigate()
-  const { setUser, setRequires2FA, setTempToken } = useAuthStore()
+  const { login, setRequires2FA, setTempToken } = useAuthStore()
   const [showPassword, setShowPassword] = useState(false)
   const [loginError, setLoginError] = useState<string | null>(null)
 
@@ -51,8 +51,8 @@ export default function Login() {
         }
         navigate('/verify-2fa')
       } else if (response.user) {
-        // Login successful
-        setUser(response.user)
+        // Login successful - start new session
+        login(response.user)
 
         // Role-based redirect to appropriate dashboard
         const role = response.user.role.toLowerCase()

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { format, isToday, isYesterday, isSameDay } from 'date-fns'
+import { format, isToday, isYesterday } from 'date-fns'
 import { Download, FileText, Image as ImageIcon } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
@@ -224,7 +224,6 @@ export default function MessageThread({ conversationId }: MessageThreadProps) {
                         <div className="mt-3 space-y-2">
                           {message.attachments.map((attachment) => {
                             const isImage = attachment.type.startsWith('image/')
-                            const isPdf = attachment.type === 'application/pdf'
 
                             return (
                               <div

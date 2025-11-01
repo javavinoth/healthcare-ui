@@ -203,7 +203,7 @@ export default function Verify2FA() {
                     <Input
                       key={index}
                       id={`code-${index}`}
-                      ref={(el) => (inputRefs.current[index] = el)}
+                      ref={(el) => { inputRefs.current[index] = el }}
                       type="text"
                       inputMode="numeric"
                       maxLength={1}

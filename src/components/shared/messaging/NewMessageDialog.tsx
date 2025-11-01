@@ -1,8 +1,7 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { X } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -10,8 +9,10 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
-import { messagesApi, providersApi } from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
+import { messagesApi } from '@/lib/api'
 import { sendMessageSchema, type SendMessageFormData } from '@/lib/validations/messaging'
+import { filterMessagableUsers } from '@/lib/constants/messagingPermissions'
 import { cn } from '@/lib/utils'
 
 interface NewMessageDialogProps {
@@ -26,14 +27,23 @@ interface NewMessageDialogProps {
 export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialogProps) {
   const { toast } = useToast()
   const queryClient = useQueryClient()
-  const [selectedProviderId, setSelectedProviderId] = useState<string>('')
+  const { user } = useAuthStore()
+  const [selectedRecipientId, setSelectedRecipientId] = useState<string>('')
 
-  // Fetch available providers
-  const { data: providers, isLoading: providersLoading } = useQuery({
-    queryKey: ['providers'],
-    queryFn: () => providersApi.getAll({}),
+  // Fetch all users that the current user can message
+  const { data: allUsers, isLoading: usersLoading } = useQuery({
+    queryKey: ['messageable-users'],
+    queryFn: () => messagesApi.getMessageableUsers(),
     enabled: open, // Only fetch when dialog is open
   })
+
+  // Filter users based on current user's role permissions
+  const messagableUsers = useMemo(() => {
+    if (!user || !allUsers) return []
+    // Filter out the current user and apply role-based permissions
+    const otherUsers = allUsers.filter((u: any) => u.id !== user.id)
+    return filterMessagableUsers(user.role as any, otherUsers)
+  }, [user, allUsers])
 
   const {
     register,
@@ -67,7 +77,7 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
       // Close dialog and reset form
       onOpenChange(false)
       reset()
-      setSelectedProviderId('')
+      setSelectedRecipientId('')
     },
     onError: (error: any) => {
       toast({
@@ -79,28 +89,41 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
   })
 
   const onSubmit = (data: SendMessageFormData) => {
-    console.log('Form submitted:', { data, selectedProviderId })
+    console.log('Form submitted:', { data, selectedRecipientId })
 
-    if (!selectedProviderId) {
+    if (!selectedRecipientId) {
       toast({
-        title: 'Provider required',
-        description: 'Please select a provider to send the message to.',
+        title: 'Recipient required',
+        description: 'Please select a recipient to send the message to.',
         variant: 'destructive',
       })
       return
     }
 
-    console.log('Sending message to:', selectedProviderId)
+    console.log('Sending message to:', selectedRecipientId)
     sendMessageMutation.mutate({
       ...data,
-      recipientId: selectedProviderId,
+      recipientId: selectedRecipientId,
     })
   }
 
-  // Update form value when provider is selected
-  const handleProviderChange = (providerId: string) => {
-    setSelectedProviderId(providerId)
-    setValue('recipientId', providerId)
+  // Update form value when recipient is selected
+  const handleRecipientChange = (recipientId: string) => {
+    setSelectedRecipientId(recipientId)
+    setValue('recipientId', recipientId)
+  }
+
+  // Get label for recipient role
+  const getRoleLabel = (role: string) => {
+    const labels: Record<string, string> = {
+      patient: 'Patient',
+      doctor: 'Doctor',
+      nurse: 'Nurse',
+      receptionist: 'Receptionist',
+      billing_staff: 'Billing Staff',
+      admin: 'Administrator',
+    }
+    return labels[role] || role
   }
 
   const contentValue = watch('body')
@@ -116,28 +139,28 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Provider Selection */}
+          {/* Recipient Selection */}
           <div className="space-y-2">
-            <Label htmlFor="provider">To</Label>
-            {providersLoading ? (
-              <div className="text-small text-neutral-blue-gray/60">Loading providers...</div>
+            <Label htmlFor="recipient">To</Label>
+            {usersLoading ? (
+              <div className="text-small text-neutral-blue-gray/60">Loading users...</div>
             ) : (
-              <Select value={selectedProviderId} onValueChange={handleProviderChange}>
-                <SelectTrigger id="provider">
-                  <SelectValue placeholder="Select a provider" />
+              <Select value={selectedRecipientId} onValueChange={handleRecipientChange}>
+                <SelectTrigger id="recipient">
+                  <SelectValue placeholder="Select a recipient" />
                 </SelectTrigger>
                 <SelectContent>
-                  {providers?.map((provider) => (
-                    <SelectItem key={provider.id} value={provider.id}>
-                      {provider.firstName} {provider.lastName} - {provider.specialty}
+                  {messagableUsers?.map((recipient: any) => (
+                    <SelectItem key={recipient.id} value={recipient.id}>
+                      {recipient.firstName} {recipient.lastName} - {getRoleLabel(recipient.role)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             )}
-            {!selectedProviderId && (
+            {!selectedRecipientId && (
               <p className="text-small text-neutral-blue-gray/60">
-                Select the healthcare provider you want to message
+                Select who you want to send a message to
               </p>
             )}
           </div>
@@ -195,7 +218,7 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
               onClick={() => {
                 onOpenChange(false)
                 reset()
-                setSelectedProviderId('')
+                setSelectedRecipientId('')
               }}
               disabled={sendMessageMutation.isPending}
             >
@@ -203,7 +226,7 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
             </Button>
             <Button
               type="submit"
-              disabled={sendMessageMutation.isPending || !contentValue?.trim() || !selectedProviderId}
+              disabled={sendMessageMutation.isPending || !contentValue?.trim() || !selectedRecipientId}
             >
               {sendMessageMutation.isPending ? 'Sending...' : 'Send Message'}
             </Button>
@@ -212,7 +235,7 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
           {/* Debug info - remove in production */}
           {import.meta.env.DEV && (
             <div className="text-caption text-neutral-blue-gray/60 pt-2">
-              Debug: Provider={selectedProviderId ? 'selected' : 'none'}, Content={contentValue?.length || 0} chars
+              Debug: Recipient={selectedRecipientId ? 'selected' : 'none'}, Content={contentValue?.length || 0} chars, Available={messagableUsers.length}
             </div>
           )}
         </form>

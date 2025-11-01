@@ -44,6 +44,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useToast } from '@/components/ui/use-toast'
+import AppHeader from '@/components/shared/AppHeader'
 import { adminApi } from '@/lib/api'
 import CreateUserModal from '@/components/admin/CreateUserModal'
 import EditUserModal from '@/components/admin/EditUserModal'
@@ -214,16 +215,16 @@ export default function UserManagement() {
 
   return (
     <div className="min-h-screen bg-neutral-light">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-blue-gray/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* App Header */}
+      <AppHeader title="User Management" showBackButton backPath="/admin/dashboard" />
+
+      {/* Page Subheader */}
+      <div className="bg-white border-b border-neutral-blue-gray/10 px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-h1 text-neutral-blue-gray">User Management</h1>
-              <p className="text-body text-neutral-blue-gray/70 mt-1">
-                Manage all system users and their roles
-              </p>
-            </div>
+            <p className="text-body text-neutral-blue-gray/70">
+              Manage all system users and their roles
+            </p>
             <Button onClick={() => setCreateModalOpen(true)}>
               <UserPlus className="h-4 w-4 mr-2" />
               Create User

@@ -9,7 +9,11 @@
       "Bash(dir /B /AD \"C:\\dev\\front-end\\my-healthcare-app\")",
       "Bash(npm run build:*)",
       "Read(//c/dev/back-end/healthcare-api/**)",
-      "Bash(mvn clean compile:*)"
+      "Bash(mvn clean compile:*)",
+      "Bash(npm install:*)",
+      "Bash(mvn spring-boot:run:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []

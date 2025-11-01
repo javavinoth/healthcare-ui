@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle } from 'lucide-react'
+import { CheckCircle, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import AppHeader from '@/components/shared/AppHeader'
 import ProviderSearchForm from '@/components/patient/ProviderSearchForm'
 import ProviderCard from '@/components/patient/ProviderCard'
 import AppointmentBookingForm from '@/components/patient/AppointmentBookingForm'
@@ -26,20 +27,7 @@ export default function BookAppointment() {
   const [step, setStep] = useState<'search' | 'select' | 'book' | 'success'>('search')
   const [searchParams, setSearchParams] = useState<ProviderSearchFormData>({})
   const [selectedProvider, setSelectedProvider] = useState<ProviderSearchResult | null>(null)
-  const [availableSlots] = useState<string[]>([
-    '09:00 AM',
-    '09:30 AM',
-    '10:00 AM',
-    '10:30 AM',
-    '11:00 AM',
-    '11:30 AM',
-    '02:00 PM',
-    '02:30 PM',
-    '03:00 PM',
-    '03:30 PM',
-    '04:00 PM',
-    '04:30 PM',
-  ])
+  const [selectedDate, setSelectedDate] = useState<string>('')
 
   // Fetch providers based on search
   const {
@@ -62,6 +50,21 @@ export default function BookAppointment() {
       return data
     },
     enabled: step === 'select',
+  })
+
+  // Fetch available time slots when provider and date are selected
+  const {
+    data: slotsData,
+    isLoading: slotsLoading,
+  } = useQuery({
+    queryKey: ['availableSlots', selectedProvider?.id, selectedDate],
+    queryFn: async () => {
+      if (!selectedProvider?.id || !selectedDate) return { slots: [] }
+      const response = await appointmentsApi.getAvailableSlots(selectedProvider.id, selectedDate)
+      return response
+    },
+    enabled: step === 'book' && !!selectedProvider?.id && !!selectedDate,
+    staleTime: 0, // Always fetch fresh availability data
   })
 
   // Book appointment mutation
@@ -119,25 +122,18 @@ export default function BookAppointment() {
     })
   }
 
-  // Handle back navigation
-  const handleBack = () => {
-    if (step === 'select') setStep('search')
-    else if (step === 'book') setStep('select')
-    else navigate('/patient/dashboard')
-  }
-
   return (
-    <div className="min-h-screen bg-neutral-light">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-blue-gray/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center gap-4">
-            {step !== 'success' && (
-              <Button variant="ghost" size="sm" onClick={handleBack}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
-              </Button>
-            )}
+    <div className="h-screen flex flex-col bg-neutral-light">
+      <AppHeader
+        title="Book Appointment"
+        showBackButton={step !== 'success'}
+        backPath="/patient/appointments"
+      />
+
+      <div className="flex-1 overflow-auto">
+        {/* Page Header */}
+        <div className="bg-white border-b border-neutral-blue-gray/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div>
               <h1 className="text-h1 text-neutral-blue-gray">Book Appointment</h1>
               <p className="text-body text-neutral-blue-gray/70 mt-1">
@@ -149,10 +145,9 @@ export default function BookAppointment() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Main Content */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Step Indicator */}
         {step !== 'success' && (
           <div className="mb-8">
@@ -239,10 +234,12 @@ export default function BookAppointment() {
           <AppointmentBookingForm
             providerId={selectedProvider.id}
             providerName={`${selectedProvider.firstName} ${selectedProvider.lastName}`}
-            availableSlots={availableSlots}
+            availableSlots={slotsData?.slots || []}
             onSubmit={handleBookAppointment}
             onCancel={() => setStep('select')}
             isLoading={bookAppointmentMutation.isPending}
+            isLoadingSlots={slotsLoading}
+            onDateChange={(date) => setSelectedDate(date)}
           />
         )}
 
@@ -276,6 +273,7 @@ export default function BookAppointment() {
             </CardContent>
           </Card>
         )}
+        </div>
       </div>
     </div>
   )

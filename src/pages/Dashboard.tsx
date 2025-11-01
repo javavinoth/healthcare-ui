@@ -1,7 +1,8 @@
 import { useAuthStore } from '@/stores/authStore'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Heart, Calendar, FileText, MessageSquare, Activity, Shield, LogOut, Settings } from 'lucide-react'
+import AppHeader from '@/components/shared/AppHeader'
+import { Calendar, FileText, MessageSquare, Activity, Shield } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '@/components/ui/use-toast'
 
@@ -10,14 +11,9 @@ import { useToast } from '@/components/ui/use-toast'
  * Role-aware landing page after login
  */
 export default function Dashboard() {
-  const { user, logout } = useAuthStore()
+  const { user } = useAuthStore()
   const navigate = useNavigate()
   const { toast } = useToast()
-
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
 
   // Handle Manage Appointments button - role-aware navigation
   const handleManageAppointments = () => {
@@ -45,13 +41,26 @@ export default function Dashboard() {
     })
   }
 
-  // Handle View Messages button
+  // Handle View Messages button - role-aware navigation
   const handleViewMessages = () => {
-    toast({
-      title: 'Messages',
-      description: 'Messaging feature coming soon!',
-      variant: 'info',
-    })
+    if (user?.role === 'patient') {
+      navigate('/patient/messages')
+    } else if (user?.role === 'doctor' || user?.role === 'nurse') {
+      navigate('/provider/messages')
+    } else if (user?.role === 'receptionist') {
+      navigate('/receptionist/messages')
+    } else if (user?.role === 'billing_staff') {
+      navigate('/billing/messages')
+    } else if (user?.role === 'admin') {
+      // Admins can use any messaging interface, default to patient view
+      navigate('/patient/messages')
+    } else {
+      toast({
+        title: 'Messages',
+        description: 'Messaging not available for your role',
+        variant: 'info',
+      })
+    }
   }
 
   if (!user) {
@@ -60,60 +69,36 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-light">
-      {/* Header */}
-      <header className="bg-primary text-white py-6 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Heart className="h-8 w-8" />
-              <div>
-                <h1 className="text-h2 text-white font-bold">Healthcare Portal</h1>
-                <p className="text-sm text-primary-light">
-                  Welcome back, {user.firstName} {user.lastName}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm font-medium">{user.email}</p>
-                <p className="text-xs text-primary-light capitalize">Role: {user.role}</p>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/profile')}
-                className="border-white text-white hover:bg-white hover:text-primary"
-              >
-                <Settings className="h-4 w-4 mr-2" />
-                Profile
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogout}
-                className="border-white text-white hover:bg-white hover:text-primary"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
+    <div className="h-screen flex flex-col bg-neutral-light">
+      <AppHeader title="Healthcare Portal" />
+
+      <div className="flex-1 overflow-auto">
+        {/* Welcome Section */}
+        <div className="bg-white border-b border-neutral-blue-gray/10">
+          <div className="container mx-auto px-4 py-6">
+            <div>
+              <h1 className="text-h2 text-neutral-blue-gray font-bold">
+                Welcome back, {user.firstName} {user.lastName}!
+              </h1>
+              <p className="text-sm text-neutral-blue-gray/70 mt-1 capitalize">
+                Role: {user.role.replace('_', ' ')}
+              </p>
             </div>
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
-        {/* Welcome Section */}
-        <section className="mb-12">
-          <h2 className="text-h1 mb-4">Dashboard</h2>
-          <p className="text-body text-neutral-blue-gray">
-            Welcome to your personalized healthcare dashboard. Access your information securely.
-          </p>
-        </section>
+        {/* Main Content */}
+        <div className="container mx-auto px-4 py-8">
+          {/* Welcome Section */}
+          <section className="mb-12">
+            <h2 className="text-h1 mb-4">Dashboard</h2>
+            <p className="text-body text-neutral-blue-gray">
+              Welcome to your personalized healthcare dashboard. Access your information securely.
+            </p>
+          </section>
 
-        {/* Feature Cards Grid */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {/* Feature Cards Grid */}
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {/* Appointments Card */}
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
@@ -222,8 +207,9 @@ export default function Dashboard() {
               <p className="text-small text-muted-foreground mt-1">Excellent</p>
             </CardContent>
           </Card>
-        </section>
-      </main>
+          </section>
+        </div>
+      </div>
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Calendar, FileText, MessageSquare, Plus, Clock, Activity } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import AppHeader from '@/components/shared/AppHeader'
 import StatsCard from '@/components/patient/StatsCard'
 import AppointmentCard from '@/components/patient/AppointmentCard'
 import MedicalRecordCard from '@/components/patient/MedicalRecordCard'
@@ -103,29 +104,32 @@ export default function PatientDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-light">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-blue-gray/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-h1 text-neutral-blue-gray">
-                Welcome back, {user?.firstName}!
-              </h1>
-              <p className="text-body text-neutral-blue-gray/70 mt-1">
-                Here's your health overview
-              </p>
+    <div className="h-screen flex flex-col bg-neutral-light">
+      <AppHeader title="Patient Dashboard" />
+
+      <div className="flex-1 overflow-auto">
+        {/* Welcome Section */}
+        <div className="bg-white border-b border-neutral-blue-gray/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-h1 text-neutral-blue-gray">
+                  Welcome back, {user?.firstName}!
+                </h1>
+                <p className="text-body text-neutral-blue-gray/70 mt-1">
+                  Here's your health overview
+                </p>
+              </div>
+              <Button onClick={() => navigate('/patient/appointments/book')}>
+                <Plus className="h-4 w-4 mr-2" />
+                Book Appointment
+              </Button>
             </div>
-            <Button onClick={() => navigate('/patient/appointments/book')}>
-              <Plus className="h-4 w-4 mr-2" />
-              Book Appointment
-            </Button>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {appointmentsLoading ? (
@@ -283,6 +287,7 @@ export default function PatientDashboard() {
               </div>
             )}
           </div>
+        </div>
         </div>
       </div>
     </div>
