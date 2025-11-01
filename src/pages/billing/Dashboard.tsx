@@ -231,7 +231,7 @@ export default function BillingDashboard() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-body text-neutral-blue-gray/70">
-                              {appointment.provider}
+                              {appointment.providerName}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">

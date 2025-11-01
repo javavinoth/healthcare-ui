@@ -304,6 +304,7 @@ export const useAuthStore = create<AuthState>()(
         // Only persist non-sensitive data
         // Note: isLoggingOut is intentionally excluded as it's transient state
         partialize: (state) => ({
+          ...state,
           user: state.user,
           isAuthenticated: state.isAuthenticated,
           sessionId: state.sessionId,

@@ -23,7 +23,6 @@ import SmartRedirect from '@/components/shared/SmartRedirect'
 
 // Lazy-loaded pages (for code splitting)
 
-const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const PatientDashboard = lazy(() => import('@/pages/patient/Dashboard'))
 const PatientAppointments = lazy(() => import('@/pages/patient/Appointments'))
 const PatientBookAppointment = lazy(() => import('@/pages/patient/BookAppointment'))
