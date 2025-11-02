@@ -6,7 +6,7 @@
  * Uses endpoint constants from './endpoints' for maintainability and type safety
  */
 
-import apiClient, { setAccessToken, setRefreshToken, clearTokens, getRefreshToken } from './client'
+import apiClient, { setAccessToken, clearTokens } from './client'
 import { ENDPOINTS } from './endpoints'
 import type { LoginFormData, ProviderRegistrationFormData } from '@/lib/validations/auth'
 import type {
@@ -42,14 +42,15 @@ export const authApi = {
   /**
    * Login - Step 1: Verify credentials
    * Returns either 2FA requirement or full auth response
+   * Note: Refresh token is automatically set as HTTP-only cookie by backend
    */
   login: async (data: LoginFormData): Promise<LoginResponse> => {
     const response = await apiClient.post<LoginResponse>(ENDPOINTS.AUTH.LOGIN, data)
 
-    // Store tokens if no 2FA required
-    if (response.data.accessToken && response.data.refreshToken) {
+    // Store access token if no 2FA required
+    // Refresh token is now in HTTP-only cookie (set by backend)
+    if (response.data.accessToken) {
       setAccessToken(response.data.accessToken)
-      setRefreshToken(response.data.refreshToken)
     }
 
     return response.data
@@ -58,14 +59,15 @@ export const authApi = {
   /**
    * Login - Step 2: Verify 2FA code
    * Returns full auth response with tokens
+   * Note: Refresh token is automatically set as HTTP-only cookie by backend
    */
   verify2FA: async (data: TwoFactorFormData): Promise<AuthResponse> => {
     const response = await apiClient.post<AuthResponse>(ENDPOINTS.AUTH.VERIFY_2FA, data)
 
-    // Store tokens after successful 2FA
-    if (response.data.accessToken && response.data.refreshToken) {
+    // Store access token after successful 2FA
+    // Refresh token is now in HTTP-only cookie (set by backend)
+    if (response.data.accessToken) {
       setAccessToken(response.data.accessToken)
-      setRefreshToken(response.data.refreshToken)
     }
 
     return response.data
@@ -94,15 +96,16 @@ export const authApi = {
 
   /**
    * Logout - Revoke tokens and clear session
+   * Note: Refresh token is automatically read from HTTP-only cookie by backend
    */
   logout: async (): Promise<MessageResponse> => {
-    const refreshToken = getRefreshToken()
-
     try {
-      const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.LOGOUT, { refreshToken })
+      // No need to send refresh token - it's in HTTP-only cookie (sent automatically)
+      const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.LOGOUT, {})
       return response.data
     } finally {
       // Always clear tokens even if API call fails
+      // Backend clears the HTTP-only cookie
       clearTokens()
     }
   },
@@ -125,21 +128,17 @@ export const authApi = {
 
   /**
    * Refresh access token using refresh token
+   * Note: Refresh token is automatically read from HTTP-only cookie by backend
+   * Backend will set new refresh token as HTTP-only cookie if rotated
    */
   refreshSession: async (): Promise<AuthResponse> => {
-    const refreshToken = getRefreshToken()
-    if (!refreshToken) {
-      throw new Error('No refresh token available')
-    }
+    // No need to send refresh token - it's in HTTP-only cookie (sent automatically)
+    const response = await apiClient.post<AuthResponse>(ENDPOINTS.AUTH.REFRESH, {})
 
-    const response = await apiClient.post<AuthResponse>(ENDPOINTS.AUTH.REFRESH, { refreshToken })
-
-    // Update stored tokens
+    // Update stored access token
+    // Refresh token is handled via HTTP-only cookie (set by backend if rotated)
     if (response.data.accessToken) {
       setAccessToken(response.data.accessToken)
-    }
-    if (response.data.refreshToken) {
-      setRefreshToken(response.data.refreshToken)
     }
 
     return response.data

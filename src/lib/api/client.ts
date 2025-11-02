@@ -12,11 +12,18 @@ import { clearActiveSessionId } from '@/lib/utils/sessionSync'
  *
  * Security Features:
  * - HTTPS-only in production
- * - JWT Bearer token authentication (sessionStorage)
+ * - JWT Access token in sessionStorage (short-lived: 15 minutes)
+ * - JWT Refresh token in HTTP-only cookie (long-lived: 24 hours, XSS-proof)
+ * - withCredentials: true (sends HTTP-only cookies with requests)
  * - Request/response logging (PHI-filtered in production)
  * - Automatic 401 handling (logout + redirect to login)
  * - Session timeout handling
  * - Single-session enforcement across tabs
+ *
+ * Token Management:
+ * - Access Token: Stored in sessionStorage, sent in Authorization header
+ * - Refresh Token: Stored in HTTP-only cookie (backend sets it), automatically sent with requests
+ * - HTTP-only cookies prevent XSS attacks from stealing refresh tokens
  *
  * Environment Configuration:
  * - Development: VITE_API_URL=http://localhost:8080/api
@@ -60,6 +67,8 @@ export function setAccessToken(token: string): void {
 
 /**
  * Get refresh token from sessionStorage
+ * @deprecated Refresh tokens are now stored as HTTP-only cookies (not in sessionStorage)
+ * This function is kept for backward compatibility only
  */
 export function getRefreshToken(): string | null {
   return sessionStorage.getItem('refreshToken')
@@ -67,6 +76,8 @@ export function getRefreshToken(): string | null {
 
 /**
  * Set refresh token in sessionStorage
+ * @deprecated Refresh tokens are now stored as HTTP-only cookies (set by backend)
+ * This function is kept for backward compatibility only
  */
 export function setRefreshToken(token: string): void {
   sessionStorage.setItem('refreshToken', token)
@@ -74,9 +85,13 @@ export function setRefreshToken(token: string): void {
 
 /**
  * Clear all tokens and session ID
+ * Note: Access token is cleared from sessionStorage
+ * Refresh token cookie is cleared by backend on logout
  */
 export function clearTokens(): void {
   sessionStorage.removeItem('accessToken')
+  // Refresh token is now in HTTP-only cookie (cleared by backend)
+  // Keep this line for cleaning up any legacy refresh tokens
   sessionStorage.removeItem('refreshToken')
   clearActiveSessionId()
 }

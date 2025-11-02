@@ -324,6 +324,10 @@ export interface AppointmentBookingFormData {
 
 /**
  * Backend Response Types (Match Spring Boot DTOs)
+ *
+ * Note: refreshToken is stored as HTTP-only cookie (not in response body)
+ * Backend sets the cookie automatically - front-end cannot access it via JavaScript
+ * This prevents XSS attacks from stealing refresh tokens
  */
 export interface LoginResponse {
   requires2FA?: boolean
@@ -331,14 +335,14 @@ export interface LoginResponse {
   message?: string
   // For users without 2FA
   accessToken?: string
-  refreshToken?: string
+  refreshToken?: string | null // Optional - now in HTTP-only cookie (backend sets it)
   tokenType?: string
   user?: User
 }
 
 export interface AuthResponse {
   accessToken: string
-  refreshToken: string
+  refreshToken?: string | null // Optional - now in HTTP-only cookie (backend sets it)
   tokenType: string
   user: User
 }
