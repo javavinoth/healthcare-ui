@@ -1,11 +1,10 @@
-import { lazy, Suspense, useEffect, useRef } from 'react'
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { queryClient } from '@/lib/queryClient'
 import { Toaster } from '@/components/ui/toaster'
 import { useSessionMonitor } from '@/hooks/useSessionMonitor'
-import { initializeApiClient } from '@/lib/api/client'
 
 // Public Pages
 import Home from '@/pages/Home'
@@ -49,25 +48,10 @@ import { ROLES, PERMISSIONS } from '@/lib/constants/roles'
 
 /**
  * Session Monitor Wrapper
- * Integrates session monitoring and API client initialization into the app
+ * Integrates session monitoring into the app
  */
 function SessionMonitorWrapper({ children }: { children: React.ReactNode }) {
-  const isInitialized = useRef(false)
-
   useSessionMonitor()
-
-  // Initialize API client on mount to fetch CSRF token
-  useEffect(() => {
-    if (!isInitialized.current) {
-      initializeApiClient()
-      isInitialized.current = true
-
-      if (import.meta.env.DEV) {
-        console.log('[App] API client initialized')
-      }
-    }
-  }, [])
-
   return <>{children}</>
 }
 

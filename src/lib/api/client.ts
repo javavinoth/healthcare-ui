@@ -7,13 +7,12 @@ import { clearActiveSessionId } from '@/lib/utils/sessionSync'
  * Backend Architecture:
  * - Spring Boot servlet context-path: /api (all endpoints prefixed with /api)
  * - Base URL configured via VITE_API_URL (includes /api suffix)
- * - Public endpoints: No authentication required (login, register, csrf-token, etc.)
+ * - Public endpoints: No authentication required (login, register, etc.)
  * - Protected endpoints: Require JWT Bearer token (automatically added by interceptor)
  *
  * Security Features:
  * - HTTPS-only in production
  * - JWT Bearer token authentication (sessionStorage)
- * - CSRF token protection for mutating requests (POST/PUT/DELETE/PATCH)
  * - Request/response logging (PHI-filtered in production)
  * - Automatic 401 handling (logout + redirect to login)
  * - Session timeout handling
@@ -23,17 +22,6 @@ import { clearActiveSessionId } from '@/lib/utils/sessionSync'
  * - Development: VITE_API_URL=http://localhost:8080/api
  * - Production:  VITE_API_URL=/api (relative) or https://api.domain.com/api (absolute)
  */
-
-// CSRF Token management
-let csrfToken: string | null = null
-
-export function getCsrfToken(): string | null {
-  return csrfToken
-}
-
-export function setCsrfToken(token: string): void {
-  csrfToken = token
-}
 
 /**
  * Axios Client Instance
@@ -90,13 +78,12 @@ export function setRefreshToken(token: string): void {
 export function clearTokens(): void {
   sessionStorage.removeItem('accessToken')
   sessionStorage.removeItem('refreshToken')
-  setCsrfToken('')
   clearActiveSessionId()
 }
 
 /**
  * Request Interceptor
- * Adds JWT access token and CSRF token to requests
+ * Adds JWT access token to requests
  */
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
@@ -104,14 +91,6 @@ apiClient.interceptors.request.use(
     const accessToken = getAccessToken()
     if (accessToken && config.headers) {
       config.headers['Authorization'] = `Bearer ${accessToken}`
-    }
-
-    // Add CSRF token to all non-GET requests
-    if (config.method && !['get', 'head', 'options'].includes(config.method.toLowerCase())) {
-      const token = getCsrfToken()
-      if (token && config.headers) {
-        config.headers['X-CSRF-Token'] = token
-      }
     }
 
     // Log requests in development (never log PHI!)
@@ -137,12 +116,6 @@ apiClient.interceptors.request.use(
  */
 apiClient.interceptors.response.use(
   (response) => {
-    // Extract CSRF token from response headers if present
-    const newCsrfToken = response.headers['x-csrf-token']
-    if (newCsrfToken) {
-      setCsrfToken(newCsrfToken)
-    }
-
     // Log successful responses in development
     if (import.meta.env.VITE_ENABLE_DEBUG_LOGS === 'true' && import.meta.env.DEV) {
       console.log('[API Response]', {
@@ -203,25 +176,6 @@ apiClient.interceptors.response.use(
     return Promise.reject(error)
   }
 )
-
-/**
- * Initialize API client
- * Fetches CSRF token on app start
- *
- * Note: CSRF token is a public endpoint that uses standard /api prefix
- * (Backend servlet context-path is /api, so /csrf-token -> /api/csrf-token)
- */
-export async function initializeApiClient(): Promise<void> {
-  try {
-    const response = await apiClient.get('/csrf-token')
-    if (response.data.csrfToken) {
-      setCsrfToken(response.data.csrfToken)
-    }
-  } catch (error) {
-    console.error('Failed to fetch CSRF token:', error)
-    // Continue without CSRF token - will fail on first mutating request
-  }
-}
 
 /**
  * Check if we're in a secure context

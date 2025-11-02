@@ -34,14 +34,6 @@ export const AUTH_ENDPOINTS = {
 } as const
 
 /**
- * CSRF Token Endpoint
- * Public endpoint to fetch CSRF token
- */
-export const CSRF_ENDPOINTS = {
-  GET_TOKEN: '/csrf-token',
-} as const
-
-/**
  * User Profile Endpoints
  * Protected endpoints (authentication required)
  */
@@ -182,7 +174,6 @@ export const AUDIT_ENDPOINTS = {
  */
 export const ENDPOINTS = {
   AUTH: AUTH_ENDPOINTS,
-  CSRF: CSRF_ENDPOINTS,
   USER: USER_ENDPOINTS,
   APPOINTMENTS: APPOINTMENT_ENDPOINTS,
   MEDICAL_RECORDS: MEDICAL_RECORD_ENDPOINTS,
@@ -195,7 +186,6 @@ export const ENDPOINTS = {
 
 // Type exports for TypeScript consumers
 export type AuthEndpoints = typeof AUTH_ENDPOINTS
-export type CsrfEndpoints = typeof CSRF_ENDPOINTS
 export type UserEndpoints = typeof USER_ENDPOINTS
 export type AppointmentEndpoints = typeof APPOINTMENT_ENDPOINTS
 export type MedicalRecordEndpoints = typeof MEDICAL_RECORD_ENDPOINTS

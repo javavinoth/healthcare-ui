@@ -354,10 +354,6 @@ export interface Enable2FAResponse {
   message: string
 }
 
-export interface CsrfTokenResponse {
-  csrfToken: string
-}
-
 /**
  * Patient Management Types (Phase 2.2)
  * For provider patient management functionality
