@@ -13,7 +13,8 @@
       "Bash(npm install:*)",
       "Bash(mvn spring-boot:run:*)",
       "Bash(netstat:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(dir /B /AD \"C:\\dev\\back-end\\healthcare-api\\src\\main\\java\\com\\healthcare\\api\")"
     ],
     "deny": [],
     "ask": []

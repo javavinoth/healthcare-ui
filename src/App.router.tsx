@@ -1,11 +1,10 @@
-import { lazy, Suspense, useEffect, useRef } from 'react'
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { queryClient } from '@/lib/queryClient'
 import { Toaster } from '@/components/ui/toaster'
 import { useSessionMonitor } from '@/hooks/useSessionMonitor'
-import { initializeApiClient } from '@/lib/api/client'
 
 // Public Pages
 import Home from '@/pages/Home'
@@ -19,10 +18,10 @@ import ResetPassword from '@/pages/ResetPassword'
 import Profile from '@/pages/Profile'
 import { ProtectedRoute, AccessDenied } from '@/components/shared/ProtectedRoute'
 import SessionTimeoutModal from '@/components/shared/SessionTimeoutModal'
+import SmartRedirect from '@/components/shared/SmartRedirect'
 
 // Lazy-loaded pages (for code splitting)
 
-const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const PatientDashboard = lazy(() => import('@/pages/patient/Dashboard'))
 const PatientAppointments = lazy(() => import('@/pages/patient/Appointments'))
 const PatientBookAppointment = lazy(() => import('@/pages/patient/BookAppointment'))
@@ -37,7 +36,9 @@ const ProviderPatientDetail = lazy(() => import('@/pages/provider/PatientDetail'
 const ProviderAppointments = lazy(() => import('@/pages/provider/Appointments'))
 const ProviderAppointmentDetail = lazy(() => import('@/pages/provider/AppointmentDetail'))
 const ProviderSchedule = lazy(() => import('@/pages/provider/Schedule'))
+const ReceptionistDashboard = lazy(() => import('@/pages/receptionist/Dashboard'))
 const ReceptionistMessages = lazy(() => import('@/pages/receptionist/Messages'))
+const BillingDashboard = lazy(() => import('@/pages/billing/Dashboard'))
 const BillingMessages = lazy(() => import('@/pages/billing/Messages'))
 const AdminDashboard = lazy(() => import('@/pages/admin/Dashboard'))
 const AdminUserManagement = lazy(() => import('@/pages/admin/UserManagement'))
@@ -47,25 +48,10 @@ import { ROLES, PERMISSIONS } from '@/lib/constants/roles'
 
 /**
  * Session Monitor Wrapper
- * Integrates session monitoring and API client initialization into the app
+ * Integrates session monitoring into the app
  */
 function SessionMonitorWrapper({ children }: { children: React.ReactNode }) {
-  const isInitialized = useRef(false)
-
   useSessionMonitor()
-
-  // Initialize API client on mount to fetch CSRF token
-  useEffect(() => {
-    if (!isInitialized.current) {
-      initializeApiClient()
-      isInitialized.current = true
-
-      if (import.meta.env.DEV) {
-        console.log('[App] API client initialized')
-      }
-    }
-  }, [])
-
   return <>{children}</>
 }
 
@@ -92,7 +78,14 @@ function AppRouter() {
         >
           <Routes>
             {/* Public Routes */}
-            <Route path="/" element={<Home />} />
+            <Route
+              path="/"
+              element={
+                <SmartRedirect unauthenticatedBehavior="children">
+                  <Home />
+                </SmartRedirect>
+              }
+            />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/verify-2fa" element={<Verify2FA />} />
@@ -100,14 +93,10 @@ function AppRouter() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/access-denied" element={<AccessDenied />} />
 
-            {/* Protected Routes - General Dashboard */}
+            {/* Protected Routes - Generic Dashboard (redirects to role-specific) */}
             <Route
               path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
+              element={<SmartRedirect unauthenticatedBehavior="/" />}
             />
 
             {/* Protected Routes - Profile */}
@@ -292,6 +281,14 @@ function AppRouter() {
 
             {/* Protected Routes - Receptionist */}
             <Route
+              path="/receptionist/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={[ROLES.RECEPTIONIST]}>
+                  <ReceptionistDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/receptionist/messages"
               element={
                 <ProtectedRoute allowedRoles={[ROLES.RECEPTIONIST]}>
@@ -301,10 +298,18 @@ function AppRouter() {
             />
             <Route
               path="/receptionist/*"
-              element={<Navigate to="/receptionist/messages" replace />}
+              element={<Navigate to="/receptionist/dashboard" replace />}
             />
 
             {/* Protected Routes - Billing Staff */}
+            <Route
+              path="/billing/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={[ROLES.BILLING_STAFF]}>
+                  <BillingDashboard />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/billing/messages"
               element={
@@ -315,11 +320,11 @@ function AppRouter() {
             />
             <Route
               path="/billing/*"
-              element={<Navigate to="/billing/messages" replace />}
+              element={<Navigate to="/billing/dashboard" replace />}
             />
 
-            {/* 404 Not Found */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            {/* 404 Not Found - Smart redirect based on auth status */}
+            <Route path="*" element={<SmartRedirect unauthenticatedBehavior="/" />} />
           </Routes>
         </Suspense>
         </SessionMonitorWrapper>

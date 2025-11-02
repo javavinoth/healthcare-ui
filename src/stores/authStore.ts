@@ -3,7 +3,7 @@ import { devtools, persist } from 'zustand/middleware'
 import type { User } from '@/types'
 import type { Permission, UserRole } from '@/lib/constants/roles'
 import { hasPermission, hasAnyPermission, hasAllPermissions } from '@/lib/constants/roles'
-import { startNewSession, endSession, getCurrentSessionId } from '@/lib/utils/sessionSync'
+import { startNewSession, endSession, getCurrentSessionId, restoreSession } from '@/lib/utils/sessionSync'
 import { clearTokens } from '@/lib/api/client'
 
 /**
@@ -125,7 +125,10 @@ export const useAuthStore = create<AuthState>()(
         login: (user) => {
           const sessionId = startNewSession()
           set({
-            user,
+            user: {
+              ...user,
+              role: user.role.toLowerCase() as UserRole,
+            },
             isAuthenticated: true,
             sessionId,
             sessionExpiry: Date.now() + SESSION_TIMEOUT,
@@ -301,12 +304,35 @@ export const useAuthStore = create<AuthState>()(
         // Only persist non-sensitive data
         // Note: isLoggingOut is intentionally excluded as it's transient state
         partialize: (state) => ({
+          ...state,
           user: state.user,
           isAuthenticated: state.isAuthenticated,
           sessionId: state.sessionId,
           sessionExpiry: state.sessionExpiry,
           lastActivity: state.lastActivity,
-        } as AuthState),
+        }),
+        // Restore session sync state when store rehydrates
+        onRehydrateStorage: () => {
+          return (state, error) => {
+            if (error) {
+              console.error('[Auth] Failed to rehydrate store:', error)
+              return
+            }
+
+            // Restore session ID to sessionSync module
+            if (state?.sessionId) {
+              const isValid = restoreSession(state.sessionId)
+
+              if (!isValid) {
+                // Session is no longer valid (another user logged in)
+                console.warn('[Auth] Session no longer valid after rehydration')
+                // The periodic validation check will handle logout
+              } else if (import.meta.env.DEV) {
+                console.log('[Auth] Session restored successfully:', state.sessionId)
+              }
+            }
+          }
+        },
       }
     ),
     {
