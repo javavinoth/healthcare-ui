@@ -34,7 +34,6 @@ export default function ProviderDashboard() {
 
   // Schedule setup prompt state
   const [showSchedulePrompt, setShowSchedulePrompt] = useState(false)
-  const [schedulePromptDismissed, setSchedulePromptDismissed] = useState(false)
 
   // Fetch provider dashboard data
   const {
@@ -65,7 +64,6 @@ export default function ProviderDashboard() {
     if (user?.id) {
       const dismissedKey = `schedule-prompt-dismissed-${user.id}`
       const isDismissed = localStorage.getItem(dismissedKey) === 'true'
-      setSchedulePromptDismissed(isDismissed)
 
       // Show prompt if schedule not configured and not dismissed
       if (!settingsLoading && !isScheduleConfigured && !isDismissed) {
@@ -79,7 +77,7 @@ export default function ProviderDashboard() {
     if (user?.id) {
       const dismissedKey = `schedule-prompt-dismissed-${user.id}`
       localStorage.setItem(dismissedKey, 'true')
-      setSchedulePromptDismissed(true)
+      setShowSchedulePrompt(false)
     }
   }
 
