@@ -1,13 +1,25 @@
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Calendar, Clock, Settings, Briefcase } from 'lucide-react'
+import { Calendar, Clock, Settings, Briefcase, AlertCircle, CheckCircle2 } from 'lucide-react'
 import WeeklyScheduleEditor from '@/components/provider/WeeklyScheduleEditor'
 import TimeOffList from '@/components/provider/TimeOffList'
 import ProviderSettingsForm from '@/components/provider/ProviderSettingsForm'
+import { providerApi } from '@/lib/api'
 
 export default function Schedule() {
   const [activeTab, setActiveTab] = useState('availability')
+
+  // Fetch provider settings to check schedule status
+  const { data: settings, isLoading: settingsLoading } = useQuery({
+    queryKey: ['provider', 'settings'],
+    queryFn: providerApi.getProviderSettings,
+  })
+
+  // Check if schedule is configured (at least one day is active)
+  const isScheduleConfigured = settings?.availability?.some((day: any) => day.isActive) || false
+  const activeDaysCount = settings?.availability?.filter((day: any) => day.isActive).length || 0
 
   return (
     <div className="container mx-auto py-6 px-4 max-w-7xl">
@@ -17,6 +29,39 @@ export default function Schedule() {
           Manage your weekly availability, time-off requests, and appointment settings
         </p>
       </div>
+
+      {/* Schedule Status Banners */}
+      {!settingsLoading && (
+        <div className="mb-6 space-y-3">
+          {/* Warning: No schedule configured */}
+          {!isScheduleConfigured && (
+            <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="font-semibold text-warning/90 mb-1">No Available Time Slots</p>
+                <p className="text-sm text-warning/80">
+                  You currently have no days enabled in your schedule. Patients will not be able to book
+                  appointments with you. Use the "Quick Actions" below to quickly set up your availability.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Success: Schedule is configured */}
+          {isScheduleConfigured && (
+            <div className="bg-wellness/10 border border-wellness/20 rounded-lg p-4 flex items-start gap-3">
+              <CheckCircle2 className="h-5 w-5 text-wellness flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="font-semibold text-wellness/90 mb-1">Schedule Active</p>
+                <p className="text-sm text-wellness/80">
+                  You have <strong>{activeDaysCount}</strong> {activeDaysCount === 1 ? 'day' : 'days'} enabled.
+                  Patients can book appointments during your available hours.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">

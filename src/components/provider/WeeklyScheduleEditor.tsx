@@ -7,9 +7,8 @@ import { providerApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Switch } from '@/components/ui/switch'
 import { useToast } from '@/components/ui/use-toast'
-import { Loader2, Clock } from 'lucide-react'
+import { Loader2, Clock, Calendar, CheckCircle2, XCircle, AlertCircle } from 'lucide-react'
 
 const DAYS_OF_WEEK = [
   { key: 'MONDAY', label: 'Monday' },
@@ -53,7 +52,7 @@ export default function WeeklyScheduleEditor() {
         dayOfWeek: day.key,
         startTime: '09:00',
         endTime: '17:00',
-        isActive: true,
+        isActive: false, // Default to OFF - providers must explicitly enable days
       })),
     },
   })
@@ -120,6 +119,42 @@ export default function WeeklyScheduleEditor() {
     setHasChanges(true)
   }
 
+  // Helper: Enable all days
+  const enableAllDays = () => {
+    const newAvailability = availability.map(day => ({
+      ...day,
+      isActive: true,
+    }))
+    setValue('availability', newAvailability)
+    setHasChanges(true)
+  }
+
+  // Helper: Disable all days
+  const disableAllDays = () => {
+    const newAvailability = availability.map(day => ({
+      ...day,
+      isActive: false,
+    }))
+    setValue('availability', newAvailability)
+    setHasChanges(true)
+  }
+
+  // Helper: Apply business hours template (Mon-Fri 9-5)
+  const applyBusinessHours = () => {
+    const newAvailability = availability.map(day => ({
+      ...day,
+      startTime: '09:00',
+      endTime: '17:00',
+      isActive: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'].includes(day.dayOfWeek),
+    }))
+    setValue('availability', newAvailability)
+    setHasChanges(true)
+  }
+
+  // Check if all days are disabled
+  const allDaysDisabled = availability.every(day => !day.isActive)
+  const activeDaysCount = availability.filter(day => day.isActive).length
+
   if (isLoadingSettings) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -130,70 +165,183 @@ export default function WeeklyScheduleEditor() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="space-y-4">
+      {/* Quick Actions */}
+      <div className="flex flex-col sm:flex-row gap-3 pb-4 border-b">
+        <div className="flex items-center gap-2 text-sm text-neutral-blue-gray/70">
+          <Calendar className="h-4 w-4" />
+          <span className="font-medium">Quick Actions:</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={applyBusinessHours}
+            className="gap-1"
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            Business Hours (Mon-Fri 9-5)
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={enableAllDays}
+            className="gap-1"
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            Enable All Days
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={disableAllDays}
+            className="gap-1 text-neutral-blue-gray"
+          >
+            <XCircle className="h-3.5 w-3.5" />
+            Disable All Days
+          </Button>
+        </div>
+      </div>
+
+      {/* Status Summary */}
+      {activeDaysCount > 0 && (
+        <div className="bg-wellness/10 border border-wellness/20 rounded-lg p-3 flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 text-wellness flex-shrink-0" />
+          <p className="text-sm text-wellness/90">
+            <strong>{activeDaysCount}</strong> {activeDaysCount === 1 ? 'day' : 'days'} enabled. Patients can book appointments during these times.
+          </p>
+        </div>
+      )}
+
+      {/* Warning if all days disabled */}
+      {allDaysDisabled && (
+        <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-warning/90 mb-1">No Available Time Slots</p>
+            <p className="text-sm text-warning/80">
+              You currently have no days enabled. Patients will not be able to book appointments with you.
+              Enable at least one day to start accepting bookings.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Weekly Schedule */}
+      <div className="space-y-3">
         {availability.map((day, index) => {
           const dayInfo = DAYS_OF_WEEK[index]
           return (
             <div
               key={day.dayOfWeek}
-              className={`flex flex-col sm:flex-row sm:items-center gap-4 p-4 border rounded-lg transition-colors ${
-                day.isActive ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-100'
+              className={`flex flex-col sm:flex-row sm:items-center gap-4 p-4 border-2 rounded-xl transition-all duration-200 ${
+                day.isActive
+                  ? 'bg-primary/5 border-primary/30 shadow-sm hover:shadow-md hover:border-primary/50'
+                  : 'bg-neutral-blue-gray/5 border-neutral-blue-gray/10 hover:border-neutral-blue-gray/20'
               }`}
             >
-              <div className="flex items-center justify-between sm:justify-start sm:w-40">
-                <Label htmlFor={`${day.dayOfWeek}-active`} className="text-base font-medium">
-                  {dayInfo.label}
-                </Label>
-                <Switch
-                  id={`${day.dayOfWeek}-active`}
-                  checked={day.isActive}
-                  onCheckedChange={(checked: boolean) => updateDay(index, 'isActive', checked)}
-                />
+              {/* Day Label & Segmented Control Toggle */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+                <div className="flex items-center gap-2 min-w-[120px]">
+                  <Calendar className={`h-4 w-4 ${day.isActive ? 'text-primary' : 'text-neutral-blue-gray/40'}`} />
+                  <Label
+                    className={`text-base font-semibold ${
+                      day.isActive ? 'text-neutral-blue-gray' : 'text-neutral-blue-gray/50'
+                    }`}
+                  >
+                    {dayInfo.label}
+                  </Label>
+                </div>
+
+                {/* Segmented Control */}
+                <div className="inline-flex rounded-lg border-2 border-neutral-blue-gray/20 p-0.5 bg-neutral-blue-gray/5">
+                  <button
+                    type="button"
+                    onClick={() => updateDay(index, 'isActive', false)}
+                    className={`px-6 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
+                      !day.isActive
+                        ? 'bg-neutral-blue-gray/90 text-white shadow-sm'
+                        : 'text-neutral-blue-gray/60 hover:text-neutral-blue-gray hover:bg-neutral-blue-gray/5'
+                    }`}
+                    aria-label={`Set ${dayInfo.label} to unavailable`}
+                  >
+                    OFF
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => updateDay(index, 'isActive', true)}
+                    className={`px-6 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
+                      day.isActive
+                        ? 'bg-primary text-white shadow-sm'
+                        : 'text-neutral-blue-gray/60 hover:text-neutral-blue-gray hover:bg-neutral-blue-gray/5'
+                    }`}
+                    aria-label={`Set ${dayInfo.label} to available`}
+                  >
+                    ON
+                  </button>
+                </div>
               </div>
 
+              {/* Time Inputs or Unavailable Message */}
               {day.isActive ? (
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-1">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 flex-1">
                   <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <Clock className="h-4 w-4 text-gray-400" />
+                    <Clock className="h-4 w-4 text-primary" />
                     <Input
                       type="time"
                       value={day.startTime}
                       onChange={(e) => updateDay(index, 'startTime', e.target.value)}
-                      className="w-full sm:w-32"
+                      className="w-full sm:w-36 border-primary/20 focus:border-primary"
                       aria-label={`${dayInfo.label} start time`}
                     />
                   </div>
-                  <span className="text-gray-500 hidden sm:inline">to</span>
+                  <span className="text-neutral-blue-gray/50 font-medium hidden sm:inline">to</span>
                   <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <Clock className="h-4 w-4 text-gray-400" />
+                    <Clock className="h-4 w-4 text-primary" />
                     <Input
                       type="time"
                       value={day.endTime}
                       onChange={(e) => updateDay(index, 'endTime', e.target.value)}
-                      className="w-full sm:w-32"
+                      className="w-full sm:w-36 border-primary/20 focus:border-primary"
                       aria-label={`${dayInfo.label} end time`}
                     />
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 italic">Not available</p>
+                <div className="flex items-center gap-2 flex-1">
+                  <XCircle className="h-4 w-4 text-neutral-blue-gray/40" />
+                  <p className="text-sm text-neutral-blue-gray/50 italic font-medium">Not available</p>
+                </div>
               )}
             </div>
           )
         })}
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-900">
-          <strong>Note:</strong> Patients can only book appointments during your active hours. Make sure to disable days
-          when you're not available.
-        </p>
+      {/* Info Box */}
+      <div className="bg-info/10 border border-info/20 rounded-lg p-4 flex items-start gap-3">
+        <AlertCircle className="h-5 w-5 text-info flex-shrink-0 mt-0.5" />
+        <div className="text-sm text-info/90">
+          <p className="font-semibold mb-1">How Availability Works</p>
+          <ul className="space-y-1 list-disc list-inside">
+            <li>Days marked as "OFF" will not show any appointment slots to patients</li>
+            <li>Set your working hours for each day you want to accept appointments</li>
+            <li>Changes take effect immediately after saving</li>
+          </ul>
+        </div>
       </div>
 
-      <div className="flex gap-3 pt-4">
-        <Button type="submit" disabled={!hasChanges || updateMutation.isPending}>
-          {updateMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Save Schedule
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+        <Button
+          type="submit"
+          disabled={!hasChanges || updateMutation.isPending}
+          className="gap-2"
+        >
+          {updateMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+          {updateMutation.isPending ? 'Saving...' : 'Save Schedule'}
         </Button>
         {hasChanges && (
           <Button
@@ -218,7 +366,7 @@ export default function WeeklyScheduleEditor() {
               }
             }}
           >
-            Reset
+            Reset Changes
           </Button>
         )}
       </div>

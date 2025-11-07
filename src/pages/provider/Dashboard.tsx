@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -10,12 +11,14 @@ import {
   Video,
   User,
   Settings,
+  AlertCircle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import StatsCard from '@/components/patient/StatsCard'
 import AppHeader from '@/components/shared/AppHeader'
+import ScheduleSetupPrompt from '@/components/provider/ScheduleSetupPrompt'
 import { providerApi } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/components/ui/use-toast'
@@ -29,6 +32,10 @@ export default function ProviderDashboard() {
   const { user } = useAuthStore()
   const { toast } = useToast()
 
+  // Schedule setup prompt state
+  const [showSchedulePrompt, setShowSchedulePrompt] = useState(false)
+  const [schedulePromptDismissed, setSchedulePromptDismissed] = useState(false)
+
   // Fetch provider dashboard data
   const {
     data: dashboardData,
@@ -39,10 +46,42 @@ export default function ProviderDashboard() {
     queryFn: () => providerApi.getDashboard(),
   })
 
+  // Fetch provider settings to check schedule configuration
+  const { data: settings, isLoading: settingsLoading } = useQuery({
+    queryKey: ['provider', 'settings'],
+    queryFn: providerApi.getProviderSettings,
+  })
+
   const stats = dashboardData?.stats || {}
   const todayAppointments = dashboardData?.todayAppointments || []
   const providerName = dashboardData?.providerName || user?.firstName || 'Provider'
   const specialty = dashboardData?.specialty || 'Healthcare Provider'
+
+  // Check if schedule is configured (at least one day is active)
+  const isScheduleConfigured = settings?.availability?.some((day: any) => day.isActive) || false
+
+  // Check localStorage for prompt dismissal
+  useEffect(() => {
+    if (user?.id) {
+      const dismissedKey = `schedule-prompt-dismissed-${user.id}`
+      const isDismissed = localStorage.getItem(dismissedKey) === 'true'
+      setSchedulePromptDismissed(isDismissed)
+
+      // Show prompt if schedule not configured and not dismissed
+      if (!settingsLoading && !isScheduleConfigured && !isDismissed) {
+        setShowSchedulePrompt(true)
+      }
+    }
+  }, [user?.id, isScheduleConfigured, settingsLoading])
+
+  // Handle prompt dismissal
+  const handleDismissPrompt = () => {
+    if (user?.id) {
+      const dismissedKey = `schedule-prompt-dismissed-${user.id}`
+      localStorage.setItem(dismissedKey, 'true')
+      setSchedulePromptDismissed(true)
+    }
+  }
 
   // Handle appointment actions
   const handleViewPatient = (patientId: string) => {
@@ -99,8 +138,43 @@ export default function ProviderDashboard() {
 
   return (
     <div className="min-h-screen bg-neutral-light">
+      {/* Schedule Setup Prompt Modal */}
+      <ScheduleSetupPrompt
+        open={showSchedulePrompt}
+        onOpenChange={setShowSchedulePrompt}
+        onDismiss={handleDismissPrompt}
+      />
+
       {/* App Header */}
       <AppHeader title={`Welcome back, Dr. ${providerName}!`} />
+
+      {/* Schedule Not Configured Banner */}
+      {!settingsLoading && !isScheduleConfigured && (
+        <div className="bg-warning/10 border-b-2 border-warning/30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="font-semibold text-warning/90 mb-1">
+                  Action Required: Set Up Your Availability
+                </p>
+                <p className="text-sm text-warning/80 mb-3">
+                  Your schedule is not configured. Patients cannot book appointments with you until you set your
+                  available hours.
+                </p>
+                <Button
+                  size="sm"
+                  onClick={() => navigate('/provider/schedule')}
+                  className="gap-2"
+                >
+                  <Calendar className="h-4 w-4" />
+                  Set Up Schedule Now
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Page Subheader */}
       <div className="bg-white border-b border-neutral-blue-gray/10 px-4 sm:px-6 lg:px-8 py-4">
