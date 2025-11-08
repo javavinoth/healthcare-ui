@@ -33,6 +33,16 @@ import type {
   Prescription,
   PrescriptionFormData,
   PrescriptionStatus,
+  AuditLogResponse,
+  ProviderDashboardResponse,
+  ProviderStatsResponse,
+  TodayAppointmentResponse,
+  CalendarEventResponse,
+  TimeBlockResponse,
+  TimeOffResponse,
+  ProviderSettingsResponse,
+  AdminUserResponse,
+  AvailabilityEntry,
 } from '@/types'
 
 /**
@@ -245,34 +255,34 @@ export const appointmentsApi = {
     startDate?: string
     endDate?: string
   }): Promise<Appointment[]> => {
-    const response = await apiClient.get('/appointments', { params })
+    const response = await apiClient.get(ENDPOINTS.APPOINTMENTS.LIST, { params })
     // Backend returns array directly, map each appointment
     const appointments = Array.isArray(response.data) ? response.data : []
     return appointments.map(mapAppointmentResponse)
   },
 
   getById: async (id: string): Promise<Appointment> => {
-    const response = await apiClient.get(`/appointments/${id}`)
+    const response = await apiClient.get(ENDPOINTS.APPOINTMENTS.GET_BY_ID(id))
     return mapAppointmentResponse(response.data)
   },
 
   create: async (data: Partial<Appointment>): Promise<Appointment> => {
-    const response = await apiClient.post('/appointments', data)
+    const response = await apiClient.post(ENDPOINTS.APPOINTMENTS.CREATE, data)
     return mapAppointmentResponse(response.data)
   },
 
   update: async (id: string, data: Partial<Appointment>): Promise<Appointment> => {
-    const response = await apiClient.put(`/appointments/${id}`, data)
+    const response = await apiClient.put(ENDPOINTS.APPOINTMENTS.UPDATE(id), data)
     return mapAppointmentResponse(response.data)
   },
 
   cancel: async (id: string, reason?: string): Promise<void> => {
-    const response = await apiClient.delete(`/appointments/${id}/cancel`, { data: { reason } })
+    const response = await apiClient.delete(ENDPOINTS.APPOINTMENTS.CANCEL(id), { data: { reason } })
     return response.data
   },
 
   reschedule: async (id: string, newDate: string, newTime: string): Promise<Appointment> => {
-    const response = await apiClient.put(`/appointments/${id}/reschedule`, {
+    const response = await apiClient.put(ENDPOINTS.APPOINTMENTS.RESCHEDULE(id), {
       date: newDate,
       time: newTime,
     })
@@ -280,7 +290,7 @@ export const appointmentsApi = {
   },
 
   getAvailableSlots: async (providerId: string, date: string): Promise<{ slots: string[] }> => {
-    const response = await apiClient.get(`/appointments/providers/${providerId}/available-slots`, {
+    const response = await apiClient.get(ENDPOINTS.APPOINTMENTS.AVAILABLE_SLOTS(providerId), {
       params: { date },
     })
     return response.data
@@ -363,27 +373,44 @@ export const medicalRecordsApi = {
     endDate?: string
     category?: string
   }): Promise<MedicalRecord[]> => {
-    const response = await apiClient.get('/medical-records', { params })
+    const response = await apiClient.get(ENDPOINTS.MEDICAL_RECORDS.LIST, { params })
     // Backend returns array directly, map each record
     const records = Array.isArray(response.data) ? response.data : []
     return records.map(mapMedicalRecordResponse)
   },
 
   getById: async (id: string): Promise<MedicalRecord> => {
-    const response = await apiClient.get(`/medical-records/${id}`)
+    const response = await apiClient.get(ENDPOINTS.MEDICAL_RECORDS.GET_BY_ID(id))
     return mapMedicalRecordResponse(response.data)
   },
 
   markAsRead: async (id: string): Promise<ApiResponse<void>> => {
-    const response = await apiClient.post(`/medical-records/${id}/mark-read`)
+    const response = await apiClient.post(ENDPOINTS.MEDICAL_RECORDS.MARK_READ(id))
     return response.data
   },
 
-  download: async (id: string): Promise<Blob> => {
-    const response = await apiClient.get(`/medical-records/${id}/download`, {
-      responseType: 'blob',
-    })
+  downloadAttachment: async (recordId: string, attachmentId: string): Promise<Blob> => {
+    const response = await apiClient.get(
+      ENDPOINTS.MEDICAL_RECORDS.DOWNLOAD_ATTACHMENT(recordId, attachmentId),
+      {
+        responseType: 'blob',
+      }
+    )
     return response.data
+  },
+
+  /**
+   * @deprecated Use downloadAttachment(recordId, attachmentId) instead
+   * Backward-compatible helper that downloads the first attachment of a record
+   */
+  download: async (recordId: string): Promise<Blob> => {
+    // Fetch the record to get the first attachment ID
+    const record = await medicalRecordsApi.getById(recordId)
+    if (!record.attachments || record.attachments.length === 0) {
+      throw new Error('No attachments found for this medical record')
+    }
+    const firstAttachment = record.attachments[0]
+    return medicalRecordsApi.downloadAttachment(recordId, firstAttachment.id)
   },
 }
 
@@ -413,7 +440,7 @@ export const messagesApi = {
     page: number = 0,
     pageSize: number = 20
   ): Promise<PaginatedResponse<Conversation>> => {
-    const response = await apiClient.get('/messages/conversations', {
+    const response = await apiClient.get(ENDPOINTS.MESSAGES.CONVERSATIONS, {
       params: { page, size: pageSize, sort: 'updatedAt,desc' },
     })
     return mapSpringPageToResponse(response.data)
@@ -424,7 +451,7 @@ export const messagesApi = {
    * @param id - Conversation ID
    */
   getConversation: async (id: string): Promise<Conversation> => {
-    const response = await apiClient.get(`/messages/conversations/${id}`)
+    const response = await apiClient.get(ENDPOINTS.MESSAGES.CONVERSATION_BY_ID(id))
     return response.data
   },
 
@@ -439,7 +466,7 @@ export const messagesApi = {
     page: number = 0,
     pageSize: number = 50
   ): Promise<PaginatedResponse<Message>> => {
-    const response = await apiClient.get(`/messages/conversations/${conversationId}/messages`, {
+    const response = await apiClient.get(ENDPOINTS.MESSAGES.CONVERSATION_MESSAGES(conversationId), {
       params: { page, size: pageSize, sort: 'sentAt,asc' },
     })
     return mapSpringPageToResponse(response.data)
@@ -455,7 +482,7 @@ export const messagesApi = {
     body: string
     conversationId?: string
   }): Promise<Message> => {
-    const response = await apiClient.post('/messages', data)
+    const response = await apiClient.post(ENDPOINTS.MESSAGES.SEND, data)
     return response.data
   },
 
@@ -464,7 +491,7 @@ export const messagesApi = {
    * @param messageId - Message ID
    */
   markAsRead: async (messageId: string): Promise<void> => {
-    await apiClient.post(`/messages/${messageId}/mark-read`)
+    await apiClient.post(ENDPOINTS.MESSAGES.MARK_READ(messageId))
   },
 
   /**
@@ -475,9 +502,13 @@ export const messagesApi = {
   uploadAttachment: async (messageId: string, file: File): Promise<Attachment> => {
     const formData = new FormData()
     formData.append('file', file)
-    const response = await apiClient.post(`/messages/${messageId}/attachments`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
+    const response = await apiClient.post(
+      ENDPOINTS.MESSAGES.UPLOAD_ATTACHMENT(messageId),
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }
+    )
     return response.data
   },
 
@@ -487,7 +518,7 @@ export const messagesApi = {
    * @param attachmentId - Attachment ID
    */
   downloadAttachment: async (attachmentId: string): Promise<any> => {
-    const response = await apiClient.get(`/messages/attachments/${attachmentId}/download`)
+    const response = await apiClient.get(ENDPOINTS.MESSAGES.DOWNLOAD_ATTACHMENT(attachmentId))
     return response.data
   },
 
@@ -499,7 +530,7 @@ export const messagesApi = {
   getMessageableUsers: async (params?: { role?: string; search?: string }): Promise<any[]> => {
     // For now, use a simple approach to fetch all active users
     // Filter will be applied client-side using messaging permissions
-    const response = await apiClient.get('/admin/users', {
+    const response = await apiClient.get(ENDPOINTS.ADMIN.LIST_USERS, {
       params: { ...params, size: 1000, page: 0, active: true },
     })
     // Safely extract users array with multiple fallback checks
@@ -518,7 +549,7 @@ export const providersApi = {
     acceptingNewPatients?: boolean
     search?: string
   }): Promise<any[]> => {
-    const response = await apiClient.post('/appointments/search-providers', params)
+    const response = await apiClient.post(ENDPOINTS.APPOINTMENTS.SEARCH_PROVIDERS, params)
     // Backend returns array directly, ensure it's an array with safety check
     const providers = Array.isArray(response.data) ? response.data : []
     return providers
@@ -534,17 +565,17 @@ export const patientsApi = {
     page?: number
     pageSize?: number
   }): Promise<ApiResponse<PaginatedResponse<User>>> => {
-    const response = await apiClient.get('/patients', { params })
+    const response = await apiClient.get(ENDPOINTS.PATIENTS.LIST, { params })
     return response.data
   },
 
   getById: async (id: string): Promise<ApiResponse<User>> => {
-    const response = await apiClient.get(`/patients/${id}`)
+    const response = await apiClient.get(ENDPOINTS.PATIENTS.GET_BY_ID(id))
     return response.data
   },
 
   getMedicalHistory: async (id: string): Promise<ApiResponse<MedicalRecord[]>> => {
-    const response = await apiClient.get(`/patients/${id}/medical-history`)
+    const response = await apiClient.get(ENDPOINTS.PATIENTS.MEDICAL_HISTORY(id))
     return response.data
   },
 }
@@ -553,18 +584,18 @@ export const patientsApi = {
  * Provider API (for providers/doctors)
  */
 export const providerApi = {
-  getDashboard: async (): Promise<any> => {
-    const response = await apiClient.get('/provider/dashboard')
+  getDashboard: async (): Promise<ProviderDashboardResponse> => {
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.DASHBOARD)
     return response.data
   },
 
-  getStats: async (): Promise<any> => {
-    const response = await apiClient.get('/provider/stats')
+  getStats: async (): Promise<ProviderStatsResponse> => {
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.STATS)
     return response.data
   },
 
-  getTodayAppointments: async (): Promise<any[]> => {
-    const response = await apiClient.get('/provider/appointments/today')
+  getTodayAppointments: async (): Promise<TodayAppointmentResponse[]> => {
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.TODAY_APPOINTMENTS)
     // Backend returns array directly, ensure it's an array with safety check
     const appointments = Array.isArray(response.data) ? response.data : []
     return appointments
@@ -576,22 +607,22 @@ export const providerApi = {
     size?: number
     search?: string
   }): Promise<PaginatedResponse<PatientSummary>> => {
-    const response = await apiClient.get('/provider/patients', { params })
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.PATIENTS, { params })
     return response.data
   },
 
   getPatientDetail: async (patientId: string): Promise<PatientDetail> => {
-    const response = await apiClient.get(`/provider/patients/${patientId}`)
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.PATIENT_DETAIL(patientId))
     return response.data
   },
 
   getPatientTimeline: async (patientId: string): Promise<PatientTimelineEvent[]> => {
-    const response = await apiClient.get(`/provider/patients/${patientId}/timeline`)
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.PATIENT_TIMELINE(patientId))
     return response.data
   },
 
   updatePatient: async (patientId: string, data: UpdatePatientData): Promise<PatientDetail> => {
-    const response = await apiClient.put(`/provider/patients/${patientId}`, data)
+    const response = await apiClient.put(ENDPOINTS.PROVIDER.UPDATE_PATIENT(patientId), data)
     return response.data
   },
 
@@ -600,15 +631,18 @@ export const providerApi = {
     startDate: string
     endDate: string
     status?: string
-  }): Promise<any[]> => {
-    const response = await apiClient.get('/provider/appointments', { params })
+  }): Promise<CalendarEventResponse[]> => {
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.APPOINTMENTS, { params })
     // Backend returns array directly, ensure it's an array with safety check
     const appointments = Array.isArray(response.data) ? response.data : []
     return appointments
   },
 
-  getCalendar: async (params: { startDate: string; endDate: string }): Promise<any[]> => {
-    const response = await apiClient.get('/provider/calendar', { params })
+  getCalendar: async (params: {
+    startDate: string
+    endDate: string
+  }): Promise<CalendarEventResponse[]> => {
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.CALENDAR, { params })
     // Backend returns array directly, ensure it's an array with safety check
     const calendar = Array.isArray(response.data) ? response.data : []
     return calendar
@@ -621,8 +655,8 @@ export const providerApi = {
       isLateArrival?: boolean
       minutesLate?: number
     }
-  ): Promise<any> => {
-    const response = await apiClient.post(`/provider/appointments/${appointmentId}/check-in`, data)
+  ): Promise<ApiResponse<void>> => {
+    const response = await apiClient.post(ENDPOINTS.PROVIDER.CHECK_IN(appointmentId), data)
     return response.data
   },
 
@@ -634,8 +668,11 @@ export const providerApi = {
       followUpInstructions?: string
       followUpDays?: number
     }
-  ): Promise<any> => {
-    const response = await apiClient.post(`/provider/appointments/${appointmentId}/complete`, data)
+  ): Promise<ApiResponse<void>> => {
+    const response = await apiClient.post(
+      ENDPOINTS.PROVIDER.COMPLETE_APPOINTMENT(appointmentId),
+      data
+    )
     return response.data
   },
 
@@ -645,8 +682,8 @@ export const providerApi = {
       notes?: string
       patientContacted?: boolean
     }
-  ): Promise<any> => {
-    const response = await apiClient.post(`/provider/appointments/${appointmentId}/no-show`, data)
+  ): Promise<ApiResponse<void>> => {
+    const response = await apiClient.post(ENDPOINTS.PROVIDER.MARK_NO_SHOW(appointmentId), data)
     return response.data
   },
 
@@ -658,51 +695,41 @@ export const providerApi = {
     reason: string
     notes?: string
     isRecurring?: boolean
-  }): Promise<any> => {
-    const response = await apiClient.post('/provider/schedule/block', data)
+  }): Promise<TimeBlockResponse> => {
+    const response = await apiClient.post(ENDPOINTS.PROVIDER.CREATE_TIME_BLOCK, data)
     return response.data
   },
 
-  getTimeBlocks: async (params: { startDate: string; endDate: string }): Promise<any[]> => {
-    const response = await apiClient.get('/provider/schedule/blocks', { params })
+  getTimeBlocks: async (params: {
+    startDate: string
+    endDate: string
+  }): Promise<TimeBlockResponse[]> => {
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.LIST_TIME_BLOCKS, { params })
     // Backend returns array directly, ensure it's an array with safety check
     const timeBlocks = Array.isArray(response.data) ? response.data : []
     return timeBlocks
   },
 
-  deleteTimeBlock: async (timeBlockId: string): Promise<any> => {
-    const response = await apiClient.delete(`/provider/schedule/blocks/${timeBlockId}`)
+  deleteTimeBlock: async (timeBlockId: string): Promise<ApiResponse<void>> => {
+    const response = await apiClient.delete(ENDPOINTS.PROVIDER.DELETE_TIME_BLOCK(timeBlockId))
     return response.data
   },
 
   // Schedule Management
-  getProviderSettings: async (): Promise<{
-    slotDuration: number
-    availability: Array<{
-      dayOfWeek: string
-      startTime: string
-      endTime: string
-      isActive: boolean
-    }>
-  }> => {
-    const response = await apiClient.get('/provider/settings')
+  getProviderSettings: async (): Promise<ProviderSettingsResponse> => {
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.GET_SETTINGS)
     return response.data
   },
 
-  updateProviderSettings: async (data: { slotDuration: number }): Promise<any> => {
-    const response = await apiClient.put('/provider/settings', data)
+  updateProviderSettings: async (data: { slotDuration: number }): Promise<ApiResponse<void>> => {
+    const response = await apiClient.put(ENDPOINTS.PROVIDER.UPDATE_SETTINGS, data)
     return response.data
   },
 
   updateAvailability: async (data: {
-    availability: Array<{
-      dayOfWeek: string
-      startTime: string
-      endTime: string
-      isActive: boolean
-    }>
-  }): Promise<any> => {
-    const response = await apiClient.put('/provider/availability', data)
+    availability: AvailabilityEntry[]
+  }): Promise<ApiResponse<void>> => {
+    const response = await apiClient.put(ENDPOINTS.PROVIDER.UPDATE_AVAILABILITY, data)
     return response.data
   },
 
@@ -711,64 +738,39 @@ export const providerApi = {
     endDate: string
     reason: string
     notes?: string
-  }): Promise<{
-    id: string
-    startDate: string
-    endDate: string
-    reason: string
-    notes?: string
-    status: string
-    durationDays: number
-    createdAt: string
-    updatedAt: string
-  }> => {
-    const response = await apiClient.post('/provider/time-off', data)
+  }): Promise<TimeOffResponse> => {
+    const response = await apiClient.post(ENDPOINTS.PROVIDER.REQUEST_TIME_OFF, data)
     return response.data
   },
 
-  getTimeOffRequests: async (): Promise<
-    Array<{
-      id: string
-      startDate: string
-      endDate: string
-      reason: string
-      notes?: string
-      status: string
-      durationDays: number
-      approvedBy?: string
-      approvedByName?: string
-      approvedAt?: string
-      createdAt: string
-      updatedAt: string
-    }>
-  > => {
-    const response = await apiClient.get('/provider/time-off')
+  getTimeOffRequests: async (): Promise<TimeOffResponse[]> => {
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.LIST_TIME_OFF)
     // Backend returns array directly, ensure it's an array with safety check
     const timeOffRequests = Array.isArray(response.data) ? response.data : []
     return timeOffRequests
   },
 
-  cancelTimeOffRequest: async (requestId: string): Promise<any> => {
-    const response = await apiClient.delete(`/provider/time-off/${requestId}`)
+  cancelTimeOffRequest: async (requestId: string): Promise<ApiResponse<void>> => {
+    const response = await apiClient.delete(ENDPOINTS.PROVIDER.CANCEL_TIME_OFF(requestId))
     return response.data
   },
 
   // Clinical Documentation
   // Visit Notes (SOAP format)
   createVisitNote: async (patientId: string, data: VisitNoteFormData): Promise<VisitNote> => {
-    const response = await apiClient.post(`/provider/patients/${patientId}/notes`, data)
+    const response = await apiClient.post(ENDPOINTS.PROVIDER.CREATE_NOTE(patientId), data)
     return response.data
   },
 
   getPatientVisitNotes: async (patientId: string): Promise<VisitNote[]> => {
-    const response = await apiClient.get(`/provider/patients/${patientId}/notes`)
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.GET_PATIENT_NOTES(patientId))
     // Backend returns array directly, ensure it's an array with safety check
     const notes = Array.isArray(response.data) ? response.data : []
     return notes
   },
 
   getVisitNoteById: async (noteId: string): Promise<VisitNote> => {
-    const response = await apiClient.get(`/provider/notes/${noteId}`)
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.GET_NOTE(noteId))
     return response.data
   },
 
@@ -777,13 +779,13 @@ export const providerApi = {
     patientId: string,
     data: PrescriptionFormData
   ): Promise<Prescription> => {
-    const response = await apiClient.post(`/provider/patients/${patientId}/prescriptions`, data)
+    const response = await apiClient.post(ENDPOINTS.PROVIDER.CREATE_PRESCRIPTION(patientId), data)
     return response.data
   },
 
   getPatientPrescriptions: async (patientId: string, status?: string): Promise<Prescription[]> => {
     const params = status ? { status } : {}
-    const response = await apiClient.get(`/provider/patients/${patientId}/prescriptions`, {
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.GET_PATIENT_PRESCRIPTIONS(patientId), {
       params,
     })
     // Backend returns array directly, ensure it's an array with safety check
@@ -792,7 +794,7 @@ export const providerApi = {
   },
 
   getPrescriptionById: async (prescriptionId: string): Promise<Prescription> => {
-    const response = await apiClient.get(`/provider/prescriptions/${prescriptionId}`)
+    const response = await apiClient.get(ENDPOINTS.PROVIDER.GET_PRESCRIPTION(prescriptionId))
     return response.data
   },
 
@@ -800,7 +802,10 @@ export const providerApi = {
     prescriptionId: string,
     data: { status: PrescriptionStatus; reason?: string }
   ): Promise<Prescription> => {
-    const response = await apiClient.put(`/provider/prescriptions/${prescriptionId}/status`, data)
+    const response = await apiClient.put(
+      ENDPOINTS.PROVIDER.UPDATE_PRESCRIPTION_STATUS(prescriptionId),
+      data
+    )
     return response.data
   },
 }
@@ -818,8 +823,8 @@ export const adminApi = {
     phoneNumber?: string
     role: string
     sendInvitation?: boolean
-  }): Promise<any> => {
-    const response = await apiClient.post('/admin/users', data)
+  }): Promise<AdminUserResponse> => {
+    const response = await apiClient.post(ENDPOINTS.ADMIN.CREATE_USER, data)
     return response.data
   },
 
@@ -830,13 +835,13 @@ export const adminApi = {
     search?: string
     sortBy?: string
     sortDir?: string
-  }): Promise<any> => {
-    const response = await apiClient.get('/admin/users', { params })
-    return response.data
+  }): Promise<PaginatedResponse<AdminUserResponse>> => {
+    const response = await apiClient.get(ENDPOINTS.ADMIN.LIST_USERS, { params })
+    return mapSpringPageToResponse(response.data)
   },
 
-  getUserById: async (id: string): Promise<any> => {
-    const response = await apiClient.get(`/admin/users/${id}`)
+  getUserById: async (id: string): Promise<AdminUserResponse> => {
+    const response = await apiClient.get(ENDPOINTS.ADMIN.GET_USER(id))
     return response.data
   },
 
@@ -848,33 +853,33 @@ export const adminApi = {
       phoneNumber?: string
       active?: boolean
     }
-  ): Promise<any> => {
-    const response = await apiClient.put(`/admin/users/${id}`, data)
+  ): Promise<AdminUserResponse> => {
+    const response = await apiClient.put(ENDPOINTS.ADMIN.UPDATE_USER(id), data)
     return response.data
   },
 
-  changeUserRole: async (id: string, role: string): Promise<any> => {
-    const response = await apiClient.put(`/admin/users/${id}/role`, { role })
+  changeUserRole: async (id: string, role: string): Promise<AdminUserResponse> => {
+    const response = await apiClient.put(ENDPOINTS.ADMIN.UPDATE_USER_ROLE(id), { role })
     return response.data
   },
 
-  activateUser: async (id: string): Promise<any> => {
-    const response = await apiClient.post(`/admin/users/${id}/activate`)
+  activateUser: async (id: string): Promise<ApiResponse<void>> => {
+    const response = await apiClient.post(ENDPOINTS.ADMIN.ACTIVATE_USER(id))
     return response.data
   },
 
-  deactivateUser: async (id: string): Promise<any> => {
-    const response = await apiClient.post(`/admin/users/${id}/deactivate`)
+  deactivateUser: async (id: string): Promise<ApiResponse<void>> => {
+    const response = await apiClient.post(ENDPOINTS.ADMIN.DEACTIVATE_USER(id))
     return response.data
   },
 
-  sendInvitation: async (id: string): Promise<any> => {
-    const response = await apiClient.post(`/admin/users/${id}/send-invitation`)
+  sendInvitation: async (id: string): Promise<ApiResponse<void>> => {
+    const response = await apiClient.post(ENDPOINTS.ADMIN.SEND_INVITATION(id))
     return response.data
   },
 
   getStats: async (): Promise<any> => {
-    const response = await apiClient.get('/admin/stats')
+    const response = await apiClient.get(ENDPOINTS.ADMIN.STATS)
     return response.data
   },
 }
@@ -883,19 +888,55 @@ export const adminApi = {
  * Audit Logging (HIPAA Compliance)
  * Logs all PHI access events
  */
+/**
+ * Audit Log API
+ * Backend handles audit logging automatically via AOP/interceptors
+ * These endpoints are for VIEWING audit logs only
+ */
 export const auditApi = {
-  logAccess: async (data: {
-    action: string
-    resourceType: string
-    resourceId: string
-    details?: Record<string, unknown>
-  }): Promise<void> => {
-    try {
-      await apiClient.post('/audit-log', data)
-    } catch (error) {
-      // Don't let audit logging failures break the app
-      console.error('Failed to log audit event:', error)
-    }
+  /**
+   * Get all audit logs (Admin only)
+   * Supports pagination via Spring Boot Pageable
+   */
+  getAll: async (params?: {
+    page?: number
+    size?: number
+  }): Promise<PaginatedResponse<AuditLogResponse>> => {
+    const response = await apiClient.get(ENDPOINTS.AUDIT.LIST, { params })
+    return mapSpringPageToResponse(response.data)
+  },
+
+  /**
+   * Get current user's audit logs
+   */
+  getMy: async (params?: {
+    page?: number
+    size?: number
+  }): Promise<PaginatedResponse<AuditLogResponse>> => {
+    const response = await apiClient.get(ENDPOINTS.AUDIT.MY_LOGS, { params })
+    return mapSpringPageToResponse(response.data)
+  },
+
+  /**
+   * Get audit logs for specific user (Admin only)
+   */
+  getUserLogs: async (
+    userId: string,
+    params?: { page?: number; size?: number }
+  ): Promise<PaginatedResponse<AuditLogResponse>> => {
+    const response = await apiClient.get(ENDPOINTS.AUDIT.USER_LOGS(userId), { params })
+    return mapSpringPageToResponse(response.data)
+  },
+
+  /**
+   * Get PHI access logs for specific patient (Provider/Admin)
+   */
+  getPatientLogs: async (
+    patientId: string,
+    params?: { page?: number; size?: number }
+  ): Promise<PaginatedResponse<AuditLogResponse>> => {
+    const response = await apiClient.get(ENDPOINTS.AUDIT.PATIENT_LOGS(patientId), { params })
+    return mapSpringPageToResponse(response.data)
   },
 }
 

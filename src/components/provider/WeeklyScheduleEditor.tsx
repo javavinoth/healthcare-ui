@@ -9,8 +9,9 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 import { Loader2, Clock, Calendar, CheckCircle2, XCircle, AlertCircle } from 'lucide-react'
+import type { DayOfWeek } from '@/types'
 
-const DAYS_OF_WEEK = [
+const DAYS_OF_WEEK: Array<{ key: DayOfWeek; label: string }> = [
   { key: 'MONDAY', label: 'Monday' },
   { key: 'TUESDAY', label: 'Tuesday' },
   { key: 'WEDNESDAY', label: 'Wednesday' },
@@ -21,7 +22,7 @@ const DAYS_OF_WEEK = [
 ]
 
 const daySchema = z.object({
-  dayOfWeek: z.string(),
+  dayOfWeek: z.enum(['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']),
   startTime: z.string(),
   endTime: z.string(),
   isActive: z.boolean(),

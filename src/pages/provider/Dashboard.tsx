@@ -22,6 +22,7 @@ import ScheduleSetupPrompt from '@/components/provider/ScheduleSetupPrompt'
 import { providerApi } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/components/ui/use-toast'
+import type { ProviderStatsResponse, TodayAppointmentResponse } from '@/types'
 
 /**
  * Provider Dashboard - Main Overview Page
@@ -51,8 +52,15 @@ export default function ProviderDashboard() {
     queryFn: providerApi.getProviderSettings,
   })
 
-  const stats = dashboardData?.stats || {}
-  const todayAppointments = dashboardData?.todayAppointments || []
+  const stats: ProviderStatsResponse = dashboardData?.stats || {
+    appointmentsToday: 0,
+    appointmentsCompleted: 0,
+    appointmentsPending: 0,
+    patientsToday: 0,
+    unreadMessages: 0,
+    pendingTasks: 0,
+  }
+  const todayAppointments: TodayAppointmentResponse[] = dashboardData?.todayAppointments || []
   const providerName = dashboardData?.providerName || user?.firstName || 'Provider'
   const specialty = dashboardData?.specialty || 'Healthcare Provider'
 

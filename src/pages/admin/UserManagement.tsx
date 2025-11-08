@@ -98,9 +98,9 @@ export default function UserManagement() {
       }),
   })
 
-  const users = usersData?.users || []
+  const users = usersData?.data || []
   const totalPages = usersData?.totalPages || 0
-  const totalElements = usersData?.totalElements || 0
+  const totalElements = usersData?.total || 0
 
   // Mutations for user actions
   const activateMutation = useMutation({

@@ -579,3 +579,146 @@ export interface PrescriptionFormData {
   pharmacyNotes?: string
   expiresAt?: string
 }
+
+// ============================================================================
+// Admin Portal Types
+// ============================================================================
+
+export interface AdminUserResponse extends User {
+  phoneNumber?: string
+  active: boolean
+  accountLocked: boolean
+  failedLoginAttempts: number
+  lastLoginIp?: string
+  createdBy?: string
+  updatedBy?: string
+}
+
+// ============================================================================
+// Provider Portal Types
+// ============================================================================
+
+export interface ProviderStatsResponse {
+  appointmentsToday: number
+  appointmentsCompleted: number
+  appointmentsPending: number
+  patientsToday: number
+  unreadMessages: number
+  pendingTasks: number
+}
+
+export interface TodayAppointmentResponse {
+  id: string
+  patientId: string
+  patientName: string
+  time: string
+  type: string
+  status: string
+  reason: string
+  isVirtual: boolean
+  scheduledAt: string
+}
+
+export interface ProviderDashboardResponse {
+  stats: ProviderStatsResponse
+  todayAppointments: TodayAppointmentResponse[]
+  providerName: string
+  specialty: string
+}
+
+export interface CalendarEventResponse {
+  id: string
+  title: string
+  date: string
+  startTime: string
+  endTime: string
+  durationMinutes: number
+  patientId: string
+  patientName: string
+  type: string
+  status: string
+  reason: string
+  isVirtual: boolean
+  virtualMeetingUrl?: string
+  location?: string
+  colorClass: string
+}
+
+export type DayOfWeek =
+  | 'MONDAY'
+  | 'TUESDAY'
+  | 'WEDNESDAY'
+  | 'THURSDAY'
+  | 'FRIDAY'
+  | 'SATURDAY'
+  | 'SUNDAY'
+
+export interface AvailabilityEntry {
+  dayOfWeek: DayOfWeek
+  startTime: string
+  endTime: string
+  isActive: boolean
+}
+
+export interface ProviderSettingsResponse {
+  slotDuration: number
+  availability: AvailabilityEntry[]
+}
+
+export interface TimeBlockResponse {
+  id: string
+  providerId: string
+  providerName?: string
+  blockDate: string
+  startTime: string
+  endTime: string
+  reason: string
+  notes?: string
+  isRecurring: boolean
+  createdAt: string
+}
+
+export type TimeOffReason = 'VACATION' | 'SICK_LEAVE' | 'PERSONAL' | 'CONFERENCE' | 'OTHER'
+
+export type TimeOffStatus = 'PENDING' | 'APPROVED' | 'DENIED' | 'CANCELLED'
+
+export interface TimeOffResponse {
+  id: string
+  startDate: string
+  endDate: string
+  reason: TimeOffReason
+  notes?: string
+  status: TimeOffStatus
+  durationDays: number
+  approvedBy?: string
+  approvedByName?: string
+  approvedAt?: string
+  createdAt: string
+  updatedAt: string
+}
+
+// ============================================================================
+// Audit Log Types
+// ============================================================================
+
+export interface AuditLogResponse {
+  id: string
+  userEmail: string
+  userRole: string
+  action: string
+  resourceType: string
+  resourceId?: string
+  description: string
+  httpMethod?: string
+  endpoint?: string
+  ipAddress: string
+  userAgent?: string
+  responseStatus?: number
+  success: boolean
+  failureReason?: string
+  timestamp: string
+  sessionId?: string
+  phiAccessed: boolean
+  patientId?: string
+  complianceNotes?: string
+}

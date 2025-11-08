@@ -4,13 +4,13 @@
  * Centralized endpoint definitions for the healthcare application.
  * All endpoints are relative to the base URL configured in VITE_API_URL.
  *
- * IMPORTANT: Backend uses /api as servlet context path (server.servlet.context-path: /api)
- * The /api prefix is already included in VITE_API_URL, so these paths are relative.
+ * IMPORTANT: Backend uses /api/v1 as servlet context path (server.servlet.context-path: /api/v1)
+ * The /api/v1 prefix is already included in VITE_API_URL, so these paths are relative.
  *
  * Example:
- *   VITE_API_URL = http://localhost:8080/api
+ *   VITE_API_URL = http://localhost:8080/api/v1
  *   ENDPOINTS.AUTH.LOGIN = '/auth/login'
- *   Final URL = http://localhost:8080/api/auth/login
+ *   Final URL = http://localhost:8080/api/v1/auth/login
  */
 
 /**
@@ -66,7 +66,8 @@ export const MEDICAL_RECORD_ENDPOINTS = {
   LIST: '/medical-records',
   GET_BY_ID: (id: number | string) => `/medical-records/${id}`,
   MARK_READ: (id: number | string) => `/medical-records/${id}/mark-read`,
-  DOWNLOAD: (id: number | string) => `/medical-records/${id}/download`,
+  DOWNLOAD_ATTACHMENT: (recordId: number | string, attachmentId: number | string) =>
+    `/medical-records/${recordId}/attachments/${attachmentId}/download`,
 } as const
 
 /**
@@ -77,8 +78,12 @@ export const MESSAGE_ENDPOINTS = {
   SEND: '/messages',
   CONVERSATIONS: '/messages/conversations',
   CONVERSATION_BY_ID: (id: number | string) => `/messages/conversations/${id}`,
+  CONVERSATION_MESSAGES: (conversationId: number | string) =>
+    `/messages/conversations/${conversationId}/messages`,
   MARK_READ: (messageId: number | string) => `/messages/${messageId}/mark-read`,
-  UPLOAD_ATTACHMENT: '/messages/attachments',
+  UPLOAD_ATTACHMENT: (messageId: number | string) => `/messages/${messageId}/attachments`,
+  DOWNLOAD_ATTACHMENT: (attachmentId: number | string) =>
+    `/messages/attachments/${attachmentId}/download`,
   SEARCH: '/messages/search',
 } as const
 
@@ -170,9 +175,20 @@ export const ADMIN_ENDPOINTS = {
 /**
  * Audit Log Endpoints
  * Protected endpoints for audit logging (HIPAA compliance)
+ * All endpoints are GET-only (backend handles audit log creation automatically)
  */
 export const AUDIT_ENDPOINTS = {
-  LOG_ACCESS: '/audit-log',
+  // Admin: View all audit logs
+  LIST: '/audit/logs',
+
+  // Admin: View audit logs for specific user
+  USER_LOGS: (userId: number | string) => `/audit/logs/user/${userId}`,
+
+  // Patient: View PHI access logs for specific patient
+  PATIENT_LOGS: (patientId: number | string) => `/audit/logs/patient/${patientId}`,
+
+  // Current user: View own audit logs
+  MY_LOGS: '/audit/logs/me',
 } as const
 
 /**

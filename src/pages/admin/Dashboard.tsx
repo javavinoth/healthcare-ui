@@ -44,7 +44,7 @@ export default function AdminDashboard() {
       }),
   })
 
-  const recentUsers = usersData?.users || []
+  const recentUsers = usersData?.data || []
   const totalProviders = (stats?.totalDoctors || 0) + (stats?.totalNurses || 0)
 
   const getRoleBadgeVariant = (role: string) => {
