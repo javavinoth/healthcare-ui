@@ -3,7 +3,13 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { Calendar, Plus, Filter } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'
@@ -64,7 +70,7 @@ export default function Appointments() {
 
   return (
     <div className="h-screen flex flex-col bg-neutral-light">
-      <AppHeader title="My Appointments" />
+      <AppHeader title="My Appointments" showBackButton backPath="/patient/dashboard" />
 
       <div className="flex-1 overflow-auto">
         {/* Page Header */}
@@ -87,113 +93,115 @@ export default function Appointments() {
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Filters */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <Filter className="h-5 w-5 text-neutral-blue-gray/70" />
-              <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="status-filter">Status</Label>
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger id="status-filter">
-                      <SelectValue placeholder="All statuses" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Appointments</SelectItem>
-                      <SelectItem value="scheduled">Scheduled</SelectItem>
-                      <SelectItem value="confirmed">Confirmed</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
+          {/* Filters */}
+          <Card className="mb-6">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <Filter className="h-5 w-5 text-neutral-blue-gray/70" />
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="status-filter">Status</Label>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger id="status-filter">
+                        <SelectValue placeholder="All statuses" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Appointments</SelectItem>
+                        <SelectItem value="scheduled">Scheduled</SelectItem>
+                        <SelectItem value="confirmed">Confirmed</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Appointments List */}
-        {isLoading ? (
-          <div className="space-y-4">
-            <Skeleton className="h-48" />
-            <Skeleton className="h-48" />
-            <Skeleton className="h-48" />
-          </div>
-        ) : error ? (
-          <Card>
-            <CardContent className="p-12">
-              <div className="text-center">
-                <p className="text-error mb-4">Failed to load appointments.</p>
-                <Button onClick={() => refetch()} variant="outline">
-                  Try Again
-                </Button>
               </div>
             </CardContent>
           </Card>
-        ) : appointments.length === 0 ? (
-          <EmptyState
-            icon={Calendar}
-            title={
-              statusFilter === 'all'
-                ? 'No appointments found'
-                : `No ${statusFilter} appointments`
-            }
-            description={
-              statusFilter === 'all'
-                ? "You don't have any appointments yet. Book one to get started!"
-                : `You don't have any ${statusFilter} appointments. Try changing the filter.`
-            }
-            actionLabel={statusFilter === 'all' ? 'Book Appointment' : 'Show All'}
-            onAction={() =>
-              statusFilter === 'all'
-                ? navigate('/patient/appointments/book')
-                : setStatusFilter('all')
-            }
-          />
-        ) : (
-          <div className="space-y-8">
-            {/* Upcoming Appointments */}
-            {(statusFilter === 'all' || statusFilter === 'scheduled' || statusFilter === 'confirmed') &&
-              upcomingAppointments.length > 0 && (
-                <div>
-                  <h2 className="text-h3 text-neutral-blue-gray mb-4">
-                    Upcoming ({upcomingAppointments.length})
-                  </h2>
-                  <div className="space-y-4">
-                    {upcomingAppointments.map((appointment) => (
-                      <AppointmentCard
-                        key={appointment.id}
-                        appointment={appointment}
-                        onViewDetails={handleViewDetails}
-                        onJoinVideo={handleJoinVideo}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
 
-            {/* Past Appointments */}
-            {(statusFilter === 'all' || statusFilter === 'completed' || statusFilter === 'cancelled') &&
-              pastAppointments.length > 0 && (
-                <div>
-                  <h2 className="text-h3 text-neutral-blue-gray mb-4">
-                    Past ({pastAppointments.length})
-                  </h2>
-                  <div className="space-y-4">
-                    {pastAppointments.map((appointment) => (
-                      <AppointmentCard
-                        key={appointment.id}
-                        appointment={appointment}
-                        onViewDetails={handleViewDetails}
-                        onJoinVideo={handleJoinVideo}
-                      />
-                    ))}
-                  </div>
+          {/* Appointments List */}
+          {isLoading ? (
+            <div className="space-y-4">
+              <Skeleton className="h-48" />
+              <Skeleton className="h-48" />
+              <Skeleton className="h-48" />
+            </div>
+          ) : error ? (
+            <Card>
+              <CardContent className="p-12">
+                <div className="text-center">
+                  <p className="text-error mb-4">Failed to load appointments.</p>
+                  <Button onClick={() => refetch()} variant="outline">
+                    Try Again
+                  </Button>
                 </div>
-              )}
-          </div>
-        )}
+              </CardContent>
+            </Card>
+          ) : appointments.length === 0 ? (
+            <EmptyState
+              icon={Calendar}
+              title={
+                statusFilter === 'all' ? 'No appointments found' : `No ${statusFilter} appointments`
+              }
+              description={
+                statusFilter === 'all'
+                  ? "You don't have any appointments yet. Book one to get started!"
+                  : `You don't have any ${statusFilter} appointments. Try changing the filter.`
+              }
+              actionLabel={statusFilter === 'all' ? 'Book Appointment' : 'Show All'}
+              onAction={() =>
+                statusFilter === 'all'
+                  ? navigate('/patient/appointments/book')
+                  : setStatusFilter('all')
+              }
+            />
+          ) : (
+            <div className="space-y-8">
+              {/* Upcoming Appointments */}
+              {(statusFilter === 'all' ||
+                statusFilter === 'scheduled' ||
+                statusFilter === 'confirmed') &&
+                upcomingAppointments.length > 0 && (
+                  <div>
+                    <h2 className="text-h3 text-neutral-blue-gray mb-4">
+                      Upcoming ({upcomingAppointments.length})
+                    </h2>
+                    <div className="space-y-4">
+                      {upcomingAppointments.map((appointment) => (
+                        <AppointmentCard
+                          key={appointment.id}
+                          appointment={appointment}
+                          onViewDetails={handleViewDetails}
+                          onJoinVideo={handleJoinVideo}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              {/* Past Appointments */}
+              {(statusFilter === 'all' ||
+                statusFilter === 'completed' ||
+                statusFilter === 'cancelled') &&
+                pastAppointments.length > 0 && (
+                  <div>
+                    <h2 className="text-h3 text-neutral-blue-gray mb-4">
+                      Past ({pastAppointments.length})
+                    </h2>
+                    <div className="space-y-4">
+                      {pastAppointments.map((appointment) => (
+                        <AppointmentCard
+                          key={appointment.id}
+                          appointment={appointment}
+                          onViewDetails={handleViewDetails}
+                          onJoinVideo={handleJoinVideo}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+            </div>
+          )}
         </div>
       </div>
     </div>

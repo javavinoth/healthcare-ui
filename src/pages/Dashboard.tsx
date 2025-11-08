@@ -99,114 +99,114 @@ export default function Dashboard() {
 
           {/* Feature Cards Grid */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {/* Appointments Card */}
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-3 bg-primary-light/10 rounded-lg">
-                  <Calendar className="h-6 w-6 text-primary" />
+            {/* Appointments Card */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-3 bg-primary-light/10 rounded-lg">
+                    <Calendar className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Appointments</CardTitle>
                 </div>
-                <CardTitle>Appointments</CardTitle>
-              </div>
-              <CardDescription>Book, reschedule, or cancel appointments</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full" onClick={handleManageAppointments}>
-                Manage Appointments
-              </Button>
-            </CardContent>
-          </Card>
+                <CardDescription>Book, reschedule, or cancel appointments</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full" onClick={handleManageAppointments}>
+                  Manage Appointments
+                </Button>
+              </CardContent>
+            </Card>
 
-          {/* Medical Records Card */}
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-3 bg-wellness/10 rounded-lg">
-                  <FileText className="h-6 w-6 text-wellness" />
+            {/* Medical Records Card */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-3 bg-wellness/10 rounded-lg">
+                    <FileText className="h-6 w-6 text-wellness" />
+                  </div>
+                  <CardTitle>Medical Records</CardTitle>
                 </div>
-                <CardTitle>Medical Records</CardTitle>
-              </div>
-              <CardDescription>View your lab results and visit notes</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="secondary" className="w-full" onClick={handleViewRecords}>
-                View Records
-              </Button>
-            </CardContent>
-          </Card>
+                <CardDescription>View your lab results and visit notes</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="secondary" className="w-full" onClick={handleViewRecords}>
+                  View Records
+                </Button>
+              </CardContent>
+            </Card>
 
-          {/* Messages Card */}
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-3 bg-info/10 rounded-lg">
-                  <MessageSquare className="h-6 w-6 text-info" />
+            {/* Messages Card */}
+            <Card className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-3 bg-info/10 rounded-lg">
+                    <MessageSquare className="h-6 w-6 text-info" />
+                  </div>
+                  <CardTitle>Messages</CardTitle>
                 </div>
-                <CardTitle>Messages</CardTitle>
-              </div>
-              <CardDescription>Communicate with your healthcare team</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full" onClick={handleViewMessages}>
-                View Messages
-              </Button>
-            </CardContent>
-          </Card>
-        </section>
+                <CardDescription>Communicate with your healthcare team</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full" onClick={handleViewMessages}>
+                  View Messages
+                </Button>
+              </CardContent>
+            </Card>
+          </section>
 
-        {/* User Info */}
-        <section className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Account Status */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-body">Account Status</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="badge-success">Active</div>
-              <p className="text-small text-muted-foreground mt-2">Account verified</p>
-            </CardContent>
-          </Card>
+          {/* User Info */}
+          <section className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Account Status */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-body">Account Status</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="badge-success">Active</div>
+                <p className="text-small text-muted-foreground mt-2">Account verified</p>
+              </CardContent>
+            </Card>
 
-          {/* Security */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-body">Security</CardTitle>
-                <Shield className="h-5 w-5 text-primary" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="badge-success">2FA Enabled</div>
-              <p className="text-small text-muted-foreground mt-2">HIPAA Compliant</p>
-            </CardContent>
-          </Card>
+            {/* Security */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-body">Security</CardTitle>
+                  <Shield className="h-5 w-5 text-primary" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="badge-success">2FA Enabled</div>
+                <p className="text-small text-muted-foreground mt-2">HIPAA Compliant</p>
+              </CardContent>
+            </Card>
 
-          {/* Role Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-body">Your Role</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-h4 font-semibold capitalize text-primary">{user.role}</p>
-              <p className="text-small text-muted-foreground mt-1">
-                {user.permissions?.length || 0} permissions
-              </p>
-            </CardContent>
-          </Card>
+            {/* Role Info */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-body">Your Role</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-h4 font-semibold capitalize text-primary">{user.role}</p>
+                <p className="text-small text-muted-foreground mt-1">
+                  {user.permissions?.length || 0} permissions
+                </p>
+              </CardContent>
+            </Card>
 
-          {/* Health Score */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-body">Health Score</CardTitle>
-                <Activity className="h-5 w-5 text-wellness" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-h2 font-bold text-wellness">95%</div>
-              <p className="text-small text-muted-foreground mt-1">Excellent</p>
-            </CardContent>
-          </Card>
+            {/* Health Score */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-body">Health Score</CardTitle>
+                  <Activity className="h-5 w-5 text-wellness" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-h2 font-bold text-wellness">95%</div>
+                <p className="text-small text-muted-foreground mt-1">Excellent</p>
+              </CardContent>
+            </Card>
           </section>
         </div>
       </div>

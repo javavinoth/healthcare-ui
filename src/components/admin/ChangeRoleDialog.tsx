@@ -146,10 +146,13 @@ export default function ChangeRoleDialog({ open, onClose, userId }: ChangeRoleDi
               <Label htmlFor="role">
                 New Role <span className="text-error">*</span>
               </Label>
-              <Select value={selectedRole} onValueChange={(value) => {
-                setSelectedRole(value)
-                setError('')
-              }}>
+              <Select
+                value={selectedRole}
+                onValueChange={(value) => {
+                  setSelectedRole(value)
+                  setError('')
+                }}
+              >
                 <SelectTrigger className={error ? 'border-error' : ''}>
                   <SelectValue placeholder="Select new role" />
                 </SelectTrigger>
@@ -177,12 +180,10 @@ export default function ChangeRoleDialog({ open, onClose, userId }: ChangeRoleDi
               <div className="flex gap-3 p-4 bg-warning/10 border border-warning/20 rounded-md">
                 <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-neutral-blue-gray">
-                    Role Change Warning
-                  </p>
+                  <p className="text-sm font-medium text-neutral-blue-gray">Role Change Warning</p>
                   <p className="text-xs text-neutral-blue-gray/70 mt-1">
-                    Changing the user's role will immediately affect their access permissions.
-                    Make sure the user is aware of this change.
+                    Changing the user's role will immediately affect their access permissions. Make
+                    sure the user is aware of this change.
                   </p>
                 </div>
               </div>
@@ -195,7 +196,9 @@ export default function ChangeRoleDialog({ open, onClose, userId }: ChangeRoleDi
               </Button>
               <Button
                 type="submit"
-                disabled={changeRoleMutation.isPending || !selectedRole || selectedRole === user?.role}
+                disabled={
+                  changeRoleMutation.isPending || !selectedRole || selectedRole === user?.role
+                }
               >
                 {changeRoleMutation.isPending ? 'Changing...' : 'Change Role'}
               </Button>

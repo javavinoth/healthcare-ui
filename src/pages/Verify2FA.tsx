@@ -61,7 +61,8 @@ export default function Verify2FA() {
       }
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || 'Invalid verification code. Please try again.'
+      const message =
+        error.response?.data?.message || 'Invalid verification code. Please try again.'
       setVerifyError(message)
       // Clear code on error
       setCodeDigits(['', '', '', '', '', ''])
@@ -203,7 +204,9 @@ export default function Verify2FA() {
                     <Input
                       key={index}
                       id={`code-${index}`}
-                      ref={(el) => { inputRefs.current[index] = el }}
+                      ref={(el) => {
+                        inputRefs.current[index] = el
+                      }}
                       type="text"
                       inputMode="numeric"
                       maxLength={1}
@@ -229,7 +232,9 @@ export default function Verify2FA() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isSubmitting || verify2FAMutation.isPending || codeDigits.join('').length !== 6}
+                disabled={
+                  isSubmitting || verify2FAMutation.isPending || codeDigits.join('').length !== 6
+                }
               >
                 {isSubmitting || verify2FAMutation.isPending ? 'Verifying...' : 'Verify Code'}
               </Button>

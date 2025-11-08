@@ -324,9 +324,7 @@ export default function UserManagement() {
                       <TableCell className="text-neutral-blue-gray/70">
                         <div className="flex items-center gap-2">
                           {user.email}
-                          {user.emailVerified && (
-                            <CheckCircle2 className="h-4 w-4 text-wellness" />
-                          )}
+                          {user.emailVerified && <CheckCircle2 className="h-4 w-4 text-wellness" />}
                         </div>
                       </TableCell>
                       <TableCell className="text-neutral-blue-gray/70">

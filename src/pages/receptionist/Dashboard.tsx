@@ -29,9 +29,7 @@ export default function ReceptionistDashboard() {
       })
       // Filter for today's appointments
       const today = new Date().toDateString()
-      return appointments.filter(
-        (apt) => new Date(apt.date).toDateString() === today
-      )
+      return appointments.filter((apt) => new Date(apt.date).toDateString() === today)
     },
   })
 
@@ -49,9 +47,7 @@ export default function ReceptionistDashboard() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-h1 text-neutral-blue-gray">
-                  Welcome back, {user?.firstName}!
-                </h1>
+                <h1 className="text-h1 text-neutral-blue-gray">Welcome back, {user?.firstName}!</h1>
                 <p className="text-body text-neutral-blue-gray/70 mt-1">
                   Here's today's reception overview
                 </p>
@@ -78,9 +74,7 @@ export default function ReceptionistDashboard() {
                       <Calendar className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <p className="text-caption text-neutral-blue-gray/70">
-                        Today's Appointments
-                      </p>
+                      <p className="text-caption text-neutral-blue-gray/70">Today's Appointments</p>
                       <p className="text-h2 text-neutral-blue-gray mt-1">
                         {todaysAppointments.length}
                       </p>
@@ -97,12 +91,8 @@ export default function ReceptionistDashboard() {
                       <ClipboardCheck className="h-6 w-6 text-wellness" />
                     </div>
                     <div>
-                      <p className="text-caption text-neutral-blue-gray/70">
-                        Checked In
-                      </p>
-                      <p className="text-h2 text-neutral-blue-gray mt-1">
-                        {checkedInCount}
-                      </p>
+                      <p className="text-caption text-neutral-blue-gray/70">Checked In</p>
+                      <p className="text-h2 text-neutral-blue-gray mt-1">{checkedInCount}</p>
                       <p className="text-caption text-neutral-blue-gray/70 mt-1">
                         {upcomingCount} pending
                       </p>
@@ -116,15 +106,9 @@ export default function ReceptionistDashboard() {
                       <MessageSquare className="h-6 w-6 text-info" />
                     </div>
                     <div>
-                      <p className="text-caption text-neutral-blue-gray/70">
-                        Messages
-                      </p>
-                      <p className="text-h2 text-neutral-blue-gray mt-1">
-                        -
-                      </p>
-                      <p className="text-caption text-neutral-blue-gray/70 mt-1">
-                        View inbox
-                      </p>
+                      <p className="text-caption text-neutral-blue-gray/70">Messages</p>
+                      <p className="text-h2 text-neutral-blue-gray mt-1">-</p>
+                      <p className="text-caption text-neutral-blue-gray/70 mt-1">View inbox</p>
                     </div>
                   </div>
                 </div>
@@ -165,10 +149,7 @@ export default function ReceptionistDashboard() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-h2 text-neutral-blue-gray">Today's Appointments</h2>
               {todaysAppointments.length > 0 && (
-                <Button
-                  variant="link"
-                  onClick={() => navigate('/receptionist/appointments')}
-                >
+                <Button variant="link" onClick={() => navigate('/receptionist/appointments')}>
                   View all
                 </Button>
               )}
@@ -187,9 +168,7 @@ export default function ReceptionistDashboard() {
             ) : todaysAppointments.length === 0 ? (
               <div className="bg-white rounded-lg p-8 border border-neutral-blue-gray/10 text-center">
                 <Calendar className="h-12 w-12 text-neutral-blue-gray/30 mx-auto mb-4" />
-                <p className="text-h3 text-neutral-blue-gray mb-2">
-                  No appointments scheduled
-                </p>
+                <p className="text-h3 text-neutral-blue-gray mb-2">No appointments scheduled</p>
                 <p className="text-body text-neutral-blue-gray/70">
                   There are no appointments scheduled for today.
                 </p>
@@ -247,8 +226,8 @@ export default function ReceptionistDashboard() {
                                 appointment.status === 'checked_in'
                                   ? 'bg-wellness/10 text-wellness'
                                   : appointment.status === 'scheduled'
-                                  ? 'bg-info/10 text-info'
-                                  : 'bg-neutral-blue-gray/10 text-neutral-blue-gray'
+                                    ? 'bg-info/10 text-info'
+                                    : 'bg-neutral-blue-gray/10 text-neutral-blue-gray'
                               }`}
                             >
                               {appointment.status.replace(/_/g, ' ')}

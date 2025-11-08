@@ -49,8 +49,7 @@ export default function Home() {
       <section className="container mx-auto px-4 py-16 sm:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="mb-6 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-            Your Health Journey,{' '}
-            <span className="text-primary">Simplified</span>
+            Your Health Journey, <span className="text-primary">Simplified</span>
           </h1>
           <p className="mb-8 text-lg text-gray-600 sm:text-xl md:text-2xl">
             Connect with healthcare providers, manage appointments, access medical records, and
@@ -109,8 +108,8 @@ export default function Home() {
               </div>
               <CardTitle>Digital Medical Records</CardTitle>
               <CardDescription>
-                Access your complete medical history, lab results, prescriptions, and clinical
-                notes anytime, anywhere.
+                Access your complete medical history, lab results, prescriptions, and clinical notes
+                anytime, anywhere.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -123,8 +122,8 @@ export default function Home() {
               </div>
               <CardTitle>Secure Messaging</CardTitle>
               <CardDescription>
-                Communicate directly with your healthcare team through encrypted,
-                HIPAA-compliant messaging.
+                Communicate directly with your healthcare team through encrypted, HIPAA-compliant
+                messaging.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -165,8 +164,8 @@ export default function Home() {
               </div>
               <CardTitle>24/7 Access</CardTitle>
               <CardDescription>
-                Access your health information and connect with your care team around the clock
-                from any device.
+                Access your health information and connect with your care team around the clock from
+                any device.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -343,8 +342,8 @@ export default function Home() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-600">
-                      Handle patient registration, appointment scheduling, and administrative
-                      tasks efficiently.
+                      Handle patient registration, appointment scheduling, and administrative tasks
+                      efficiently.
                     </p>
                   </CardContent>
                 </Card>
@@ -372,8 +371,7 @@ export default function Home() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-600">
-                      Handle insurance claims, payment processing, and billing inquiries
-                      seamlessly.
+                      Handle insurance claims, payment processing, and billing inquiries seamlessly.
                     </p>
                   </CardContent>
                 </Card>

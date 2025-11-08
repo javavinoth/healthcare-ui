@@ -40,12 +40,7 @@ export default function WeeklyScheduleEditor() {
   const queryClient = useQueryClient()
   const [hasChanges, setHasChanges] = useState(false)
 
-  const {
-    handleSubmit,
-    setValue,
-    watch,
-    reset,
-  } = useForm<ScheduleFormData>({
+  const { handleSubmit, setValue, watch, reset } = useForm<ScheduleFormData>({
     resolver: zodResolver(scheduleSchema),
     defaultValues: {
       availability: DAYS_OF_WEEK.map((day) => ({
@@ -102,7 +97,8 @@ export default function WeeklyScheduleEditor() {
     onError: (error: any) => {
       toast({
         title: 'Update Failed',
-        description: error.response?.data?.message || 'Failed to update schedule. Please try again.',
+        description:
+          error.response?.data?.message || 'Failed to update schedule. Please try again.',
         variant: 'destructive',
       })
     },
@@ -121,7 +117,7 @@ export default function WeeklyScheduleEditor() {
 
   // Helper: Enable all days
   const enableAllDays = () => {
-    const newAvailability = availability.map(day => ({
+    const newAvailability = availability.map((day) => ({
       ...day,
       isActive: true,
     }))
@@ -131,7 +127,7 @@ export default function WeeklyScheduleEditor() {
 
   // Helper: Disable all days
   const disableAllDays = () => {
-    const newAvailability = availability.map(day => ({
+    const newAvailability = availability.map((day) => ({
       ...day,
       isActive: false,
     }))
@@ -141,7 +137,7 @@ export default function WeeklyScheduleEditor() {
 
   // Helper: Apply business hours template (Mon-Fri 9-5)
   const applyBusinessHours = () => {
-    const newAvailability = availability.map(day => ({
+    const newAvailability = availability.map((day) => ({
       ...day,
       startTime: '09:00',
       endTime: '17:00',
@@ -152,8 +148,8 @@ export default function WeeklyScheduleEditor() {
   }
 
   // Check if all days are disabled
-  const allDaysDisabled = availability.every(day => !day.isActive)
-  const activeDaysCount = availability.filter(day => day.isActive).length
+  const allDaysDisabled = availability.every((day) => !day.isActive)
+  const activeDaysCount = availability.filter((day) => day.isActive).length
 
   if (isLoadingSettings) {
     return (
@@ -210,7 +206,8 @@ export default function WeeklyScheduleEditor() {
         <div className="bg-wellness/10 border border-wellness/20 rounded-lg p-3 flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 text-wellness flex-shrink-0" />
           <p className="text-sm text-wellness/90">
-            <strong>{activeDaysCount}</strong> {activeDaysCount === 1 ? 'day' : 'days'} enabled. Patients can book appointments during these times.
+            <strong>{activeDaysCount}</strong> {activeDaysCount === 1 ? 'day' : 'days'} enabled.
+            Patients can book appointments during these times.
           </p>
         </div>
       )}
@@ -222,8 +219,8 @@ export default function WeeklyScheduleEditor() {
           <div>
             <p className="text-sm font-semibold text-warning/90 mb-1">No Available Time Slots</p>
             <p className="text-sm text-warning/80">
-              You currently have no days enabled. Patients will not be able to book appointments with you.
-              Enable at least one day to start accepting bookings.
+              You currently have no days enabled. Patients will not be able to book appointments
+              with you. Enable at least one day to start accepting bookings.
             </p>
           </div>
         </div>
@@ -245,7 +242,9 @@ export default function WeeklyScheduleEditor() {
               {/* Day Label & Segmented Control Toggle */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
                 <div className="flex items-center gap-2 min-w-[120px]">
-                  <Calendar className={`h-4 w-4 ${day.isActive ? 'text-primary' : 'text-neutral-blue-gray/40'}`} />
+                  <Calendar
+                    className={`h-4 w-4 ${day.isActive ? 'text-primary' : 'text-neutral-blue-gray/40'}`}
+                  />
                   <Label
                     className={`text-base font-semibold ${
                       day.isActive ? 'text-neutral-blue-gray' : 'text-neutral-blue-gray/50'
@@ -312,7 +311,9 @@ export default function WeeklyScheduleEditor() {
               ) : (
                 <div className="flex items-center gap-2 flex-1">
                   <XCircle className="h-4 w-4 text-neutral-blue-gray/40" />
-                  <p className="text-sm text-neutral-blue-gray/50 italic font-medium">Not available</p>
+                  <p className="text-sm text-neutral-blue-gray/50 italic font-medium">
+                    Not available
+                  </p>
                 </div>
               )}
             </div>
@@ -335,11 +336,7 @@ export default function WeeklyScheduleEditor() {
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
-        <Button
-          type="submit"
-          disabled={!hasChanges || updateMutation.isPending}
-          className="gap-2"
-        >
+        <Button type="submit" disabled={!hasChanges || updateMutation.isPending} className="gap-2">
           {updateMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
           {updateMutation.isPending ? 'Saving...' : 'Save Schedule'}
         </Button>

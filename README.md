@@ -5,6 +5,7 @@ A professional, HIPAA-ready healthcare web application built with React 19, Type
 ## 🏥 Project Overview
 
 This healthcare portal provides a comprehensive platform for patients, healthcare providers, and administrative staff to:
+
 - **Patients**: Book appointments, view medical records, communicate with providers
 - **Providers**: Manage patient care, view schedules, access patient records
 - **Admins**: Oversee operations, manage users, track facility metrics
@@ -12,6 +13,7 @@ This healthcare portal provides a comprehensive platform for patients, healthcar
 ## ✨ Key Features
 
 ### Design & UX
+
 - ✅ **WCAG 2.1 AA Compliant** - Full accessibility compliance
 - ✅ **Healthcare-specific color palette** - Blue-focused trust theme with wellness accents
 - ✅ **Mobile-first responsive design** - Optimized for all devices (320px-1440px+)
@@ -20,6 +22,7 @@ This healthcare portal provides a comprehensive platform for patients, healthcar
 - ✅ **Skip to content links** - Keyboard navigation support
 
 ### Security (HIPAA-Ready Architecture)
+
 - ✅ **HTTPS-only in production** - Encrypted data transmission
 - ✅ **HTTP-only cookie authentication** - Secure session management
 - ✅ **CSRF token protection** - Cross-site request forgery prevention
@@ -31,44 +34,53 @@ This healthcare portal provides a comprehensive platform for patients, healthcar
 ## 🛠 Tech Stack
 
 ### Core
+
 - **React 19.1.1** - Latest React with concurrent features
 - **TypeScript 5.9.3** - Type safety and developer experience
 - **Vite 7.1.7** - Fast build tool and dev server
 
 ### UI & Styling
+
 - **Tailwind CSS** - Utility-first CSS with custom healthcare theme
 - **shadcn/ui** - Accessible, customizable component library
 - **Radix UI** - Unstyled, accessible component primitives
 - **Lucide React** - Healthcare-friendly icon set
 
 ### State Management
+
 - **TanStack Query v5** - Server state management with PHI-safe caching
 - **Zustand v5** - Lightweight client state management
 
 ### Forms & Validation
+
 - **React Hook Form v7** - Performant form handling
 - **Zod** - TypeScript-first schema validation with XSS protection
 
 ### Data & API
+
 - **Axios** - HTTP client with CSRF and security features
 - **date-fns** - Date manipulation utilities
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - **Node.js** 18+ and npm 9+
 
 ### Installation & Running
 
 1. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 2. **Setup environment variables**
+
    ```bash
    cp .env.example .env
    ```
+
    Edit `.env` to configure your API endpoint and settings.
 
 3. **Start development server**
@@ -89,16 +101,19 @@ This healthcare portal provides a comprehensive platform for patients, healthcar
 ### Color Palette
 
 #### Primary Colors (Trust & Professionalism)
+
 - **Primary Dark**: `#1e3e72` - Headers, important text
 - **Primary**: `#23408e` - Main brand color, buttons
 - **Primary Light**: `#63c8f2` - Accents, interactive elements
 - **Primary Bright**: `#16c2d5` - Call-to-action buttons
 
 #### Wellness Colors (Health & Healing)
+
 - **Wellness**: `#5aba4a` - Success states, positive indicators
 - **Wellness Sage**: `#c7d0c4` - Subtle backgrounds
 
 #### Status Colors
+
 - **Success**: `#5aba4a`
 - **Warning**: `#f59e0b`
 - **Error**: `#ef4444`
@@ -113,12 +128,14 @@ This healthcare portal provides a comprehensive platform for patients, healthcar
 ## 🔐 Security Features
 
 ### Authentication & Authorization
+
 - **RBAC (Role-Based Access Control)** with 6 roles:
   - Patient, Doctor, Nurse, Admin, Billing Staff, Receptionist
 - **Session management** with automatic timeout
 - **2FA support** (ready for implementation)
 
 ### Data Protection
+
 - **PHI-safe caching** - No long-term caching of sensitive data
 - **CSRF protection** - All mutating requests include CSRF token
 - **XSS prevention** - Input sanitization with Zod schemas
@@ -135,6 +152,7 @@ This healthcare portal provides a comprehensive platform for patients, healthcar
 ## 🗺 Roadmap
 
 ### Phase 1: Foundation (Completed ✅)
+
 - [x] Project setup with React 19 + TypeScript + Vite
 - [x] Tailwind CSS with healthcare design system
 - [x] shadcn/ui component library integration
@@ -144,6 +162,7 @@ This healthcare portal provides a comprehensive platform for patients, healthcar
 - [x] Demo application showcasing design system
 
 ### Phase 2: Authentication & Authorization (Next)
+
 - [ ] Login page with form validation
 - [ ] Two-Factor Authentication (2FA) modal
 - [ ] Password reset flow
@@ -151,6 +170,7 @@ This healthcare portal provides a comprehensive platform for patients, healthcar
 - [ ] Session timeout modal
 
 ### Phase 3: Patient Portal
+
 - [ ] Patient dashboard
 - [ ] Appointment booking system
 - [ ] Medical records viewer
@@ -158,12 +178,14 @@ This healthcare portal provides a comprehensive platform for patients, healthcar
 - [ ] Profile management
 
 ### Phase 4: Provider Dashboard
+
 - [ ] Provider home screen
 - [ ] Patient management
 - [ ] Schedule/calendar view
 - [ ] Clinical tools
 
 ### Phase 5: Administrative System
+
 - [ ] Admin dashboard
 - [ ] User management
 - [ ] Facility metrics

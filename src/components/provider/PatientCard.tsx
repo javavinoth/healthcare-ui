@@ -92,9 +92,7 @@ export default function PatientCard({ patient, onClick }: PatientCardProps) {
                 <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                 <div>
                   <span className="text-muted-foreground">Last visit: </span>
-                  <span className="font-medium">
-                    {formatDate(patient.lastAppointmentDate)}
-                  </span>
+                  <span className="font-medium">{formatDate(patient.lastAppointmentDate)}</span>
                 </div>
               </div>
               {patient.upcomingAppointmentDate && (

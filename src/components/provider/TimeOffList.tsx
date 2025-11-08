@@ -143,9 +143,7 @@ export default function TimeOffList() {
                         {statusConfig.label}
                       </Badge>
                       {request.approvedByName && (
-                        <span className="text-xs text-gray-500">
-                          by {request.approvedByName}
-                        </span>
+                        <span className="text-xs text-gray-500">by {request.approvedByName}</span>
                       )}
                     </div>
 
@@ -170,7 +168,8 @@ export default function TimeOffList() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Cancel Time-Off Request?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to cancel this time-off request? This action cannot be undone.
+                            Are you sure you want to cancel this time-off request? This action
+                            cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>

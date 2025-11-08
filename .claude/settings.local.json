@@ -14,7 +14,8 @@
       "Bash(mvn spring-boot:run:*)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "Bash(dir /B /AD \"C:\\dev\\back-end\\healthcare-api\\src\\main\\java\\com\\healthcare\\api\")"
+      "Bash(dir /B /AD \"C:\\dev\\back-end\\healthcare-api\\src\\main\\java\\com\\healthcare\\api\")",
+      "Bash(npm run lint)"
     ],
     "deny": [],
     "ask": []

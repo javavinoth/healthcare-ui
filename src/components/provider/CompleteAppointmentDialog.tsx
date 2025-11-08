@@ -64,8 +64,7 @@ export default function CompleteAppointmentDialog({
       toast({
         variant: 'destructive',
         title: 'Failed to Complete',
-        description:
-          error.response?.data?.message || 'Failed to complete appointment',
+        description: error.response?.data?.message || 'Failed to complete appointment',
       })
     },
   })
@@ -83,9 +82,7 @@ export default function CompleteAppointmentDialog({
     completeMutation.mutate({
       notes: notes.trim(),
       followUpRequired,
-      followUpInstructions: followUpRequired
-        ? followUpInstructions.trim() || undefined
-        : undefined,
+      followUpInstructions: followUpRequired ? followUpInstructions.trim() || undefined : undefined,
       followUpDays: followUpRequired ? followUpDays : undefined,
     })
   }
@@ -128,9 +125,7 @@ export default function CompleteAppointmentDialog({
               rows={6}
               maxLength={5000}
               className={
-                notes.trim().length > 0 && notes.trim().length < 10
-                  ? 'border-destructive'
-                  : ''
+                notes.trim().length > 0 && notes.trim().length < 10 ? 'border-destructive' : ''
               }
             />
             <div className="flex justify-between text-xs text-muted-foreground">
@@ -148,9 +143,7 @@ export default function CompleteAppointmentDialog({
             <Checkbox
               id="followUpRequired"
               checked={followUpRequired}
-              onCheckedChange={(checked) =>
-                setFollowUpRequired(checked === true)
-              }
+              onCheckedChange={(checked) => setFollowUpRequired(checked === true)}
             />
             <label
               htmlFor="followUpRequired"
@@ -164,9 +157,7 @@ export default function CompleteAppointmentDialog({
           {followUpRequired && (
             <div className="space-y-4 pl-6 border-l-2 border-primary/20">
               <div className="space-y-2">
-                <Label htmlFor="followUpInstructions">
-                  Follow-up Instructions
-                </Label>
+                <Label htmlFor="followUpInstructions">Follow-up Instructions</Label>
                 <Textarea
                   id="followUpInstructions"
                   value={followUpInstructions}
@@ -189,9 +180,7 @@ export default function CompleteAppointmentDialog({
                   max="365"
                   value={followUpDays || ''}
                   onChange={(e) =>
-                    setFollowUpDays(
-                      e.target.value ? parseInt(e.target.value) : undefined
-                    )
+                    setFollowUpDays(e.target.value ? parseInt(e.target.value) : undefined)
                   }
                   placeholder="e.g., 7, 14, 30"
                 />
@@ -201,20 +190,11 @@ export default function CompleteAppointmentDialog({
         </div>
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={handleClose}
-            disabled={completeMutation.isPending}
-          >
+          <Button variant="outline" onClick={handleClose} disabled={completeMutation.isPending}>
             Cancel
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={!isValid || completeMutation.isPending}
-          >
-            {completeMutation.isPending
-              ? 'Completing...'
-              : 'Complete Appointment'}
+          <Button onClick={handleSubmit} disabled={!isValid || completeMutation.isPending}>
+            {completeMutation.isPending ? 'Completing...' : 'Complete Appointment'}
           </Button>
         </DialogFooter>
       </DialogContent>

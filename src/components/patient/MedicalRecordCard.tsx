@@ -12,7 +12,10 @@ interface MedicalRecordCardProps {
   compact?: boolean
 }
 
-const recordTypeConfig: Record<MedicalRecordType, { icon: typeof FileText; label: string; color: string }> = {
+const recordTypeConfig: Record<
+  MedicalRecordType,
+  { icon: typeof FileText; label: string; color: string }
+> = {
   lab_result: { icon: FileText, label: 'Lab Result', color: 'text-info' },
   imaging: { icon: FileText, label: 'Imaging', color: 'text-primary' },
   visit_note: { icon: FileText, label: 'Visit Note', color: 'text-neutral-blue-gray' },
@@ -37,7 +40,9 @@ export default function MedicalRecordCard({
       <CardContent className={compact ? 'p-4' : 'p-6'}>
         <div className="flex items-start gap-4">
           {/* Icon */}
-          <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ${typeConfig.color}`}>
+          <div
+            className={`flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ${typeConfig.color}`}
+          >
             <IconComponent className="h-5 w-5" />
           </div>
 
@@ -48,7 +53,9 @@ export default function MedicalRecordCard({
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="font-semibold text-neutral-blue-gray">{record.title}</h3>
                   {record.isNew && (
-                    <Badge variant="info" className="text-xs">New</Badge>
+                    <Badge variant="info" className="text-xs">
+                      New
+                    </Badge>
                   )}
                 </div>
                 <p className="text-sm text-neutral-blue-gray/70">
@@ -56,7 +63,13 @@ export default function MedicalRecordCard({
                 </p>
               </div>
               <Badge
-                variant={record.status === 'final' ? 'success' : record.status === 'preliminary' ? 'warning' : 'secondary'}
+                variant={
+                  record.status === 'final'
+                    ? 'success'
+                    : record.status === 'preliminary'
+                      ? 'warning'
+                      : 'secondary'
+                }
               >
                 {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
               </Badge>
@@ -77,9 +90,7 @@ export default function MedicalRecordCard({
 
             {/* Category */}
             {record.category && (
-              <p className="text-xs text-neutral-blue-gray/60">
-                Category: {record.category}
-              </p>
+              <p className="text-xs text-neutral-blue-gray/60">Category: {record.category}</p>
             )}
 
             {/* Attachments */}
@@ -93,21 +104,13 @@ export default function MedicalRecordCard({
             {!compact && (onView || onDownload) && (
               <div className="flex gap-2 pt-2">
                 {onView && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => onView(record.id)}
-                  >
+                  <Button size="sm" variant="outline" onClick={() => onView(record.id)}>
                     <Eye className="h-4 w-4 mr-1" />
                     View
                   </Button>
                 )}
                 {onDownload && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => onDownload(record.id)}
-                  >
+                  <Button size="sm" variant="outline" onClick={() => onDownload(record.id)}>
                     <Download className="h-4 w-4 mr-1" />
                     Download
                   </Button>

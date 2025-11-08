@@ -24,10 +24,7 @@ export default function BillingMessagesPage() {
   const [isNewMessageDialogOpen, setIsNewMessageDialogOpen] = useState(false)
 
   // Fetch conversations with automatic refresh
-  const {
-    data: conversationsData,
-    isLoading: conversationsLoading,
-  } = useQuery({
+  const { data: conversationsData, isLoading: conversationsLoading } = useQuery({
     queryKey: ['conversations'],
     queryFn: () => messagesApi.getConversations(),
     refetchInterval: 30000, // Refresh every 30 seconds for new messages
@@ -36,14 +33,12 @@ export default function BillingMessagesPage() {
   const conversations = conversationsData?.data || []
 
   // Get selected conversation
-  const selectedConversation = conversations.find(
-    (c) => c.id === selectedConversationId
-  )
+  const selectedConversation = conversations.find((c) => c.id === selectedConversationId)
 
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* App Header */}
-      <AppHeader title="Messages" />
+      <AppHeader title="Messages" showBackButton backPath="/billing/dashboard" />
 
       {/* Page Subheader */}
       <div className="border-b border-neutral-blue-gray/10 bg-white px-6 py-3">
@@ -82,10 +77,10 @@ export default function BillingMessagesPage() {
                       selectedConversation?.participants[0]?.role === 'patient'
                         ? 'bg-info'
                         : selectedConversation?.participants[0]?.role === 'billing_staff'
-                        ? 'bg-warning'
-                        : selectedConversation?.participants[0]?.role === 'admin'
-                        ? 'bg-error'
-                        : 'bg-secondary'
+                          ? 'bg-warning'
+                          : selectedConversation?.participants[0]?.role === 'admin'
+                            ? 'bg-error'
+                            : 'bg-secondary'
                     }`}
                   >
                     {selectedConversation?.participants[0]?.name
@@ -99,7 +94,8 @@ export default function BillingMessagesPage() {
                       {selectedConversation?.participants[0]?.name || 'Unknown'}
                     </h2>
                     <p className="text-caption text-neutral-blue-gray/60 capitalize">
-                      {selectedConversation?.participants[0]?.role?.replace('_', ' ') || 'Unknown role'}
+                      {selectedConversation?.participants[0]?.role?.replace('_', ' ') ||
+                        'Unknown role'}
                     </p>
                   </div>
                 </div>
@@ -129,10 +125,7 @@ export default function BillingMessagesPage() {
       </div>
 
       {/* New Message Dialog */}
-      <NewMessageDialog
-        open={isNewMessageDialogOpen}
-        onOpenChange={setIsNewMessageDialogOpen}
-      />
+      <NewMessageDialog open={isNewMessageDialogOpen} onOpenChange={setIsNewMessageDialogOpen} />
     </div>
   )
 }

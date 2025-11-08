@@ -48,7 +48,10 @@ export default function AdminDashboard() {
   const totalProviders = (stats?.totalDoctors || 0) + (stats?.totalNurses || 0)
 
   const getRoleBadgeVariant = (role: string) => {
-    const variants: Record<string, 'default' | 'secondary' | 'success' | 'warning' | 'info' | 'destructive'> = {
+    const variants: Record<
+      string,
+      'default' | 'secondary' | 'success' | 'warning' | 'info' | 'destructive'
+    > = {
       ADMIN: 'destructive',
       DOCTOR: 'success',
       NURSE: 'info',
@@ -76,9 +79,7 @@ export default function AdminDashboard() {
       <div className="bg-white border-b border-neutral-blue-gray/10 px-4 sm:px-6 lg:px-8 py-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
-            <p className="text-body text-neutral-blue-gray/70">
-              System Administration Dashboard
-            </p>
+            <p className="text-body text-neutral-blue-gray/70">System Administration Dashboard</p>
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => navigate('/admin/users')}>
                 <Users className="h-4 w-4 mr-2" />

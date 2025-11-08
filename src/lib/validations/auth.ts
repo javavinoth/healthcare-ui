@@ -108,16 +108,8 @@ export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>
  * Profile Update Schema
  */
 export const profileSchema = z.object({
-  firstName: z
-    .string()
-    .min(1, 'First name is required')
-    .max(100, 'First name is too long')
-    .trim(),
-  lastName: z
-    .string()
-    .min(1, 'Last name is required')
-    .max(100, 'Last name is too long')
-    .trim(),
+  firstName: z.string().min(1, 'First name is required').max(100, 'First name is too long').trim(),
+  lastName: z.string().min(1, 'Last name is required').max(100, 'Last name is too long').trim(),
   phoneNumber: z
     .string()
     .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number (E.164 format)')
@@ -154,11 +146,7 @@ export const registrationSchema = z
       .min(1, 'First name is required')
       .max(100, 'First name is too long')
       .trim(),
-    lastName: z
-      .string()
-      .min(1, 'Last name is required')
-      .max(100, 'Last name is too long')
-      .trim(),
+    lastName: z.string().min(1, 'Last name is required').max(100, 'Last name is too long').trim(),
     phoneNumber: z
       .string()
       .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number (E.164 format)')
@@ -201,22 +189,14 @@ export const providerRegistrationSchema = z
       .min(1, 'First name is required')
       .max(100, 'First name is too long')
       .trim(),
-    lastName: z
-      .string()
-      .min(1, 'Last name is required')
-      .max(100, 'Last name is too long')
-      .trim(),
+    lastName: z.string().min(1, 'Last name is required').max(100, 'Last name is too long').trim(),
     phoneNumber: z
       .string()
       .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number (E.164 format)')
       .optional()
       .or(z.literal('')),
     // Provider-specific fields
-    specialty: z
-      .string()
-      .min(1, 'Specialty is required')
-      .max(100, 'Specialty is too long')
-      .trim(),
+    specialty: z.string().min(1, 'Specialty is required').max(100, 'Specialty is too long').trim(),
     npi: z
       .string()
       .min(1, 'NPI number is required')

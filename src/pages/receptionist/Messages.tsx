@@ -24,10 +24,7 @@ export default function ReceptionistMessagesPage() {
   const [isNewMessageDialogOpen, setIsNewMessageDialogOpen] = useState(false)
 
   // Fetch conversations with automatic refresh
-  const {
-    data: conversationsData,
-    isLoading: conversationsLoading,
-  } = useQuery({
+  const { data: conversationsData, isLoading: conversationsLoading } = useQuery({
     queryKey: ['conversations'],
     queryFn: () => messagesApi.getConversations(),
     refetchInterval: 30000, // Refresh every 30 seconds for new messages
@@ -36,14 +33,12 @@ export default function ReceptionistMessagesPage() {
   const conversations = conversationsData?.data || []
 
   // Get selected conversation
-  const selectedConversation = conversations.find(
-    (c) => c.id === selectedConversationId
-  )
+  const selectedConversation = conversations.find((c) => c.id === selectedConversationId)
 
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* App Header */}
-      <AppHeader title="Messages" />
+      <AppHeader title="Messages" showBackButton backPath="/receptionist/dashboard" />
 
       {/* Page Subheader */}
       <div className="border-b border-neutral-blue-gray/10 bg-white px-6 py-3">
@@ -82,10 +77,10 @@ export default function ReceptionistMessagesPage() {
                       selectedConversation?.participants[0]?.role === 'patient'
                         ? 'bg-info'
                         : selectedConversation?.participants[0]?.role === 'doctor'
-                        ? 'bg-primary'
-                        : selectedConversation?.participants[0]?.role === 'nurse'
-                        ? 'bg-wellness'
-                        : 'bg-secondary'
+                          ? 'bg-primary'
+                          : selectedConversation?.participants[0]?.role === 'nurse'
+                            ? 'bg-wellness'
+                            : 'bg-secondary'
                     }`}
                   >
                     {selectedConversation?.participants[0]?.name
@@ -129,10 +124,7 @@ export default function ReceptionistMessagesPage() {
       </div>
 
       {/* New Message Dialog */}
-      <NewMessageDialog
-        open={isNewMessageDialogOpen}
-        onOpenChange={setIsNewMessageDialogOpen}
-      />
+      <NewMessageDialog open={isNewMessageDialogOpen} onOpenChange={setIsNewMessageDialogOpen} />
     </div>
   )
 }

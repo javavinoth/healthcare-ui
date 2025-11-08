@@ -293,7 +293,11 @@ export default function Register() {
 
               {/* Patient Registration Form */}
               <TabsContent value="patient">
-                <form onSubmit={patientForm.handleSubmit(onPatientSubmit)} className="space-y-6" noValidate>
+                <form
+                  onSubmit={patientForm.handleSubmit(onPatientSubmit)}
+                  className="space-y-6"
+                  noValidate
+                >
                   {/* Name Fields */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -309,7 +313,9 @@ export default function Register() {
                         className={patientForm.formState.errors.firstName ? 'border-error' : ''}
                       />
                       {patientForm.formState.errors.firstName && (
-                        <p className="text-sm text-error">{patientForm.formState.errors.firstName.message}</p>
+                        <p className="text-sm text-error">
+                          {patientForm.formState.errors.firstName.message}
+                        </p>
                       )}
                     </div>
 
@@ -326,7 +332,9 @@ export default function Register() {
                         className={patientForm.formState.errors.lastName ? 'border-error' : ''}
                       />
                       {patientForm.formState.errors.lastName && (
-                        <p className="text-sm text-error">{patientForm.formState.errors.lastName.message}</p>
+                        <p className="text-sm text-error">
+                          {patientForm.formState.errors.lastName.message}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -345,14 +353,17 @@ export default function Register() {
                       className={patientForm.formState.errors.email ? 'border-error' : ''}
                     />
                     {patientForm.formState.errors.email && (
-                      <p className="text-sm text-error">{patientForm.formState.errors.email.message}</p>
+                      <p className="text-sm text-error">
+                        {patientForm.formState.errors.email.message}
+                      </p>
                     )}
                   </div>
 
                   {/* Phone */}
                   <div className="space-y-2">
                     <Label htmlFor="patient-phoneNumber">
-                      Phone Number <span className="text-neutral-blue-gray text-sm">(optional)</span>
+                      Phone Number{' '}
+                      <span className="text-neutral-blue-gray text-sm">(optional)</span>
                     </Label>
                     <Input
                       id="patient-phoneNumber"
@@ -362,7 +373,9 @@ export default function Register() {
                       {...patientForm.register('phoneNumber')}
                     />
                     {patientForm.formState.errors.phoneNumber && (
-                      <p className="text-sm text-error">{patientForm.formState.errors.phoneNumber.message}</p>
+                      <p className="text-sm text-error">
+                        {patientForm.formState.errors.phoneNumber.message}
+                      </p>
                     )}
                   </div>
 
@@ -377,18 +390,26 @@ export default function Register() {
                         type={showPassword ? 'text' : 'password'}
                         autoComplete="new-password"
                         {...patientForm.register('password')}
-                        className={patientForm.formState.errors.password ? 'border-error pr-12' : 'pr-12'}
+                        className={
+                          patientForm.formState.errors.password ? 'border-error pr-12' : 'pr-12'
+                        }
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 -translate-y-1/2"
                       >
-                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
                       </button>
                     </div>
                     {patientForm.formState.errors.password && (
-                      <p className="text-sm text-error">{patientForm.formState.errors.password.message}</p>
+                      <p className="text-sm text-error">
+                        {patientForm.formState.errors.password.message}
+                      </p>
                     )}
                   </div>
 
@@ -402,22 +423,36 @@ export default function Register() {
                         id="patient-confirmPassword"
                         type={showConfirmPassword ? 'text' : 'password'}
                         {...patientForm.register('confirmPassword')}
-                        className={patientForm.formState.errors.confirmPassword ? 'border-error pr-12' : 'pr-12'}
+                        className={
+                          patientForm.formState.errors.confirmPassword
+                            ? 'border-error pr-12'
+                            : 'pr-12'
+                        }
                       />
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         className="absolute right-3 top-1/2 -translate-y-1/2"
                       >
-                        {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
                       </button>
                     </div>
                     {patientForm.formState.errors.confirmPassword && (
-                      <p className="text-sm text-error">{patientForm.formState.errors.confirmPassword.message}</p>
+                      <p className="text-sm text-error">
+                        {patientForm.formState.errors.confirmPassword.message}
+                      </p>
                     )}
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isSubmitting || registerSuccess}>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isSubmitting || registerSuccess}
+                  >
                     {isSubmitting ? 'Creating Account...' : 'Create Patient Account'}
                   </Button>
                 </form>
@@ -425,13 +460,17 @@ export default function Register() {
 
               {/* Provider Registration Form */}
               <TabsContent value="provider">
-                <form onSubmit={providerForm.handleSubmit(onProviderSubmit)} className="space-y-6" noValidate>
+                <form
+                  onSubmit={providerForm.handleSubmit(onProviderSubmit)}
+                  className="space-y-6"
+                  noValidate
+                >
                   {/* Notice */}
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
                     <p className="text-blue-900 font-medium mb-1">Provider Registration</p>
                     <p className="text-blue-700">
-                      Your account will be reviewed by our administrators before activation. You'll receive an email
-                      once approved.
+                      Your account will be reviewed by our administrators before activation. You'll
+                      receive an email once approved.
                     </p>
                   </div>
 
@@ -447,7 +486,9 @@ export default function Register() {
                         className={providerForm.formState.errors.firstName ? 'border-error' : ''}
                       />
                       {providerForm.formState.errors.firstName && (
-                        <p className="text-sm text-error">{providerForm.formState.errors.firstName.message}</p>
+                        <p className="text-sm text-error">
+                          {providerForm.formState.errors.firstName.message}
+                        </p>
                       )}
                     </div>
 
@@ -461,7 +502,9 @@ export default function Register() {
                         className={providerForm.formState.errors.lastName ? 'border-error' : ''}
                       />
                       {providerForm.formState.errors.lastName && (
-                        <p className="text-sm text-error">{providerForm.formState.errors.lastName.message}</p>
+                        <p className="text-sm text-error">
+                          {providerForm.formState.errors.lastName.message}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -479,15 +522,23 @@ export default function Register() {
                         className={providerForm.formState.errors.email ? 'border-error' : ''}
                       />
                       {providerForm.formState.errors.email && (
-                        <p className="text-sm text-error">{providerForm.formState.errors.email.message}</p>
+                        <p className="text-sm text-error">
+                          {providerForm.formState.errors.email.message}
+                        </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="provider-phoneNumber">Phone Number</Label>
-                      <Input id="provider-phoneNumber" type="tel" {...providerForm.register('phoneNumber')} />
+                      <Input
+                        id="provider-phoneNumber"
+                        type="tel"
+                        {...providerForm.register('phoneNumber')}
+                      />
                       {providerForm.formState.errors.phoneNumber && (
-                        <p className="text-sm text-error">{providerForm.formState.errors.phoneNumber.message}</p>
+                        <p className="text-sm text-error">
+                          {providerForm.formState.errors.phoneNumber.message}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -515,7 +566,9 @@ export default function Register() {
                           </SelectContent>
                         </Select>
                         {providerForm.formState.errors.title && (
-                          <p className="text-sm text-error">{providerForm.formState.errors.title.message}</p>
+                          <p className="text-sm text-error">
+                            {providerForm.formState.errors.title.message}
+                          </p>
                         )}
                       </div>
 
@@ -524,7 +577,9 @@ export default function Register() {
                         <Label htmlFor="provider-specialty">
                           Specialty <span className="text-error">*</span>
                         </Label>
-                        <Select onValueChange={(value) => providerForm.setValue('specialty', value)}>
+                        <Select
+                          onValueChange={(value) => providerForm.setValue('specialty', value)}
+                        >
                           <SelectTrigger id="provider-specialty">
                             <SelectValue placeholder="Select specialty" />
                           </SelectTrigger>
@@ -537,7 +592,9 @@ export default function Register() {
                           </SelectContent>
                         </Select>
                         {providerForm.formState.errors.specialty && (
-                          <p className="text-sm text-error">{providerForm.formState.errors.specialty.message}</p>
+                          <p className="text-sm text-error">
+                            {providerForm.formState.errors.specialty.message}
+                          </p>
                         )}
                       </div>
 
@@ -554,7 +611,9 @@ export default function Register() {
                           className={providerForm.formState.errors.npi ? 'border-error' : ''}
                         />
                         {providerForm.formState.errors.npi && (
-                          <p className="text-sm text-error">{providerForm.formState.errors.npi.message}</p>
+                          <p className="text-sm text-error">
+                            {providerForm.formState.errors.npi.message}
+                          </p>
                         )}
                       </div>
 
@@ -566,10 +625,14 @@ export default function Register() {
                         <Input
                           id="provider-licenseNumber"
                           {...providerForm.register('licenseNumber')}
-                          className={providerForm.formState.errors.licenseNumber ? 'border-error' : ''}
+                          className={
+                            providerForm.formState.errors.licenseNumber ? 'border-error' : ''
+                          }
                         />
                         {providerForm.formState.errors.licenseNumber && (
-                          <p className="text-sm text-error">{providerForm.formState.errors.licenseNumber.message}</p>
+                          <p className="text-sm text-error">
+                            {providerForm.formState.errors.licenseNumber.message}
+                          </p>
                         )}
                       </div>
 
@@ -578,7 +641,9 @@ export default function Register() {
                         <Label htmlFor="provider-licenseState">
                           License State <span className="text-error">*</span>
                         </Label>
-                        <Select onValueChange={(value) => providerForm.setValue('licenseState', value)}>
+                        <Select
+                          onValueChange={(value) => providerForm.setValue('licenseState', value)}
+                        >
                           <SelectTrigger id="provider-licenseState">
                             <SelectValue placeholder="Select state" />
                           </SelectTrigger>
@@ -591,7 +656,9 @@ export default function Register() {
                           </SelectContent>
                         </Select>
                         {providerForm.formState.errors.licenseState && (
-                          <p className="text-sm text-error">{providerForm.formState.errors.licenseState.message}</p>
+                          <p className="text-sm text-error">
+                            {providerForm.formState.errors.licenseState.message}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -611,18 +678,28 @@ export default function Register() {
                             id="provider-password"
                             type={showPassword ? 'text' : 'password'}
                             {...providerForm.register('password')}
-                            className={providerForm.formState.errors.password ? 'border-error pr-12' : 'pr-12'}
+                            className={
+                              providerForm.formState.errors.password
+                                ? 'border-error pr-12'
+                                : 'pr-12'
+                            }
                           />
                           <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute right-3 top-1/2 -translate-y-1/2"
                           >
-                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            {showPassword ? (
+                              <EyeOff className="h-5 w-5" />
+                            ) : (
+                              <Eye className="h-5 w-5" />
+                            )}
                           </button>
                         </div>
                         {providerForm.formState.errors.password && (
-                          <p className="text-sm text-error">{providerForm.formState.errors.password.message}</p>
+                          <p className="text-sm text-error">
+                            {providerForm.formState.errors.password.message}
+                          </p>
                         )}
                       </div>
 
@@ -635,14 +712,22 @@ export default function Register() {
                             id="provider-confirmPassword"
                             type={showConfirmPassword ? 'text' : 'password'}
                             {...providerForm.register('confirmPassword')}
-                            className={providerForm.formState.errors.confirmPassword ? 'border-error pr-12' : 'pr-12'}
+                            className={
+                              providerForm.formState.errors.confirmPassword
+                                ? 'border-error pr-12'
+                                : 'pr-12'
+                            }
                           />
                           <button
                             type="button"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                             className="absolute right-3 top-1/2 -translate-y-1/2"
                           >
-                            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                            {showConfirmPassword ? (
+                              <EyeOff className="h-5 w-5" />
+                            ) : (
+                              <Eye className="h-5 w-5" />
+                            )}
                           </button>
                         </div>
                         {providerForm.formState.errors.confirmPassword && (
@@ -654,7 +739,11 @@ export default function Register() {
                     </div>
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isSubmitting || registerSuccess}>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isSubmitting || registerSuccess}
+                  >
                     {isSubmitting ? 'Submitting Application...' : 'Submit Provider Application'}
                   </Button>
                 </form>
@@ -676,7 +765,9 @@ export default function Register() {
         {/* Security Notice */}
         <div className="mt-6 text-center">
           <p className="text-sm text-neutral-blue-gray">🔒 Secure HIPAA-compliant registration</p>
-          <p className="text-xs text-neutral-blue-gray mt-1">Your data is encrypted and protected</p>
+          <p className="text-xs text-neutral-blue-gray mt-1">
+            Your data is encrypted and protected
+          </p>
         </div>
       </div>
     </div>

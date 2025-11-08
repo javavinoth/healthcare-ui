@@ -9,7 +9,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { passwordResetConfirmSchema, type PasswordResetConfirmFormData } from '@/lib/validations/auth'
+import {
+  passwordResetConfirmSchema,
+  type PasswordResetConfirmFormData,
+} from '@/lib/validations/auth'
 import { authApi } from '@/lib/api'
 
 /**
@@ -169,7 +172,10 @@ export default function ResetPassword() {
                   {/* New Password Field */}
                   <div className="space-y-2">
                     <Label htmlFor="password">
-                      New Password <span className="text-error" aria-label="required">*</span>
+                      New Password{' '}
+                      <span className="text-error" aria-label="required">
+                        *
+                      </span>
                     </Label>
                     <div className="relative">
                       <Input
@@ -188,7 +194,11 @@ export default function ResetPassword() {
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-blue-gray hover:text-primary transition-colors"
                         aria-label={showPassword ? 'Hide password' : 'Show password'}
                       >
-                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
                       </button>
                     </div>
 
@@ -197,7 +207,9 @@ export default function ResetPassword() {
                       <div id="password-strength" className="space-y-1">
                         <div className="flex items-center justify-between text-xs">
                           <span className="text-neutral-blue-gray">Password strength:</span>
-                          <span className={`font-medium ${passwordStrength.label === 'Strong' ? 'text-wellness' : passwordStrength.label === 'Medium' ? 'text-warning' : 'text-error'}`}>
+                          <span
+                            className={`font-medium ${passwordStrength.label === 'Strong' ? 'text-wellness' : passwordStrength.label === 'Medium' ? 'text-warning' : 'text-error'}`}
+                          >
                             {passwordStrength.label}
                           </span>
                         </div>
@@ -220,9 +232,15 @@ export default function ResetPassword() {
                     <div className="text-xs text-neutral-blue-gray space-y-1 mt-2">
                       <p className="font-medium">Password must contain:</p>
                       <ul className="list-disc list-inside ml-2 space-y-1">
-                        <li className={password.length >= 8 ? 'text-wellness' : ''}>At least 8 characters</li>
-                        <li className={/[A-Z]/.test(password) ? 'text-wellness' : ''}>One uppercase letter</li>
-                        <li className={/[a-z]/.test(password) ? 'text-wellness' : ''}>One lowercase letter</li>
+                        <li className={password.length >= 8 ? 'text-wellness' : ''}>
+                          At least 8 characters
+                        </li>
+                        <li className={/[A-Z]/.test(password) ? 'text-wellness' : ''}>
+                          One uppercase letter
+                        </li>
+                        <li className={/[a-z]/.test(password) ? 'text-wellness' : ''}>
+                          One lowercase letter
+                        </li>
                         <li className={/\d/.test(password) ? 'text-wellness' : ''}>One number</li>
                         <li className={/[@$!%*?&]/.test(password) ? 'text-wellness' : ''}>
                           One special character (@$!%*?&)
@@ -234,7 +252,10 @@ export default function ResetPassword() {
                   {/* Confirm Password Field */}
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">
-                      Confirm New Password <span className="text-error" aria-label="required">*</span>
+                      Confirm New Password{' '}
+                      <span className="text-error" aria-label="required">
+                        *
+                      </span>
                     </Label>
                     <div className="relative">
                       <Input
@@ -243,7 +264,9 @@ export default function ResetPassword() {
                         autoComplete="new-password"
                         placeholder="Confirm new password"
                         aria-invalid={errors.confirmPassword ? 'true' : 'false'}
-                        aria-describedby={errors.confirmPassword ? 'confirm-password-error' : undefined}
+                        aria-describedby={
+                          errors.confirmPassword ? 'confirm-password-error' : undefined
+                        }
                         {...register('confirmPassword')}
                         className={errors.confirmPassword ? 'border-error pr-12' : 'pr-12'}
                       />
@@ -253,7 +276,11 @@ export default function ResetPassword() {
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-blue-gray hover:text-primary transition-colors"
                         aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                       >
-                        {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
                       </button>
                     </div>
                     {errors.confirmPassword && (

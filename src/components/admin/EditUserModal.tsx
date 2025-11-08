@@ -142,12 +142,7 @@ export default function EditUserModal({ open, onClose, userId }: EditUserModalPr
             {/* Email (read-only) */}
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                value={user?.email || ''}
-                disabled
-                className="bg-neutral-light"
-              />
+              <Input id="email" value={user?.email || ''} disabled className="bg-neutral-light" />
               <p className="text-xs text-neutral-blue-gray/60 mt-1">
                 Email address cannot be changed
               </p>
@@ -165,9 +160,7 @@ export default function EditUserModal({ open, onClose, userId }: EditUserModalPr
                 placeholder="Enter first name"
                 className={errors.firstName ? 'border-error' : ''}
               />
-              {errors.firstName && (
-                <p className="text-sm text-error mt-1">{errors.firstName}</p>
-              )}
+              {errors.firstName && <p className="text-sm text-error mt-1">{errors.firstName}</p>}
             </div>
 
             {/* Last Name */}

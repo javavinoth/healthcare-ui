@@ -1,14 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
-import {
-  Clock,
-  User,
-  Video,
-  MapPin,
-  FileText,
-  AlertCircle,
-} from 'lucide-react'
+import { Clock, User, Video, MapPin, FileText, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -100,7 +93,10 @@ export default function ProviderAppointmentDetail() {
   }
 
   const getStatusBadge = (status: string) => {
-    const statusMap: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+    const statusMap: Record<
+      string,
+      { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }
+    > = {
       SCHEDULED: { label: 'Scheduled', variant: 'default' },
       CONFIRMED: { label: 'Confirmed', variant: 'secondary' },
       CHECKED_IN: { label: 'Checked In', variant: 'default' },
@@ -113,7 +109,10 @@ export default function ProviderAppointmentDetail() {
 
   const statusInfo = getStatusBadge(appointment.status)
   const canCheckIn = appointment.status === 'SCHEDULED' || appointment.status === 'CONFIRMED'
-  const canComplete = appointment.status === 'CHECKED_IN' || appointment.status === 'CONFIRMED' || appointment.status === 'SCHEDULED'
+  const canComplete =
+    appointment.status === 'CHECKED_IN' ||
+    appointment.status === 'CONFIRMED' ||
+    appointment.status === 'SCHEDULED'
   const canMarkNoShow = appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED'
 
   return (
@@ -128,7 +127,8 @@ export default function ProviderAppointmentDetail() {
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Appointment Details</h1>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {format(new Date(appointment.date), 'EEEE, MMMM d, yyyy')} at {appointment.startTime}
+                  {format(new Date(appointment.date), 'EEEE, MMMM d, yyyy')} at{' '}
+                  {appointment.startTime}
                 </p>
               </div>
               <Badge variant={statusInfo.variant} className="text-sm py-1 px-3">
@@ -139,9 +139,7 @@ export default function ProviderAppointmentDetail() {
             {/* Quick Actions */}
             <div className="flex gap-2">
               {canCheckIn && (
-                <Button onClick={() => openDialog('checkIn')}>
-                  Check In Patient
-                </Button>
+                <Button onClick={() => openDialog('checkIn')}>Check In Patient</Button>
               )}
               {canComplete && (
                 <Button variant="outline" onClick={() => openDialog('complete')}>
@@ -149,7 +147,11 @@ export default function ProviderAppointmentDetail() {
                 </Button>
               )}
               {canMarkNoShow && (
-                <Button variant="outline" onClick={() => openDialog('noShow')} className="text-orange-600 border-orange-600 hover:bg-orange-50">
+                <Button
+                  variant="outline"
+                  onClick={() => openDialog('noShow')}
+                  className="text-orange-600 border-orange-600 hover:bg-orange-50"
+                >
                   Mark No-Show
                 </Button>
               )}
@@ -171,7 +173,8 @@ export default function ProviderAppointmentDetail() {
                     <div>
                       <p className="font-medium">Time</p>
                       <p className="text-sm text-muted-foreground">
-                        {appointment.startTime} - {appointment.endTime} ({appointment.durationMinutes} minutes)
+                        {appointment.startTime} - {appointment.endTime} (
+                        {appointment.durationMinutes} minutes)
                       </p>
                     </div>
                   </div>
@@ -194,9 +197,7 @@ export default function ProviderAppointmentDetail() {
                     <AlertCircle className="h-5 w-5 text-muted-foreground mt-0.5" />
                     <div>
                       <p className="font-medium">Reason for Visit</p>
-                      <p className="text-sm text-muted-foreground">
-                        {appointment.reason}
-                      </p>
+                      <p className="text-sm text-muted-foreground">{appointment.reason}</p>
                     </div>
                   </div>
 
@@ -219,19 +220,19 @@ export default function ProviderAppointmentDetail() {
                         </div>
                       </div>
                     </>
-                  ) : appointment.location && (
-                    <>
-                      <Separator />
-                      <div className="flex items-start gap-3">
-                        <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
-                        <div>
-                          <p className="font-medium">Location</p>
-                          <p className="text-sm text-muted-foreground">
-                            {appointment.location}
-                          </p>
+                  ) : (
+                    appointment.location && (
+                      <>
+                        <Separator />
+                        <div className="flex items-start gap-3">
+                          <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
+                          <div>
+                            <p className="font-medium">Location</p>
+                            <p className="text-sm text-muted-foreground">{appointment.location}</p>
+                          </div>
                         </div>
-                      </div>
-                    </>
+                      </>
+                    )
                   )}
                 </CardContent>
               </Card>
@@ -251,7 +252,9 @@ export default function ProviderAppointmentDetail() {
                     </div>
                     <div>
                       <p className="font-semibold">{appointment.patientName}</p>
-                      <p className="text-sm text-muted-foreground">Patient ID: {appointment.patientId.slice(0, 8)}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Patient ID: {appointment.patientId.slice(0, 8)}
+                      </p>
                     </div>
                   </div>
 
@@ -276,7 +279,9 @@ export default function ProviderAppointmentDetail() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Created:</span>
-                      <span className="font-medium">{format(new Date(appointment.date), 'MMM d')}</span>
+                      <span className="font-medium">
+                        {format(new Date(appointment.date), 'MMM d')}
+                      </span>
                     </div>
                     {appointment.status === 'CHECKED_IN' && (
                       <div className="flex justify-between">

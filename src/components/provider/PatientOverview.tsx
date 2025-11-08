@@ -57,9 +57,7 @@ export default function PatientOverview({ patient }: PatientOverviewProps) {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Full Name
-              </label>
+              <label className="text-sm font-medium text-muted-foreground">Full Name</label>
               <p className="mt-1">
                 {patient.firstName} {patient.lastName}
               </p>
@@ -68,28 +66,20 @@ export default function PatientOverview({ patient }: PatientOverviewProps) {
               <label className="text-sm font-medium text-muted-foreground">
                 Medical Record Number
               </label>
-              <p className="mt-1 font-mono">
-                {patient.medicalRecordNumber || 'Not assigned'}
-              </p>
+              <p className="mt-1 font-mono">{patient.medicalRecordNumber || 'Not assigned'}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Date of Birth
-              </label>
+              <label className="text-sm font-medium text-muted-foreground">Date of Birth</label>
               <p className="mt-1">{formatDate(patient.dateOfBirth)}</p>
               {patient.age && (
-                <p className="text-sm text-muted-foreground">
-                  {patient.age} years old
-                </p>
+                <p className="text-sm text-muted-foreground">{patient.age} years old</p>
               )}
             </div>
             <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Gender
-              </label>
+              <label className="text-sm font-medium text-muted-foreground">Gender</label>
               <p className="mt-1">{getGenderLabel(patient.gender)}</p>
             </div>
           </div>
@@ -132,29 +122,17 @@ export default function PatientOverview({ patient }: PatientOverviewProps) {
           </CardHeader>
           <CardContent className="space-y-3">
             <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Provider
-              </label>
-              <p className="mt-1">
-                {patient.insurance?.provider || 'Not provided'}
-              </p>
+              <label className="text-sm font-medium text-muted-foreground">Provider</label>
+              <p className="mt-1">{patient.insurance?.provider || 'Not provided'}</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Policy Number
-                </label>
-                <p className="mt-1 font-mono text-sm">
-                  {patient.insurance?.policyNumber || 'N/A'}
-                </p>
+                <label className="text-sm font-medium text-muted-foreground">Policy Number</label>
+                <p className="mt-1 font-mono text-sm">{patient.insurance?.policyNumber || 'N/A'}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Group Number
-                </label>
-                <p className="mt-1 font-mono text-sm">
-                  {patient.insurance?.groupNumber || 'N/A'}
-                </p>
+                <label className="text-sm font-medium text-muted-foreground">Group Number</label>
+                <p className="mt-1 font-mono text-sm">{patient.insurance?.groupNumber || 'N/A'}</p>
               </div>
             </div>
           </CardContent>
@@ -170,29 +148,17 @@ export default function PatientOverview({ patient }: PatientOverviewProps) {
           </CardHeader>
           <CardContent className="space-y-3">
             <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Name
-              </label>
-              <p className="mt-1">
-                {patient.emergencyContact?.name || 'Not provided'}
-              </p>
+              <label className="text-sm font-medium text-muted-foreground">Name</label>
+              <p className="mt-1">{patient.emergencyContact?.name || 'Not provided'}</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Phone
-                </label>
-                <p className="mt-1">
-                  {patient.emergencyContact?.phone || 'N/A'}
-                </p>
+                <label className="text-sm font-medium text-muted-foreground">Phone</label>
+                <p className="mt-1">{patient.emergencyContact?.phone || 'N/A'}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Relationship
-                </label>
-                <p className="mt-1 capitalize">
-                  {patient.emergencyContact?.relationship || 'N/A'}
-                </p>
+                <label className="text-sm font-medium text-muted-foreground">Relationship</label>
+                <p className="mt-1 capitalize">{patient.emergencyContact?.relationship || 'N/A'}</p>
               </div>
             </div>
           </CardContent>
@@ -215,19 +181,13 @@ export default function PatientOverview({ patient }: PatientOverviewProps) {
             {patient.allergies && patient.allergies.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {patient.allergies.map((allergy, index) => (
-                  <Badge
-                    key={index}
-                    variant="destructive"
-                    className="font-normal"
-                  >
+                  <Badge key={index} variant="destructive" className="font-normal">
                     {allergy}
                   </Badge>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">
-                No known allergies
-              </p>
+              <p className="text-sm text-muted-foreground">No known allergies</p>
             )}
           </div>
 
@@ -235,8 +195,7 @@ export default function PatientOverview({ patient }: PatientOverviewProps) {
             <label className="text-sm font-medium text-muted-foreground mb-2 block">
               Current Medications
             </label>
-            {patient.currentMedications &&
-            patient.currentMedications.length > 0 ? (
+            {patient.currentMedications && patient.currentMedications.length > 0 ? (
               <ul className="space-y-1">
                 {patient.currentMedications.map((medication, index) => (
                   <li key={index} className="text-sm flex items-start gap-2">
@@ -246,9 +205,7 @@ export default function PatientOverview({ patient }: PatientOverviewProps) {
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-muted-foreground">
-                No current medications
-              </p>
+              <p className="text-sm text-muted-foreground">No current medications</p>
             )}
           </div>
         </CardContent>

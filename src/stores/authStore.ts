@@ -3,7 +3,12 @@ import { devtools, persist } from 'zustand/middleware'
 import type { User } from '@/types'
 import type { Permission, UserRole } from '@/lib/constants/roles'
 import { hasPermission, hasAnyPermission, hasAllPermissions } from '@/lib/constants/roles'
-import { startNewSession, endSession, getCurrentSessionId, restoreSession } from '@/lib/utils/sessionSync'
+import {
+  startNewSession,
+  endSession,
+  getCurrentSessionId,
+  restoreSession,
+} from '@/lib/utils/sessionSync'
 import { clearTokens } from '@/lib/api/client'
 
 /**

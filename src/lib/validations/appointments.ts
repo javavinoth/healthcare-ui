@@ -24,18 +24,20 @@ export const appointmentBookingSchema = z.object({
   providerId: z.string().min(1, 'Please select a provider'),
   date: z.string().min(1, 'Please select a date'),
   time: z.string().min(1, 'Please select a time slot'),
-  type: z.enum([
-    'ROUTINE_CHECKUP',
-    'FOLLOW_UP',
-    'CONSULTATION',
-    'URGENT_CARE',
-    'PROCEDURE',
-    'LAB_WORK',
-    'VACCINATION',
-    'TELEHEALTH',
-  ]).refine((val) => val !== undefined, {
-    message: 'Please select an appointment type',
-  }),
+  type: z
+    .enum([
+      'ROUTINE_CHECKUP',
+      'FOLLOW_UP',
+      'CONSULTATION',
+      'URGENT_CARE',
+      'PROCEDURE',
+      'LAB_WORK',
+      'VACCINATION',
+      'TELEHEALTH',
+    ])
+    .refine((val) => val !== undefined, {
+      message: 'Please select an appointment type',
+    }),
   reason: z
     .string()
     .min(10, 'Please provide a reason (at least 10 characters)')
@@ -80,16 +82,19 @@ export type AppointmentCancellationFormData = z.infer<typeof appointmentCancella
  * Appointment Filter Schema
  */
 export const appointmentFilterSchema = z.object({
-  status: z.enum([
-    'all',
-    'scheduled',
-    'confirmed',
-    'checked_in',
-    'in_progress',
-    'completed',
-    'cancelled',
-    'no_show',
-  ]).optional().default('all'),
+  status: z
+    .enum([
+      'all',
+      'scheduled',
+      'confirmed',
+      'checked_in',
+      'in_progress',
+      'completed',
+      'cancelled',
+      'no_show',
+    ])
+    .optional()
+    .default('all'),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   providerId: z.string().optional(),

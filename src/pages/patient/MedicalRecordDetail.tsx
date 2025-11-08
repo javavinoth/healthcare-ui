@@ -1,12 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
-import {
-  Calendar,
-  User,
-  Download,
-  Paperclip,
-} from 'lucide-react'
+import { Calendar, User, Download, Paperclip } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -73,7 +68,7 @@ export default function MedicalRecordDetail() {
         description: 'Your medical record is being downloaded.',
         variant: 'success',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Download failed',
         description: 'Failed to download medical record. Please try again.',
@@ -172,8 +167,8 @@ export default function MedicalRecordDetail() {
                   medicalRecord.status === 'final'
                     ? 'success'
                     : medicalRecord.status === 'preliminary'
-                    ? 'warning'
-                    : 'secondary'
+                      ? 'warning'
+                      : 'secondary'
                 }
               >
                 {medicalRecord.status.charAt(0).toUpperCase() + medicalRecord.status.slice(1)}
@@ -248,9 +243,7 @@ export default function MedicalRecordDetail() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() =>
-                          handleDownloadAttachment(attachment.url, attachment.name)
-                        }
+                        onClick={() => handleDownloadAttachment(attachment.url, attachment.name)}
                       >
                         <Download className="h-4 w-4" />
                       </Button>

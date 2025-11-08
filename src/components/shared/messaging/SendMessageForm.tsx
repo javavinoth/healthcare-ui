@@ -20,10 +20,7 @@ interface SendMessageFormProps {
  * SendMessageForm Component
  * Form for composing and sending messages with attachment support
  */
-export default function SendMessageForm({
-  conversationId,
-  recipientId,
-}: SendMessageFormProps) {
+export default function SendMessageForm({ conversationId, recipientId }: SendMessageFormProps) {
   const { user } = useAuthStore()
   const { toast } = useToast()
   const queryClient = useQueryClient()
@@ -32,13 +29,13 @@ export default function SendMessageForm({
   // Get conversation details to find recipient
   const { data: conversation } = useQuery({
     queryKey: ['conversation', conversationId],
-    queryFn: () => conversationId ? messagesApi.getConversation(conversationId) : null,
+    queryFn: () => (conversationId ? messagesApi.getConversation(conversationId) : null),
     enabled: !!conversationId && !recipientId,
   })
 
   // Determine recipient ID
-  const actualRecipientId = recipientId ||
-    conversation?.participants.find(p => p.id !== user?.id)?.id || ''
+  const actualRecipientId =
+    recipientId || conversation?.participants.find((p) => p.id !== user?.id)?.id || ''
 
   const {
     register,
@@ -64,6 +61,7 @@ export default function SendMessageForm({
         conversationId: conversationId,
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actualRecipientId, conversationId])
 
   // Send message mutation
@@ -74,11 +72,9 @@ export default function SendMessageForm({
       if (attachments.length > 0) {
         try {
           await Promise.all(
-            attachments.map((file) =>
-              messagesApi.uploadAttachment(newMessage.id, file)
-            )
+            attachments.map((file) => messagesApi.uploadAttachment(newMessage.id, file))
           )
-        } catch (error) {
+        } catch {
           toast({
             title: 'Attachment upload failed',
             description: 'Message sent but attachments failed to upload.',
@@ -209,9 +205,7 @@ export default function SendMessageForm({
             <span
               className={cn(
                 'text-caption',
-                isNearLimit
-                  ? 'text-error font-medium'
-                  : 'text-neutral-blue-gray/50'
+                isNearLimit ? 'text-error font-medium' : 'text-neutral-blue-gray/50'
               )}
             >
               {characterCount} / {maxCharacters}

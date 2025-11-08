@@ -57,8 +57,7 @@ export default function MarkNoShowDialog({
       toast({
         variant: 'destructive',
         title: 'Failed to Mark No-Show',
-        description:
-          error.response?.data?.message || 'Failed to mark appointment as no-show',
+        description: error.response?.data?.message || 'Failed to mark appointment as no-show',
       })
     },
   })
@@ -85,8 +84,7 @@ export default function MarkNoShowDialog({
             Mark as No-Show
           </DialogTitle>
           <DialogDescription>
-            Mark {appointment.patientName}'s {appointment.time} appointment as
-            no-show
+            Mark {appointment.patientName}'s {appointment.time} appointment as no-show
           </DialogDescription>
         </DialogHeader>
 
@@ -94,8 +92,8 @@ export default function MarkNoShowDialog({
           {/* Warning Message */}
           <div className="rounded-lg bg-orange-50 border border-orange-200 p-3">
             <p className="text-sm text-orange-900">
-              This action will mark the appointment as no-show. The patient did
-              not arrive for their scheduled appointment.
+              This action will mark the appointment as no-show. The patient did not arrive for their
+              scheduled appointment.
             </p>
           </div>
 
@@ -104,9 +102,7 @@ export default function MarkNoShowDialog({
             <Checkbox
               id="patientContacted"
               checked={patientContacted}
-              onCheckedChange={(checked) =>
-                setPatientContacted(checked === true)
-              }
+              onCheckedChange={(checked) => setPatientContacted(checked === true)}
             />
             <label
               htmlFor="patientContacted"
@@ -127,25 +123,15 @@ export default function MarkNoShowDialog({
               rows={3}
               maxLength={500}
             />
-            <p className="text-xs text-muted-foreground">
-              {notes.length}/500 characters
-            </p>
+            <p className="text-xs text-muted-foreground">{notes.length}/500 characters</p>
           </div>
         </div>
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={handleClose}
-            disabled={noShowMutation.isPending}
-          >
+          <Button variant="outline" onClick={handleClose} disabled={noShowMutation.isPending}>
             Cancel
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={noShowMutation.isPending}
-            variant="destructive"
-          >
+          <Button onClick={handleSubmit} disabled={noShowMutation.isPending} variant="destructive">
             {noShowMutation.isPending ? 'Marking...' : 'Mark as No-Show'}
           </Button>
         </DialogFooter>

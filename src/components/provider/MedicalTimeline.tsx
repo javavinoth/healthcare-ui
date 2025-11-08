@@ -1,12 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import {
-  Calendar,
-  FileText,
-  Pill,
-  FlaskConical,
-  User,
-} from 'lucide-react'
+import { Calendar, FileText, Pill, FlaskConical, User } from 'lucide-react'
 import type { PatientTimelineEvent } from '@/types'
 import { format, isToday, isYesterday, isThisWeek, parseISO } from 'date-fns'
 
@@ -15,10 +9,7 @@ interface MedicalTimelineProps {
   isLoading?: boolean
 }
 
-export default function MedicalTimeline({
-  events,
-  isLoading,
-}: MedicalTimelineProps) {
+export default function MedicalTimeline({ events, isLoading }: MedicalTimelineProps) {
   const getEventIcon = (type: string) => {
     switch (type) {
       case 'APPOINTMENT':
@@ -50,10 +41,8 @@ export default function MedicalTimeline({
   const getStatusBadgeVariant = (status?: string) => {
     if (!status) return 'secondary'
     const statusLower = status.toLowerCase()
-    if (statusLower === 'completed' || statusLower === 'final')
-      return 'default'
-    if (statusLower === 'scheduled' || statusLower === 'confirmed')
-      return 'secondary'
+    if (statusLower === 'completed' || statusLower === 'final') return 'default'
+    if (statusLower === 'scheduled' || statusLower === 'confirmed') return 'secondary'
     if (statusLower === 'cancelled') return 'destructive'
     return 'secondary'
   }
@@ -79,14 +68,17 @@ export default function MedicalTimeline({
   }
 
   // Group events by date
-  const groupedEvents = events.reduce((groups, event) => {
-    const dateGroup = formatDateGroup(event.date)
-    if (!groups[dateGroup]) {
-      groups[dateGroup] = []
-    }
-    groups[dateGroup].push(event)
-    return groups
-  }, {} as Record<string, PatientTimelineEvent[]>)
+  const groupedEvents = events.reduce(
+    (groups, event) => {
+      const dateGroup = formatDateGroup(event.date)
+      if (!groups[dateGroup]) {
+        groups[dateGroup] = []
+      }
+      groups[dateGroup].push(event)
+      return groups
+    },
+    {} as Record<string, PatientTimelineEvent[]>
+  )
 
   if (isLoading) {
     return (
@@ -110,9 +102,7 @@ export default function MedicalTimeline({
             <Calendar className="h-8 w-8 text-primary" />
           </div>
         </div>
-        <h3 className="text-lg font-semibold mb-2">
-          No timeline events yet
-        </h3>
+        <h3 className="text-lg font-semibold mb-2">No timeline events yet</h3>
         <p className="text-sm text-muted-foreground">
           Appointments and medical records will appear here
         </p>
@@ -133,25 +123,18 @@ export default function MedicalTimeline({
               const colorClass = getEventColor(event.type)
 
               return (
-                <Card
-                  key={event.id}
-                  className="hover:shadow-md transition-shadow cursor-pointer"
-                >
+                <Card key={event.id} className="hover:shadow-md transition-shadow cursor-pointer">
                   <CardContent className="p-4">
                     <div className="flex items-start gap-4">
                       {/* Icon */}
-                      <div
-                        className={`p-2 rounded-lg shrink-0 ${colorClass}`}
-                      >
+                      <div className={`p-2 rounded-lg shrink-0 ${colorClass}`}>
                         <Icon className="h-5 w-5" />
                       </div>
 
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-1">
-                          <h4 className="font-semibold text-sm">
-                            {event.title}
-                          </h4>
+                          <h4 className="font-semibold text-sm">{event.title}</h4>
                           {event.status && (
                             <Badge
                               variant={getStatusBadgeVariant(event.status)}

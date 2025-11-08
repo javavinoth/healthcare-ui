@@ -116,7 +116,11 @@ export function SessionTimeoutModal({ warningTime = 120000 }: SessionTimeoutModa
           {/* Countdown Timer */}
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-warning/10 mb-4">
-              <span className="text-h1 font-bold text-warning" aria-live="polite" aria-atomic="true">
+              <span
+                className="text-h1 font-bold text-warning"
+                aria-live="polite"
+                aria-atomic="true"
+              >
                 {formatTime(countdown)}
               </span>
             </div>
@@ -147,18 +151,10 @@ export function SessionTimeoutModal({ warningTime = 120000 }: SessionTimeoutModa
 
         {/* Action Buttons */}
         <DialogFooter className="flex gap-3 sm:gap-3">
-          <Button
-            variant="outline"
-            onClick={handleLogout}
-            className="flex-1"
-          >
+          <Button variant="outline" onClick={handleLogout} className="flex-1">
             Logout
           </Button>
-          <Button
-            onClick={handleExtendSession}
-            className="flex-1"
-            autoFocus
-          >
+          <Button onClick={handleExtendSession} className="flex-1" autoFocus>
             Stay Logged In
           </Button>
         </DialogFooter>

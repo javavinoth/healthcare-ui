@@ -482,13 +482,13 @@ export interface VisitNote {
   }
   appointmentId?: string
   // SOAP Format Fields
-  subjective?: string    // Patient's description (symptoms, concerns, history)
-  objective?: string     // Provider's observations (exam findings, vitals)
-  assessment: string     // Diagnosis, clinical impression
-  plan: string           // Treatment plan, next steps, follow-up
+  subjective?: string // Patient's description (symptoms, concerns, history)
+  objective?: string // Provider's observations (exam findings, vitals)
+  assessment: string // Diagnosis, clinical impression
+  plan: string // Treatment plan, next steps, follow-up
   // Additional Details
-  chiefComplaint?: string    // Brief summary of visit reason
-  diagnosisCodes?: string    // ICD-10 codes (comma-separated)
+  chiefComplaint?: string // Brief summary of visit reason
+  diagnosisCodes?: string // ICD-10 codes (comma-separated)
   createdAt: string
   updatedAt: string
 }
@@ -548,11 +548,7 @@ export type MedicationRoute =
   | 'OTIC'
   | 'NASAL'
 
-export type PrescriptionStatus =
-  | 'ACTIVE'
-  | 'COMPLETED'
-  | 'CANCELLED'
-  | 'DISCONTINUED'
+export type PrescriptionStatus = 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'DISCONTINUED'
 
 /**
  * Form Data for Clinical Documentation

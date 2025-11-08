@@ -61,13 +61,12 @@ export default function MessageThread({ conversationId }: MessageThreadProps) {
   useEffect(() => {
     if (!user || !messages.length) return
 
-    const unreadMessages = messages.filter(
-      (msg) => !msg.isRead && msg.senderId !== user.id
-    )
+    const unreadMessages = messages.filter((msg) => !msg.isRead && msg.senderId !== user.id)
 
     unreadMessages.forEach((msg) => {
       markAsReadMutation.mutate(msg.id)
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages, user])
 
   // Format date for message grouping
@@ -147,9 +146,7 @@ export default function MessageThread({ conversationId }: MessageThreadProps) {
       <div className="flex-1 flex items-center justify-center bg-neutral-light">
         <div className="text-center">
           <p className="text-error mb-2">Failed to load messages</p>
-          <p className="text-small text-neutral-blue-gray/60">
-            Please try again later
-          </p>
+          <p className="text-small text-neutral-blue-gray/60">Please try again later</p>
         </div>
       </div>
     )
@@ -183,18 +180,12 @@ export default function MessageThread({ conversationId }: MessageThreadProps) {
             <div className="space-y-4">
               {group.messages.map((message) => {
                 const isOwnMessage = message.senderId === user?.id
-                const messageTime = format(
-                  new Date(message.sentAt),
-                  'h:mm a'
-                )
+                const messageTime = format(new Date(message.sentAt), 'h:mm a')
 
                 return (
                   <div
                     key={message.id}
-                    className={cn(
-                      'flex',
-                      isOwnMessage ? 'justify-end' : 'justify-start'
-                    )}
+                    className={cn('flex', isOwnMessage ? 'justify-end' : 'justify-start')}
                   >
                     <div
                       className={cn(
@@ -215,9 +206,7 @@ export default function MessageThread({ conversationId }: MessageThreadProps) {
                       )}
 
                       {/* Message Content */}
-                      <p className="text-body whitespace-pre-wrap break-words">
-                        {message.content}
-                      </p>
+                      <p className="text-body whitespace-pre-wrap break-words">{message.content}</p>
 
                       {/* Attachments */}
                       {message.attachments && message.attachments.length > 0 && (
@@ -241,9 +230,7 @@ export default function MessageThread({ conversationId }: MessageThreadProps) {
                                   <FileText className="h-4 w-4 flex-shrink-0" />
                                 )}
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-small truncate">
-                                    {attachment.name}
-                                  </p>
+                                  <p className="text-small truncate">{attachment.name}</p>
                                   <p className="text-caption opacity-70">
                                     {(attachment.size / 1024).toFixed(1)} KB
                                   </p>
@@ -251,9 +238,7 @@ export default function MessageThread({ conversationId }: MessageThreadProps) {
                                 <Button
                                   size="sm"
                                   variant={isOwnMessage ? 'ghost' : 'outline'}
-                                  onClick={() =>
-                                    handleDownloadAttachment(attachment)
-                                  }
+                                  onClick={() => handleDownloadAttachment(attachment)}
                                   className={cn(
                                     'h-8 w-8 p-0',
                                     isOwnMessage && 'text-white hover:bg-white/10'
@@ -275,9 +260,7 @@ export default function MessageThread({ conversationId }: MessageThreadProps) {
                         )}
                       >
                         {messageTime}
-                        {message.isRead && isOwnMessage && (
-                          <span className="ml-2">• Read</span>
-                        )}
+                        {message.isRead && isOwnMessage && <span className="ml-2">• Read</span>}
                       </p>
                     </div>
                   </div>

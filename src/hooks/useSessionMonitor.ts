@@ -1,7 +1,11 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
-import { initSessionSync, addSessionChangeListener, removeSessionChangeListener } from '@/lib/utils/sessionSync'
+import {
+  initSessionSync,
+  addSessionChangeListener,
+  removeSessionChangeListener,
+} from '@/lib/utils/sessionSync'
 import { useToast } from '@/components/ui/use-toast'
 
 /**

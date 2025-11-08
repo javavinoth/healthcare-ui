@@ -61,7 +61,8 @@ export default function Login() {
       }
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || 'Invalid email or password. Please try again.'
+      const message =
+        error.response?.data?.message || 'Invalid email or password. Please try again.'
       setLoginError(message)
     },
   })
@@ -109,7 +110,10 @@ export default function Login() {
               {/* Email Field */}
               <div className="space-y-2">
                 <Label htmlFor="email">
-                  Email Address <span className="text-error" aria-label="required">*</span>
+                  Email Address{' '}
+                  <span className="text-error" aria-label="required">
+                    *
+                  </span>
                 </Label>
                 <Input
                   id="email"
@@ -131,7 +135,10 @@ export default function Login() {
               {/* Password Field */}
               <div className="space-y-2">
                 <Label htmlFor="password">
-                  Password <span className="text-error" aria-label="required">*</span>
+                  Password{' '}
+                  <span className="text-error" aria-label="required">
+                    *
+                  </span>
                 </Label>
                 <div className="relative">
                   <Input
@@ -208,9 +215,7 @@ export default function Login() {
 
         {/* Security Notice */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-neutral-blue-gray">
-            🔒 Secure HIPAA-compliant login
-          </p>
+          <p className="text-sm text-neutral-blue-gray">🔒 Secure HIPAA-compliant login</p>
           <p className="text-xs text-neutral-blue-gray mt-1">
             Your data is encrypted and protected
           </p>

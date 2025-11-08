@@ -50,7 +50,7 @@ export default function PatientsPage() {
   if (isLoading) {
     return (
       <div className="h-screen flex flex-col bg-gray-50">
-        <AppHeader title="My Patients" />
+        <AppHeader title="My Patients" showBackButton backPath="/provider/dashboard" />
         <div className="flex-1 overflow-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="mb-6">
@@ -71,7 +71,7 @@ export default function PatientsPage() {
   if (isError) {
     return (
       <div className="h-screen flex flex-col bg-gray-50">
-        <AppHeader title="My Patients" />
+        <AppHeader title="My Patients" showBackButton backPath="/provider/dashboard" />
         <div className="flex-1 overflow-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 text-center">
@@ -99,12 +99,8 @@ export default function PatientsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              My Patients
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              View and manage your patients
-            </p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">My Patients</h1>
+            <p className="text-sm text-muted-foreground">View and manage your patients</p>
           </div>
 
           {/* Search Bar */}
@@ -136,11 +132,7 @@ export default function PatientsPage() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                 {patients.map((patient: PatientSummary) => (
-                  <PatientCard
-                    key={patient.id}
-                    patient={patient}
-                    onClick={handlePatientClick}
-                  />
+                  <PatientCard key={patient.id} patient={patient} onClick={handlePatientClick} />
                 ))}
               </div>
 

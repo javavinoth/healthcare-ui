@@ -128,7 +128,9 @@ export default function ProviderDashboard() {
     }
 
     return (
-      <span className={`px-2 py-1 text-xs font-medium rounded ${typeColors[type] || typeColors.CONSULTATION}`}>
+      <span
+        className={`px-2 py-1 text-xs font-medium rounded ${typeColors[type] || typeColors.CONSULTATION}`}
+      >
         {type.replace('_', ' ')}
       </span>
     )
@@ -157,14 +159,10 @@ export default function ProviderDashboard() {
                   Action Required: Set Up Your Availability
                 </p>
                 <p className="text-sm text-warning/80 mb-3">
-                  Your schedule is not configured. Patients cannot book appointments with you until you set your
-                  available hours.
+                  Your schedule is not configured. Patients cannot book appointments with you until
+                  you set your available hours.
                 </p>
-                <Button
-                  size="sm"
-                  onClick={() => navigate('/provider/schedule')}
-                  className="gap-2"
-                >
+                <Button size="sm" onClick={() => navigate('/provider/schedule')} className="gap-2">
                   <Calendar className="h-4 w-4" />
                   Set Up Schedule Now
                 </Button>
@@ -180,10 +178,7 @@ export default function ProviderDashboard() {
           <div className="flex items-center justify-between">
             <p className="text-body text-neutral-blue-gray/70">{specialty}</p>
             <div className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => navigate('/provider/messages')}
-              >
+              <Button variant="outline" onClick={() => navigate('/provider/messages')}>
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Messages
                 {stats.unreadMessages > 0 && (
@@ -192,23 +187,15 @@ export default function ProviderDashboard() {
                   </span>
                 )}
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => navigate('/provider/patients')}
-              >
+              <Button variant="outline" onClick={() => navigate('/provider/patients')}>
                 <Users className="h-4 w-4 mr-2" />
                 My Patients
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => navigate('/provider/schedule')}
-              >
+              <Button variant="outline" onClick={() => navigate('/provider/schedule')}>
                 <Settings className="h-4 w-4 mr-2" />
                 Manage Schedule
               </Button>
-              <Button
-                onClick={() => navigate('/provider/appointments')}
-              >
+              <Button onClick={() => navigate('/provider/appointments')}>
                 <Calendar className="h-4 w-4 mr-2" />
                 View Schedule
               </Button>
@@ -328,7 +315,9 @@ export default function ProviderDashboard() {
                   >
                     {/* Time */}
                     <div className="flex flex-col items-center justify-center w-20 text-center">
-                      <p className="text-sm font-semibold text-neutral-blue-gray">{appointment.time}</p>
+                      <p className="text-sm font-semibold text-neutral-blue-gray">
+                        {appointment.time}
+                      </p>
                       {appointment.isVirtual && (
                         <div className="mt-1" title="Virtual Appointment">
                           <Video className="h-4 w-4 text-info" />
@@ -344,7 +333,9 @@ export default function ProviderDashboard() {
                           {appointment.patientName}
                         </p>
                       </div>
-                      <p className="text-sm text-neutral-blue-gray/70 truncate">{appointment.reason}</p>
+                      <p className="text-sm text-neutral-blue-gray/70 truncate">
+                        {appointment.reason}
+                      </p>
                       <div className="flex gap-2 mt-2">
                         {getTypeBadge(appointment.type)}
                         {getStatusBadge(appointment.status)}

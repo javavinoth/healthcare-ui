@@ -1,0 +1,4 @@
+# Netlify SPA routing configuration
+# This redirects all routes to index.html while preserving the URL
+# The 200 status code ensures the URL stays the same (not a redirect)
+/* /index.html 200

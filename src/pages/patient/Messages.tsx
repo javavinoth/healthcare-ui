@@ -24,10 +24,7 @@ export default function MessagesPage() {
   const [isNewMessageDialogOpen, setIsNewMessageDialogOpen] = useState(false)
 
   // Fetch conversations with automatic refresh
-  const {
-    data: conversationsData,
-    isLoading: conversationsLoading,
-  } = useQuery({
+  const { data: conversationsData, isLoading: conversationsLoading } = useQuery({
     queryKey: ['conversations'],
     queryFn: () => messagesApi.getConversations(),
     refetchInterval: 30000, // Refresh every 30 seconds for new messages
@@ -36,14 +33,12 @@ export default function MessagesPage() {
   const conversations = conversationsData?.data || []
 
   // Get selected conversation
-  const selectedConversation = conversations.find(
-    (c) => c.id === selectedConversationId
-  )
+  const selectedConversation = conversations.find((c) => c.id === selectedConversationId)
 
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* App Header */}
-      <AppHeader title="Messages" />
+      <AppHeader title="Messages" showBackButton backPath="/patient/dashboard" />
 
       {/* Page Subheader */}
       <div className="border-b border-neutral-blue-gray/10 bg-white px-6 py-3">
@@ -82,8 +77,8 @@ export default function MessagesPage() {
                       selectedConversation?.participants[0]?.role === 'doctor'
                         ? 'bg-primary'
                         : selectedConversation?.participants[0]?.role === 'nurse'
-                        ? 'bg-info'
-                        : 'bg-wellness'
+                          ? 'bg-info'
+                          : 'bg-wellness'
                     }`}
                   >
                     {selectedConversation?.participants[0]?.name
@@ -127,10 +122,7 @@ export default function MessagesPage() {
       </div>
 
       {/* New Message Dialog */}
-      <NewMessageDialog
-        open={isNewMessageDialogOpen}
-        onOpenChange={setIsNewMessageDialogOpen}
-      />
+      <NewMessageDialog open={isNewMessageDialogOpen} onOpenChange={setIsNewMessageDialogOpen} />
     </div>
   )
 }

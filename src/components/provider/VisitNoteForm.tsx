@@ -23,7 +23,10 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 const visitNoteSchema = z.object({
   subjective: z.string().max(5000, 'Subjective section cannot exceed 5000 characters').optional(),
   objective: z.string().max(5000, 'Objective section cannot exceed 5000 characters').optional(),
-  assessment: z.string().min(1, 'Assessment is required').max(5000, 'Assessment cannot exceed 5000 characters'),
+  assessment: z
+    .string()
+    .min(1, 'Assessment is required')
+    .max(5000, 'Assessment cannot exceed 5000 characters'),
   plan: z.string().min(1, 'Plan is required').max(5000, 'Plan cannot exceed 5000 characters'),
   chiefComplaint: z.string().max(500, 'Chief complaint cannot exceed 500 characters').optional(),
   diagnosisCodes: z.string().max(500, 'Diagnosis codes cannot exceed 500 characters').optional(),
@@ -38,7 +41,12 @@ interface VisitNoteFormProps {
   trigger?: React.ReactNode
 }
 
-export default function VisitNoteForm({ patientId, patientName, appointmentId, trigger }: VisitNoteFormProps) {
+export default function VisitNoteForm({
+  patientId,
+  patientName,
+  appointmentId,
+  trigger,
+}: VisitNoteFormProps) {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
@@ -96,7 +104,8 @@ export default function VisitNoteForm({ patientId, patientName, appointmentId, t
     onError: (error: any) => {
       toast({
         title: 'Failed to Create Note',
-        description: error.response?.data?.message || 'Failed to create visit note. Please try again.',
+        description:
+          error.response?.data?.message || 'Failed to create visit note. Please try again.',
         variant: 'destructive',
       })
     },
@@ -122,9 +131,7 @@ export default function VisitNoteForm({ patientId, patientName, appointmentId, t
             <FileText className="h-5 w-5" />
             Create Visit Note (SOAP Format)
           </DialogTitle>
-          <DialogDescription>
-            Document clinical visit for {patientName}
-          </DialogDescription>
+          <DialogDescription>Document clinical visit for {patientName}</DialogDescription>
         </DialogHeader>
 
         <ScrollArea className="max-h-[70vh] pr-4" aria-label="Visit note form content">
@@ -150,7 +157,8 @@ export default function VisitNoteForm({ patientId, patientName, appointmentId, t
             {/* Subjective - S */}
             <div className="space-y-2">
               <Label htmlFor="subjective" className="text-lg font-semibold text-primary">
-                S - Subjective <span className="text-muted-foreground text-sm font-normal">(Optional)</span>
+                S - Subjective{' '}
+                <span className="text-muted-foreground text-sm font-normal">(Optional)</span>
               </Label>
               <p className="text-sm text-muted-foreground">
                 Patient's description: symptoms, concerns, history, what they tell you
@@ -172,7 +180,8 @@ export default function VisitNoteForm({ patientId, patientName, appointmentId, t
             {/* Objective - O */}
             <div className="space-y-2">
               <Label htmlFor="objective" className="text-lg font-semibold text-primary">
-                O - Objective <span className="text-muted-foreground text-sm font-normal">(Optional)</span>
+                O - Objective{' '}
+                <span className="text-muted-foreground text-sm font-normal">(Optional)</span>
               </Label>
               <p className="text-sm text-muted-foreground">
                 Provider's observations: exam findings, vital signs, lab results, what you observe
@@ -238,7 +247,8 @@ export default function VisitNoteForm({ patientId, patientName, appointmentId, t
             {/* Diagnosis Codes */}
             <div className="space-y-2">
               <Label htmlFor="diagnosisCodes">
-                ICD-10 Codes <span className="text-muted-foreground text-xs">(Optional, comma-separated)</span>
+                ICD-10 Codes{' '}
+                <span className="text-muted-foreground text-xs">(Optional, comma-separated)</span>
               </Label>
               <Input
                 id="diagnosisCodes"

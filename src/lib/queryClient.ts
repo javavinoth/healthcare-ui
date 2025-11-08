@@ -170,8 +170,7 @@ export const queryKeys = {
 
   // Health Metrics
   healthMetrics: {
-    all: (patientId: string, type?: string) =>
-      ['health-metrics', patientId, type] as const,
+    all: (patientId: string, type?: string) => ['health-metrics', patientId, type] as const,
   },
 } as const
 

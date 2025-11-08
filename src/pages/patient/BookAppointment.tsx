@@ -12,7 +12,10 @@ import AppointmentBookingForm from '@/components/patient/AppointmentBookingForm'
 import EmptyState from '@/components/patient/EmptyState'
 import { providersApi, appointmentsApi } from '@/lib/api'
 import { useToast } from '@/components/ui/use-toast'
-import type { ProviderSearchFormData, AppointmentBookingFormData } from '@/lib/validations/appointments'
+import type {
+  ProviderSearchFormData,
+  AppointmentBookingFormData,
+} from '@/lib/validations/appointments'
 import type { ProviderSearchResult } from '@/types'
 
 /**
@@ -53,10 +56,7 @@ export default function BookAppointment() {
   })
 
   // Fetch available time slots when provider and date are selected
-  const {
-    data: slotsData,
-    isLoading: slotsLoading,
-  } = useQuery({
+  const { data: slotsData, isLoading: slotsLoading } = useQuery({
     queryKey: ['availableSlots', selectedProvider?.id, selectedDate],
     queryFn: async () => {
       if (!selectedProvider?.id || !selectedDate) return { slots: [] }
@@ -82,7 +82,8 @@ export default function BookAppointment() {
     onError: (error: any) => {
       toast({
         title: 'Booking failed',
-        description: error.response?.data?.message || 'Failed to book appointment. Please try again.',
+        description:
+          error.response?.data?.message || 'Failed to book appointment. Please try again.',
         variant: 'destructive',
       })
     },
@@ -90,7 +91,18 @@ export default function BookAppointment() {
 
   const providers = providersData || []
 
-  console.log('[Provider Search] State - step:', step, 'loading:', providersLoading, 'error:', providersError, 'providers:', providers, 'count:', providers.length)
+  console.log(
+    '[Provider Search] State - step:',
+    step,
+    'loading:',
+    providersLoading,
+    'error:',
+    providersError,
+    'providers:',
+    providers,
+    'count:',
+    providers.length
+  )
 
   // Handle search
   const handleSearch = (data: ProviderSearchFormData) => {
@@ -148,131 +160,139 @@ export default function BookAppointment() {
 
         {/* Main Content */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Step Indicator */}
-        {step !== 'success' && (
-          <div className="mb-8">
-            <div className="flex items-center justify-between">
-              <div className={`flex items-center gap-2 ${step === 'search' ? 'text-primary' : 'text-neutral-blue-gray/50'}`}>
-                <div className={`flex h-8 w-8 items-center justify-center rounded-full ${step === 'search' ? 'bg-primary text-white' : 'bg-neutral-blue-gray/20'}`}>
-                  1
+          {/* Step Indicator */}
+          {step !== 'success' && (
+            <div className="mb-8">
+              <div className="flex items-center justify-between">
+                <div
+                  className={`flex items-center gap-2 ${step === 'search' ? 'text-primary' : 'text-neutral-blue-gray/50'}`}
+                >
+                  <div
+                    className={`flex h-8 w-8 items-center justify-center rounded-full ${step === 'search' ? 'bg-primary text-white' : 'bg-neutral-blue-gray/20'}`}
+                  >
+                    1
+                  </div>
+                  <span className="text-sm font-medium">Search</span>
                 </div>
-                <span className="text-sm font-medium">Search</span>
-              </div>
-              <div className="flex-1 h-px bg-neutral-blue-gray/20 mx-4" />
-              <div className={`flex items-center gap-2 ${step === 'select' ? 'text-primary' : 'text-neutral-blue-gray/50'}`}>
-                <div className={`flex h-8 w-8 items-center justify-center rounded-full ${step === 'select' ? 'bg-primary text-white' : 'bg-neutral-blue-gray/20'}`}>
-                  2
+                <div className="flex-1 h-px bg-neutral-blue-gray/20 mx-4" />
+                <div
+                  className={`flex items-center gap-2 ${step === 'select' ? 'text-primary' : 'text-neutral-blue-gray/50'}`}
+                >
+                  <div
+                    className={`flex h-8 w-8 items-center justify-center rounded-full ${step === 'select' ? 'bg-primary text-white' : 'bg-neutral-blue-gray/20'}`}
+                  >
+                    2
+                  </div>
+                  <span className="text-sm font-medium">Select Provider</span>
                 </div>
-                <span className="text-sm font-medium">Select Provider</span>
-              </div>
-              <div className="flex-1 h-px bg-neutral-blue-gray/20 mx-4" />
-              <div className={`flex items-center gap-2 ${step === 'book' ? 'text-primary' : 'text-neutral-blue-gray/50'}`}>
-                <div className={`flex h-8 w-8 items-center justify-center rounded-full ${step === 'book' ? 'bg-primary text-white' : 'bg-neutral-blue-gray/20'}`}>
-                  3
+                <div className="flex-1 h-px bg-neutral-blue-gray/20 mx-4" />
+                <div
+                  className={`flex items-center gap-2 ${step === 'book' ? 'text-primary' : 'text-neutral-blue-gray/50'}`}
+                >
+                  <div
+                    className={`flex h-8 w-8 items-center justify-center rounded-full ${step === 'book' ? 'bg-primary text-white' : 'bg-neutral-blue-gray/20'}`}
+                  >
+                    3
+                  </div>
+                  <span className="text-sm font-medium">Book</span>
                 </div>
-                <span className="text-sm font-medium">Book</span>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Step 1: Search Providers */}
-        {step === 'search' && (
-          <ProviderSearchForm
-            onSearch={handleSearch}
-            onReset={() => setSearchParams({})}
-          />
-        )}
+          {/* Step 1: Search Providers */}
+          {step === 'search' && (
+            <ProviderSearchForm onSearch={handleSearch} onReset={() => setSearchParams({})} />
+          )}
 
-        {/* Step 2: Select Provider */}
-        {step === 'select' && (
-          <div className="space-y-4">
-            {providersLoading ? (
-              <>
-                <Skeleton className="h-48" />
-                <Skeleton className="h-48" />
-                <Skeleton className="h-48" />
-              </>
-            ) : providersError ? (
-              <Card>
-                <CardContent className="p-12">
-                  <p className="text-error text-center">
-                    Failed to load providers. Please try again.
-                  </p>
-                </CardContent>
-              </Card>
-            ) : providers.length === 0 ? (
-              <EmptyState
-                icon={ArrowLeft}
-                title="No providers found"
-                description="No providers match your search criteria. Try adjusting your filters."
-                actionLabel="Back to Search"
-                onAction={() => setStep('search')}
-              />
-            ) : (
-              <>
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm text-neutral-blue-gray/70">
-                    Found {providers.length} provider{providers.length !== 1 ? 's' : ''}
-                  </p>
-                </div>
-                {providers.map((provider) => (
-                  <ProviderCard
-                    key={provider.id}
-                    provider={provider as unknown as ProviderSearchResult}
-                    onSelect={handleSelectProvider}
-                    showSelectButton
-                  />
-                ))}
-              </>
-            )}
-          </div>
-        )}
+          {/* Step 2: Select Provider */}
+          {step === 'select' && (
+            <div className="space-y-4">
+              {providersLoading ? (
+                <>
+                  <Skeleton className="h-48" />
+                  <Skeleton className="h-48" />
+                  <Skeleton className="h-48" />
+                </>
+              ) : providersError ? (
+                <Card>
+                  <CardContent className="p-12">
+                    <p className="text-error text-center">
+                      Failed to load providers. Please try again.
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : providers.length === 0 ? (
+                <EmptyState
+                  icon={ArrowLeft}
+                  title="No providers found"
+                  description="No providers match your search criteria. Try adjusting your filters."
+                  actionLabel="Back to Search"
+                  onAction={() => setStep('search')}
+                />
+              ) : (
+                <>
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm text-neutral-blue-gray/70">
+                      Found {providers.length} provider{providers.length !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                  {providers.map((provider) => (
+                    <ProviderCard
+                      key={provider.id}
+                      provider={provider as unknown as ProviderSearchResult}
+                      onSelect={handleSelectProvider}
+                      showSelectButton
+                    />
+                  ))}
+                </>
+              )}
+            </div>
+          )}
 
-        {/* Step 3: Book Appointment */}
-        {step === 'book' && selectedProvider && (
-          <AppointmentBookingForm
-            providerId={selectedProvider.id}
-            providerName={`${selectedProvider.firstName} ${selectedProvider.lastName}`}
-            availableSlots={slotsData?.slots || []}
-            onSubmit={handleBookAppointment}
-            onCancel={() => setStep('select')}
-            isLoading={bookAppointmentMutation.isPending}
-            isLoadingSlots={slotsLoading}
-            onDateChange={(date) => setSelectedDate(date)}
-          />
-        )}
+          {/* Step 3: Book Appointment */}
+          {step === 'book' && selectedProvider && (
+            <AppointmentBookingForm
+              providerId={selectedProvider.id}
+              providerName={`${selectedProvider.firstName} ${selectedProvider.lastName}`}
+              availableSlots={slotsData?.slots || []}
+              onSubmit={handleBookAppointment}
+              onCancel={() => setStep('select')}
+              isLoading={bookAppointmentMutation.isPending}
+              isLoadingSlots={slotsLoading}
+              onDateChange={(date) => setSelectedDate(date)}
+            />
+          )}
 
-        {/* Step 4: Success */}
-        {step === 'success' && (
-          <Card>
-            <CardContent className="p-12">
-              <div className="text-center space-y-6">
-                <div className="flex justify-center">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-wellness/10">
-                    <CheckCircle className="h-12 w-12 text-wellness" />
+          {/* Step 4: Success */}
+          {step === 'success' && (
+            <Card>
+              <CardContent className="p-12">
+                <div className="text-center space-y-6">
+                  <div className="flex justify-center">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-wellness/10">
+                      <CheckCircle className="h-12 w-12 text-wellness" />
+                    </div>
+                  </div>
+                  <div>
+                    <h2 className="text-h2 text-neutral-blue-gray mb-2">Appointment Confirmed!</h2>
+                    <p className="text-neutral-blue-gray/70">
+                      Your appointment has been successfully booked. You will receive a confirmation
+                      email shortly.
+                    </p>
+                  </div>
+                  <div className="flex gap-4 justify-center">
+                    <Button onClick={() => navigate('/patient/appointments')}>
+                      View Appointments
+                    </Button>
+                    <Button variant="outline" onClick={() => navigate('/patient/dashboard')}>
+                      Back to Dashboard
+                    </Button>
                   </div>
                 </div>
-                <div>
-                  <h2 className="text-h2 text-neutral-blue-gray mb-2">
-                    Appointment Confirmed!
-                  </h2>
-                  <p className="text-neutral-blue-gray/70">
-                    Your appointment has been successfully booked. You will receive a confirmation email shortly.
-                  </p>
-                </div>
-                <div className="flex gap-4 justify-center">
-                  <Button onClick={() => navigate('/patient/appointments')}>
-                    View Appointments
-                  </Button>
-                  <Button variant="outline" onClick={() => navigate('/patient/dashboard')}>
-                    Back to Dashboard
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

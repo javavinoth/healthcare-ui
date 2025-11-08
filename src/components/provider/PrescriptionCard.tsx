@@ -40,7 +40,9 @@ export default function PrescriptionCard({ prescription, className }: Prescripti
             <Pill className="h-5 w-5 text-primary" />
             <CardTitle className="text-lg">{prescription.medicationName}</CardTitle>
           </div>
-          <Badge className={STATUS_STYLES[prescription.status]}>{prescription.status.toLowerCase()}</Badge>
+          <Badge className={STATUS_STYLES[prescription.status]}>
+            {prescription.status.toLowerCase()}
+          </Badge>
         </div>
 
         {/* Metadata */}
@@ -62,8 +64,12 @@ export default function PrescriptionCard({ prescription, className }: Prescripti
           <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 rounded-md flex items-start gap-2">
             <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-400 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-orange-900 dark:text-orange-100">Discontinued</p>
-              <p className="text-sm text-orange-700 dark:text-orange-300 mt-1">{prescription.discontinuedReason}</p>
+              <p className="text-sm font-medium text-orange-900 dark:text-orange-100">
+                Discontinued
+              </p>
+              <p className="text-sm text-orange-700 dark:text-orange-300 mt-1">
+                {prescription.discontinuedReason}
+              </p>
             </div>
           </div>
         )}
@@ -79,7 +85,9 @@ export default function PrescriptionCard({ prescription, className }: Prescripti
           {prescription.route && (
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-1">Route</p>
-              <p className="text-sm font-semibold text-foreground">{ROUTE_LABELS[prescription.route] || prescription.route}</p>
+              <p className="text-sm font-semibold text-foreground">
+                {ROUTE_LABELS[prescription.route] || prescription.route}
+              </p>
             </div>
           )}
         </div>
@@ -120,7 +128,9 @@ export default function PrescriptionCard({ prescription, className }: Prescripti
             <Separator />
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-2">Instructions</p>
-              <p className="text-sm text-foreground whitespace-pre-wrap">{prescription.instructions}</p>
+              <p className="text-sm text-foreground whitespace-pre-wrap">
+                {prescription.instructions}
+              </p>
             </div>
           </>
         )}
@@ -130,7 +140,9 @@ export default function PrescriptionCard({ prescription, className }: Prescripti
           <>
             <Separator />
             <div>
-              <p className="text-xs font-medium text-muted-foreground mb-1">Diagnosis / Indication</p>
+              <p className="text-xs font-medium text-muted-foreground mb-1">
+                Diagnosis / Indication
+              </p>
               <p className="text-sm text-foreground">{prescription.diagnosis}</p>
             </div>
           </>
@@ -142,7 +154,9 @@ export default function PrescriptionCard({ prescription, className }: Prescripti
             <Separator />
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-1">Expires</p>
-              <p className="text-sm text-foreground">{format(new Date(prescription.expiresAt), 'MMM dd, yyyy')}</p>
+              <p className="text-sm text-foreground">
+                {format(new Date(prescription.expiresAt), 'MMM dd, yyyy')}
+              </p>
             </div>
           </>
         )}
@@ -153,7 +167,9 @@ export default function PrescriptionCard({ prescription, className }: Prescripti
             <Separator />
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-2">Pharmacy Notes</p>
-              <p className="text-sm text-muted-foreground italic whitespace-pre-wrap">{prescription.pharmacyNotes}</p>
+              <p className="text-sm text-muted-foreground italic whitespace-pre-wrap">
+                {prescription.pharmacyNotes}
+              </p>
             </div>
           </>
         )}

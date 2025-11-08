@@ -30,12 +30,7 @@ export const attachmentSchema = z.object({
     })
     .refine(
       (file) => {
-        const allowedTypes = [
-          'application/pdf',
-          'image/png',
-          'image/jpeg',
-          'image/jpg',
-        ]
+        const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg']
         return allowedTypes.includes(file.type)
       },
       {

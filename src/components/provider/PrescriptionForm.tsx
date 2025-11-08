@@ -66,7 +66,12 @@ const MEDICATION_ROUTES: { value: MedicationRoute; label: string }[] = [
   { value: 'NASAL', label: 'Nasal' },
 ]
 
-export default function PrescriptionForm({ patientId, patientName, visitNoteId, trigger }: PrescriptionFormProps) {
+export default function PrescriptionForm({
+  patientId,
+  patientName,
+  visitNoteId,
+  trigger,
+}: PrescriptionFormProps) {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
@@ -120,7 +125,9 @@ export default function PrescriptionForm({ patientId, patientName, visitNoteId, 
         visitNoteId,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['provider', 'patients', patientId, 'prescriptions'] })
+      queryClient.invalidateQueries({
+        queryKey: ['provider', 'patients', patientId, 'prescriptions'],
+      })
       queryClient.invalidateQueries({ queryKey: ['provider', 'patients', patientId, 'timeline'] })
       toast({
         title: 'Prescription Created',
@@ -132,7 +139,8 @@ export default function PrescriptionForm({ patientId, patientName, visitNoteId, 
     onError: (error: any) => {
       toast({
         title: 'Failed to Create Prescription',
-        description: error.response?.data?.message || 'Failed to create prescription. Please try again.',
+        description:
+          error.response?.data?.message || 'Failed to create prescription. Please try again.',
         variant: 'destructive',
       })
     },
@@ -195,8 +203,15 @@ export default function PrescriptionForm({ patientId, patientName, visitNoteId, 
                 <Label htmlFor="dosage">
                   Dosage <span className="text-destructive">*</span>
                 </Label>
-                <Input id="dosage" {...register('dosage')} placeholder="e.g., 500 mg" maxLength={100} />
-                {errors.dosage && <p className="text-sm text-destructive">{errors.dosage.message}</p>}
+                <Input
+                  id="dosage"
+                  {...register('dosage')}
+                  placeholder="e.g., 500 mg"
+                  maxLength={100}
+                />
+                {errors.dosage && (
+                  <p className="text-sm text-destructive">{errors.dosage.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -222,13 +237,25 @@ export default function PrescriptionForm({ patientId, patientName, visitNoteId, 
                 <Label htmlFor="frequency">
                   Frequency <span className="text-destructive">*</span>
                 </Label>
-                <Input id="frequency" {...register('frequency')} placeholder="e.g., Twice daily" maxLength={100} />
-                {errors.frequency && <p className="text-sm text-destructive">{errors.frequency.message}</p>}
+                <Input
+                  id="frequency"
+                  {...register('frequency')}
+                  placeholder="e.g., Twice daily"
+                  maxLength={100}
+                />
+                {errors.frequency && (
+                  <p className="text-sm text-destructive">{errors.frequency.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="duration">Duration</Label>
-                <Input id="duration" {...register('duration')} placeholder="e.g., 7 days" maxLength={100} />
+                <Input
+                  id="duration"
+                  {...register('duration')}
+                  placeholder="e.g., 7 days"
+                  maxLength={100}
+                />
               </div>
             </div>
 
@@ -245,7 +272,9 @@ export default function PrescriptionForm({ patientId, patientName, visitNoteId, 
                   placeholder="30"
                   min={1}
                 />
-                {errors.quantity && <p className="text-sm text-destructive">{errors.quantity.message}</p>}
+                {errors.quantity && (
+                  <p className="text-sm text-destructive">{errors.quantity.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -258,7 +287,9 @@ export default function PrescriptionForm({ patientId, patientName, visitNoteId, 
                   min={0}
                   max={12}
                 />
-                {errors.refills && <p className="text-sm text-destructive">{errors.refills.message}</p>}
+                {errors.refills && (
+                  <p className="text-sm text-destructive">{errors.refills.message}</p>
+                )}
               </div>
             </div>
 
@@ -282,7 +313,12 @@ export default function PrescriptionForm({ patientId, patientName, visitNoteId, 
             {/* Diagnosis */}
             <div className="space-y-2">
               <Label htmlFor="diagnosis">Diagnosis / Indication</Label>
-              <Input id="diagnosis" {...register('diagnosis')} placeholder="e.g., Bacterial sinusitis" maxLength={500} />
+              <Input
+                id="diagnosis"
+                {...register('diagnosis')}
+                placeholder="e.g., Bacterial sinusitis"
+                maxLength={500}
+              />
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>{errors.diagnosis?.message}</span>
                 <span>{diagnosis?.length || 0}/500</span>
@@ -310,7 +346,9 @@ export default function PrescriptionForm({ patientId, patientName, visitNoteId, 
             <div className="space-y-2">
               <Label htmlFor="expiresAt">Expiration Date (Optional)</Label>
               <Input id="expiresAt" type="date" {...register('expiresAt')} />
-              <p className="text-xs text-muted-foreground">Date when prescription can no longer be filled</p>
+              <p className="text-xs text-muted-foreground">
+                Date when prescription can no longer be filled
+              </p>
             </div>
 
             {/* Actions */}

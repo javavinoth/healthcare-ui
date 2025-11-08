@@ -163,9 +163,7 @@ export default function CreateUserModal({ open, onClose }: CreateUserModalProps)
               placeholder="Enter first name"
               className={errors.firstName ? 'border-error' : ''}
             />
-            {errors.firstName && (
-              <p className="text-sm text-error mt-1">{errors.firstName}</p>
-            )}
+            {errors.firstName && <p className="text-sm text-error mt-1">{errors.firstName}</p>}
           </div>
 
           {/* Last Name */}
@@ -216,7 +214,10 @@ export default function CreateUserModal({ open, onClose }: CreateUserModalProps)
             <Label htmlFor="role">
               Role <span className="text-error">*</span>
             </Label>
-            <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
+            <Select
+              value={formData.role}
+              onValueChange={(value) => setFormData({ ...formData, role: value })}
+            >
               <SelectTrigger className={errors.role ? 'border-error' : ''}>
                 <SelectValue placeholder="Select user role" />
               </SelectTrigger>
@@ -242,10 +243,7 @@ export default function CreateUserModal({ open, onClose }: CreateUserModalProps)
               }
             />
             <div className="flex-1">
-              <Label
-                htmlFor="sendInvitation"
-                className="text-sm font-medium cursor-pointer"
-              >
+              <Label htmlFor="sendInvitation" className="text-sm font-medium cursor-pointer">
                 Send invitation email
               </Label>
               <p className="text-xs text-neutral-blue-gray/60 mt-1">
@@ -270,9 +268,7 @@ export default function CreateUserModal({ open, onClose }: CreateUserModalProps)
                 placeholder="Enter password (min 8 characters)"
                 className={errors.password ? 'border-error' : ''}
               />
-              {errors.password && (
-                <p className="text-sm text-error mt-1">{errors.password}</p>
-              )}
+              {errors.password && <p className="text-sm text-error mt-1">{errors.password}</p>}
             </div>
           )}
 

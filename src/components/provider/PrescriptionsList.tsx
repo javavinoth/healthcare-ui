@@ -28,9 +28,18 @@ const STATUS_OPTIONS = [
 export default function PrescriptionsList({ patientId }: PrescriptionsListProps) {
   const [statusFilter, setStatusFilter] = useState('ALL')
 
-  const { data: prescriptions, isLoading, isError, error } = useQuery({
+  const {
+    data: prescriptions,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ['provider', 'patients', patientId, 'prescriptions', statusFilter],
-    queryFn: () => providerApi.getPatientPrescriptions(patientId, statusFilter === 'ALL' ? undefined : statusFilter),
+    queryFn: () =>
+      providerApi.getPatientPrescriptions(
+        patientId,
+        statusFilter === 'ALL' ? undefined : statusFilter
+      ),
   })
 
   if (isLoading) {
@@ -54,7 +63,8 @@ export default function PrescriptionsList({ patientId }: PrescriptionsListProps)
         <AlertCircle className="h-8 w-8 text-destructive mx-auto mb-2" />
         <h3 className="text-lg font-semibold text-destructive mb-2">Error Loading Prescriptions</h3>
         <p className="text-sm text-muted-foreground">
-          {(error as any)?.response?.data?.message || 'Failed to load prescriptions. Please try again.'}
+          {(error as any)?.response?.data?.message ||
+            'Failed to load prescriptions. Please try again.'}
         </p>
       </div>
     )

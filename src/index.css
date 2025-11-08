@@ -76,13 +76,18 @@
   }
 
   /* Ensure minimum touch target sizes (WCAG 2.5.5) */
-  button, a, input[type="checkbox"], input[type="radio"] {
+  button,
+  a,
+  input[type='checkbox'],
+  input[type='radio'] {
     min-height: 44px;
     min-width: 44px;
   }
 
   /* Accessible form elements */
-  input, select, textarea {
+  input,
+  select,
+  textarea {
     @apply text-body;
   }
 

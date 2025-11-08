@@ -207,7 +207,9 @@ export function isSecureContext(): boolean {
  * Security warning for non-HTTPS in production
  */
 if (import.meta.env.PROD && !isSecureContext()) {
-  console.error('SECURITY WARNING: Application is running over HTTP in production. PHI data is at risk!')
+  console.error(
+    'SECURITY WARNING: Application is running over HTTP in production. PHI data is at risk!'
+  )
 }
 
 export default apiClient

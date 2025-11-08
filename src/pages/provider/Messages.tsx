@@ -24,10 +24,7 @@ export default function ProviderMessagesPage() {
   const [isNewMessageDialogOpen, setIsNewMessageDialogOpen] = useState(false)
 
   // Fetch conversations with automatic refresh
-  const {
-    data: conversationsData,
-    isLoading: conversationsLoading,
-  } = useQuery({
+  const { data: conversationsData, isLoading: conversationsLoading } = useQuery({
     queryKey: ['conversations'],
     queryFn: () => messagesApi.getConversations(),
     refetchInterval: 30000, // Refresh every 30 seconds for new messages
@@ -36,21 +33,17 @@ export default function ProviderMessagesPage() {
   const conversations = conversationsData?.data || []
 
   // Get selected conversation
-  const selectedConversation = conversations.find(
-    (c) => c.id === selectedConversationId
-  )
+  const selectedConversation = conversations.find((c) => c.id === selectedConversationId)
 
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* App Header */}
-      <AppHeader title="Provider Messages" />
+      <AppHeader title="Provider Messages" showBackButton backPath="/provider/dashboard" />
 
       {/* Page Subheader */}
       <div className="border-b border-neutral-blue-gray/10 bg-white px-6 py-3">
         <div className="flex items-center justify-between">
-          <p className="text-sm text-neutral-blue-gray/70">
-            View and respond to patient messages
-          </p>
+          <p className="text-sm text-neutral-blue-gray/70">View and respond to patient messages</p>
           <Button onClick={() => setIsNewMessageDialogOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             New Message
@@ -82,8 +75,8 @@ export default function ProviderMessagesPage() {
                       selectedConversation?.participants[0]?.role === 'patient'
                         ? 'bg-info'
                         : selectedConversation?.participants[0]?.role === 'doctor'
-                        ? 'bg-primary'
-                        : 'bg-wellness'
+                          ? 'bg-primary'
+                          : 'bg-wellness'
                     }`}
                   >
                     {selectedConversation?.participants[0]?.name
@@ -127,10 +120,7 @@ export default function ProviderMessagesPage() {
       </div>
 
       {/* New Message Dialog */}
-      <NewMessageDialog
-        open={isNewMessageDialogOpen}
-        onOpenChange={setIsNewMessageDialogOpen}
-      />
+      <NewMessageDialog open={isNewMessageDialogOpen} onOpenChange={setIsNewMessageDialogOpen} />
     </div>
   )
 }

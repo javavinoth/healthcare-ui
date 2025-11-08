@@ -30,15 +30,11 @@ export default function StatsCard({
           <div className="space-y-2 flex-1">
             <p className="text-sm font-medium text-neutral-blue-gray/70">{title}</p>
             <p className="text-2xl font-bold text-neutral-blue-gray">{value}</p>
-            {description && (
-              <p className="text-xs text-neutral-blue-gray/60">{description}</p>
-            )}
+            {description && <p className="text-xs text-neutral-blue-gray/60">{description}</p>}
             {trend && (
               <div className="flex items-center gap-1 text-xs">
                 <span
-                  className={`font-medium ${
-                    trend.isPositive ? 'text-wellness' : 'text-error'
-                  }`}
+                  className={`font-medium ${trend.isPositive ? 'text-wellness' : 'text-error'}`}
                 >
                   {trend.isPositive ? '↑' : '↓'} {Math.abs(trend.value)}%
                 </span>

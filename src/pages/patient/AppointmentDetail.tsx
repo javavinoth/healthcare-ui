@@ -16,7 +16,13 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -25,7 +31,13 @@ import { appointmentsApi } from '@/lib/api'
 import { useToast } from '@/components/ui/use-toast'
 import type { AppointmentStatus } from '@/types'
 
-const statusConfig: Record<AppointmentStatus, { variant: 'default' | 'secondary' | 'success' | 'warning' | 'destructive' | 'info', label: string }> = {
+const statusConfig: Record<
+  AppointmentStatus,
+  {
+    variant: 'default' | 'secondary' | 'success' | 'warning' | 'destructive' | 'info'
+    label: string
+  }
+> = {
   scheduled: { variant: 'default', label: 'Scheduled' },
   confirmed: { variant: 'success', label: 'Confirmed' },
   checked_in: { variant: 'info', label: 'Checked In' },
@@ -357,9 +369,7 @@ export default function AppointmentDetail() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Reschedule Appointment</DialogTitle>
-            <DialogDescription>
-              Choose a new date and time for your appointment.
-            </DialogDescription>
+            <DialogDescription>Choose a new date and time for your appointment.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -383,7 +393,11 @@ export default function AppointmentDetail() {
             </div>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => setShowRescheduleDialog(false)} className="flex-1">
+            <Button
+              variant="outline"
+              onClick={() => setShowRescheduleDialog(false)}
+              className="flex-1"
+            >
               Cancel
             </Button>
             <Button
@@ -431,17 +445,15 @@ export default function AppointmentDetail() {
                     cancelReason.trim().length > 0 && cancelReason.trim().length < 10
                       ? 'text-error'
                       : cancelReason.trim().length >= 10
-                      ? 'text-wellness'
-                      : 'text-neutral-blue-gray/60'
+                        ? 'text-wellness'
+                        : 'text-neutral-blue-gray/60'
                   }
                 >
                   {cancelReason.trim().length < 10
                     ? `Minimum 10 characters (${cancelReason.trim().length}/10)`
                     : 'Valid reason length'}
                 </span>
-                <span className="text-neutral-blue-gray/60">
-                  {cancelReason.length}/500
-                </span>
+                <span className="text-neutral-blue-gray/60">{cancelReason.length}/500</span>
               </div>
             </div>
           </div>

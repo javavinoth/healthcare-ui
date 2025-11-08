@@ -1,5 +1,15 @@
 import { useMemo } from 'react'
-import { format, isSameDay, addDays, startOfWeek, endOfWeek, eachDayOfInterval, startOfMonth, endOfMonth, eachWeekOfInterval } from 'date-fns'
+import {
+  format,
+  isSameDay,
+  addDays,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  startOfMonth,
+  endOfMonth,
+  eachWeekOfInterval,
+} from 'date-fns'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -73,7 +83,8 @@ function DayView({ events, currentDate, onEventClick }: Omit<ProviderCalendarPro
       <div className="divide-y">
         {hours.map((hour) => {
           const hourEvents = getEventsForHour(hour)
-          const timeLabel = hour === 12 ? '12:00 PM' : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`
+          const timeLabel =
+            hour === 12 ? '12:00 PM' : hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`
 
           return (
             <div key={hour} className="flex min-h-[80px]">
@@ -120,9 +131,13 @@ function WeekView({ events, currentDate, onEventClick }: Omit<ProviderCalendarPr
 
           return (
             <div key={day.toString()} className="min-h-[400px]">
-              <div className={`p-3 border-b font-medium text-center ${isToday ? 'bg-primary/10 text-primary' : 'bg-gray-50'}`}>
+              <div
+                className={`p-3 border-b font-medium text-center ${isToday ? 'bg-primary/10 text-primary' : 'bg-gray-50'}`}
+              >
                 <div className="text-xs uppercase">{format(day, 'EEE')}</div>
-                <div className={`text-xl ${isToday ? 'bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mt-1' : ''}`}>
+                <div
+                  className={`text-xl ${isToday ? 'bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mt-1' : ''}`}
+                >
                   {format(day, 'd')}
                 </div>
               </div>
@@ -196,7 +211,9 @@ function MonthView({ events, currentDate, onEventClick }: Omit<ProviderCalendarP
                 key={day.toString()}
                 className={`min-h-[120px] border-r border-b p-2 ${!isCurrentMonth ? 'bg-gray-50' : ''}`}
               >
-                <div className={`text-sm font-medium mb-1 ${isToday ? 'bg-primary text-white rounded-full w-7 h-7 flex items-center justify-center' : isCurrentMonth ? '' : 'text-muted-foreground'}`}>
+                <div
+                  className={`text-sm font-medium mb-1 ${isToday ? 'bg-primary text-white rounded-full w-7 h-7 flex items-center justify-center' : isCurrentMonth ? '' : 'text-muted-foreground'}`}
+                >
                   {format(day, 'd')}
                 </div>
                 <div className="space-y-1">
@@ -254,24 +271,22 @@ function EventCard({ event, onClick }: { event: CalendarEvent; onClick: () => vo
             <span className="text-sm font-medium truncate">{event.patientName}</span>
           </div>
 
-          <div className="text-xs text-muted-foreground mb-1">
-            {event.type.replace(/_/g, ' ')}
-          </div>
+          <div className="text-xs text-muted-foreground mb-1">{event.type.replace(/_/g, ' ')}</div>
 
-          <div className="text-xs text-muted-foreground line-clamp-2">
-            {event.reason}
-          </div>
+          <div className="text-xs text-muted-foreground line-clamp-2">{event.reason}</div>
 
           {event.isVirtual ? (
             <div className="flex items-center gap-1 mt-2 text-xs text-blue-600">
               <Video className="h-3 w-3" />
               <span>Virtual Appointment</span>
             </div>
-          ) : event.location && (
-            <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3" />
-              <span>{event.location}</span>
-            </div>
+          ) : (
+            event.location && (
+              <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                <span>{event.location}</span>
+              </div>
+            )
           )}
         </div>
       </div>

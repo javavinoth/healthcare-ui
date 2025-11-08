@@ -1,10 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ['class'],
-  content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -68,21 +65,21 @@ export default {
         print: ['Georgia', '"Times New Roman"', 'serif'],
       },
       fontSize: {
-        h1: ['2.5rem', { lineHeight: '1.2', fontWeight: '700' }],    // 40px
-        h2: ['1.75rem', { lineHeight: '1.2', fontWeight: '700' }],   // 28px
-        h3: ['1.5rem', { lineHeight: '1.3', fontWeight: '600' }],    // 24px
-        h4: ['1.25rem', { lineHeight: '1.3', fontWeight: '600' }],   // 20px
-        body: ['1rem', { lineHeight: '1.5', fontWeight: '400' }],    // 16px
+        h1: ['2.5rem', { lineHeight: '1.2', fontWeight: '700' }], // 40px
+        h2: ['1.75rem', { lineHeight: '1.2', fontWeight: '700' }], // 28px
+        h3: ['1.5rem', { lineHeight: '1.3', fontWeight: '600' }], // 24px
+        h4: ['1.25rem', { lineHeight: '1.3', fontWeight: '600' }], // 20px
+        body: ['1rem', { lineHeight: '1.5', fontWeight: '400' }], // 16px
         small: ['0.875rem', { lineHeight: '1.5', fontWeight: '400' }], // 14px
         caption: ['0.75rem', { lineHeight: '1.5', fontWeight: '400' }], // 12px
       },
       spacing: {
-        xs: '0.25rem',  // 4px
-        sm: '0.5rem',   // 8px
-        md: '1rem',     // 16px
-        lg: '1.5rem',   // 24px
-        xl: '2rem',     // 32px
-        '2xl': '3rem',  // 48px
+        xs: '0.25rem', // 4px
+        sm: '0.5rem', // 8px
+        md: '1rem', // 16px
+        lg: '1.5rem', // 24px
+        xl: '2rem', // 32px
+        '2xl': '3rem', // 48px
       },
       borderRadius: {
         lg: '0.5rem',

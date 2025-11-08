@@ -68,7 +68,7 @@ export default function PatientDashboard() {
   }
 
   // Handle medical record actions
-  const handleViewRecord = (_id: string) => {
+  const handleViewRecord = () => {
     // Navigate to records view (to be implemented)
     toast({
       title: 'Medical Records',
@@ -94,7 +94,7 @@ export default function PatientDashboard() {
         description: 'Your medical record is being downloaded.',
         variant: 'success',
       })
-    } catch (error) {
+    } catch {
       toast({
         title: 'Download failed',
         description: 'Failed to download medical record. Please try again.',
@@ -113,9 +113,7 @@ export default function PatientDashboard() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-h1 text-neutral-blue-gray">
-                  Welcome back, {user?.firstName}!
-                </h1>
+                <h1 className="text-h1 text-neutral-blue-gray">Welcome back, {user?.firstName}!</h1>
                 <p className="text-body text-neutral-blue-gray/70 mt-1">
                   Here's your health overview
                 </p>
@@ -130,164 +128,159 @@ export default function PatientDashboard() {
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {appointmentsLoading ? (
-            <>
-              <Skeleton className="h-32" />
-              <Skeleton className="h-32" />
-              <Skeleton className="h-32" />
-            </>
-          ) : (
-            <>
-              <StatsCard
-                title="Upcoming Appointments"
-                value={upcomingAppointments.length}
-                icon={Calendar}
-                description={
-                  upcomingAppointments.length > 0
-                    ? `Next: ${upcomingAppointments[0]?.date}`
-                    : 'No upcoming appointments'
-                }
-                iconColor="text-primary"
-                iconBgColor="bg-primary/10"
-              />
-              <StatsCard
-                title="New Medical Records"
-                value={newRecordsCount}
-                icon={FileText}
-                description={newRecordsCount > 0 ? 'Unread records available' : 'All caught up!'}
-                iconColor="text-info"
-                iconBgColor="bg-info/10"
-              />
-              <StatsCard
-                title="Health Status"
-                value="Good"
-                icon={Activity}
-                description="Based on recent checkups"
-                iconColor="text-wellness"
-                iconBgColor="bg-wellness/10"
-              />
-            </>
-          )}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex-col gap-2"
-            onClick={() => navigate('/patient/appointments/book')}
-          >
-            <Calendar className="h-6 w-6" />
-            <span>Book Appointment</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex-col gap-2"
-            onClick={() => navigate('/patient/appointments')}
-          >
-            <Clock className="h-6 w-6" />
-            <span>View All Appointments</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex-col gap-2"
-            onClick={() => navigate('/patient/messages')}
-          >
-            <MessageSquare className="h-6 w-6" />
-            <span>Message Provider</span>
-          </Button>
-        </div>
-
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Upcoming Appointments */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-h2 text-neutral-blue-gray">Upcoming Appointments</h2>
-              {upcomingAppointments.length > 0 && (
-                <Button
-                  variant="link"
-                  onClick={() => navigate('/patient/appointments')}
-                >
-                  View all
-                </Button>
-              )}
-            </div>
-
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {appointmentsLoading ? (
-              <div className="space-y-4">
-                <Skeleton className="h-48" />
-                <Skeleton className="h-48" />
-              </div>
-            ) : appointmentsError ? (
-              <div className="bg-white rounded-lg p-6 border border-error/20">
-                <p className="text-error">Failed to load appointments. Please try again.</p>
-              </div>
-            ) : upcomingAppointments.length === 0 ? (
-              <EmptyState
-                icon={Calendar}
-                title="No upcoming appointments"
-                description="You don't have any scheduled appointments. Book one to see your healthcare provider."
-                actionLabel="Book Appointment"
-                onAction={() => navigate('/patient/appointments/book')}
-              />
+              <>
+                <Skeleton className="h-32" />
+                <Skeleton className="h-32" />
+                <Skeleton className="h-32" />
+              </>
             ) : (
-              <div className="space-y-4">
-                {upcomingAppointments.map((appointment) => (
-                  <AppointmentCard
-                    key={appointment.id}
-                    appointment={appointment}
-                    onViewDetails={handleViewAppointmentDetails}
-                    onJoinVideo={handleJoinVideo}
-                    compact
-                  />
-                ))}
-              </div>
+              <>
+                <StatsCard
+                  title="Upcoming Appointments"
+                  value={upcomingAppointments.length}
+                  icon={Calendar}
+                  description={
+                    upcomingAppointments.length > 0
+                      ? `Next: ${upcomingAppointments[0]?.date}`
+                      : 'No upcoming appointments'
+                  }
+                  iconColor="text-primary"
+                  iconBgColor="bg-primary/10"
+                />
+                <StatsCard
+                  title="New Medical Records"
+                  value={newRecordsCount}
+                  icon={FileText}
+                  description={newRecordsCount > 0 ? 'Unread records available' : 'All caught up!'}
+                  iconColor="text-info"
+                  iconBgColor="bg-info/10"
+                />
+                <StatsCard
+                  title="Health Status"
+                  value="Good"
+                  icon={Activity}
+                  description="Based on recent checkups"
+                  iconColor="text-wellness"
+                  iconBgColor="bg-wellness/10"
+                />
+              </>
             )}
           </div>
 
-          {/* Recent Medical Records */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-h2 text-neutral-blue-gray">Recent Medical Records</h2>
-              {recentRecords.length > 0 && (
-                <Button variant="link">View all</Button>
+          {/* Quick Actions */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <Button
+              variant="outline"
+              className="h-auto py-4 flex-col gap-2"
+              onClick={() => navigate('/patient/appointments/book')}
+            >
+              <Calendar className="h-6 w-6" />
+              <span>Book Appointment</span>
+            </Button>
+            <Button
+              variant="outline"
+              className="h-auto py-4 flex-col gap-2"
+              onClick={() => navigate('/patient/appointments')}
+            >
+              <Clock className="h-6 w-6" />
+              <span>View All Appointments</span>
+            </Button>
+            <Button
+              variant="outline"
+              className="h-auto py-4 flex-col gap-2"
+              onClick={() => navigate('/patient/messages')}
+            >
+              <MessageSquare className="h-6 w-6" />
+              <span>Message Provider</span>
+            </Button>
+          </div>
+
+          {/* Two Column Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Upcoming Appointments */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-h2 text-neutral-blue-gray">Upcoming Appointments</h2>
+                {upcomingAppointments.length > 0 && (
+                  <Button variant="link" onClick={() => navigate('/patient/appointments')}>
+                    View all
+                  </Button>
+                )}
+              </div>
+
+              {appointmentsLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-48" />
+                  <Skeleton className="h-48" />
+                </div>
+              ) : appointmentsError ? (
+                <div className="bg-white rounded-lg p-6 border border-error/20">
+                  <p className="text-error">Failed to load appointments. Please try again.</p>
+                </div>
+              ) : upcomingAppointments.length === 0 ? (
+                <EmptyState
+                  icon={Calendar}
+                  title="No upcoming appointments"
+                  description="You don't have any scheduled appointments. Book one to see your healthcare provider."
+                  actionLabel="Book Appointment"
+                  onAction={() => navigate('/patient/appointments/book')}
+                />
+              ) : (
+                <div className="space-y-4">
+                  {upcomingAppointments.map((appointment) => (
+                    <AppointmentCard
+                      key={appointment.id}
+                      appointment={appointment}
+                      onViewDetails={handleViewAppointmentDetails}
+                      onJoinVideo={handleJoinVideo}
+                      compact
+                    />
+                  ))}
+                </div>
               )}
             </div>
 
-            {recordsLoading ? (
-              <div className="space-y-4">
-                <Skeleton className="h-32" />
-                <Skeleton className="h-32" />
-                <Skeleton className="h-32" />
+            {/* Recent Medical Records */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-h2 text-neutral-blue-gray">Recent Medical Records</h2>
+                {recentRecords.length > 0 && <Button variant="link">View all</Button>}
               </div>
-            ) : recordsError ? (
-              <div className="bg-white rounded-lg p-6 border border-error/20">
-                <p className="text-error">Failed to load medical records. Please try again.</p>
-              </div>
-            ) : recentRecords.length === 0 ? (
-              <EmptyState
-                icon={FileText}
-                title="No medical records"
-                description="Your medical records will appear here once they are available."
-              />
-            ) : (
-              <div className="space-y-4">
-                {recentRecords.map((record) => (
-                  <MedicalRecordCard
-                    key={record.id}
-                    record={record}
-                    onView={handleViewRecord}
-                    onDownload={handleDownloadRecord}
-                    compact
-                  />
-                ))}
-              </div>
-            )}
+
+              {recordsLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-32" />
+                  <Skeleton className="h-32" />
+                  <Skeleton className="h-32" />
+                </div>
+              ) : recordsError ? (
+                <div className="bg-white rounded-lg p-6 border border-error/20">
+                  <p className="text-error">Failed to load medical records. Please try again.</p>
+                </div>
+              ) : recentRecords.length === 0 ? (
+                <EmptyState
+                  icon={FileText}
+                  title="No medical records"
+                  description="Your medical records will appear here once they are available."
+                />
+              ) : (
+                <div className="space-y-4">
+                  {recentRecords.map((record) => (
+                    <MedicalRecordCard
+                      key={record.id}
+                      record={record}
+                      onView={handleViewRecord}
+                      onDownload={handleDownloadRecord}
+                      compact
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
         </div>
       </div>
     </div>

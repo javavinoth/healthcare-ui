@@ -6,7 +6,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 import { useAuthStore } from '@/stores/authStore'
@@ -174,9 +180,7 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
               placeholder="e.g., Question about medication"
               className={cn(errors.subject && 'border-error focus:ring-error')}
             />
-            {errors.subject && (
-              <p className="text-small text-error">{errors.subject.message}</p>
-            )}
+            {errors.subject && <p className="text-small text-error">{errors.subject.message}</p>}
           </div>
 
           {/* Message */}
@@ -196,18 +200,14 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
                 <span
                   className={cn(
                     'text-caption',
-                    isNearLimit
-                      ? 'text-error font-medium'
-                      : 'text-neutral-blue-gray/50'
+                    isNearLimit ? 'text-error font-medium' : 'text-neutral-blue-gray/50'
                   )}
                 >
                   {characterCount} / {maxCharacters}
                 </span>
               </div>
             </div>
-            {errors.body && (
-              <p className="text-small text-error">{errors.body.message}</p>
-            )}
+            {errors.body && <p className="text-small text-error">{errors.body.message}</p>}
           </div>
 
           {/* Actions */}
@@ -226,7 +226,9 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
             </Button>
             <Button
               type="submit"
-              disabled={sendMessageMutation.isPending || !contentValue?.trim() || !selectedRecipientId}
+              disabled={
+                sendMessageMutation.isPending || !contentValue?.trim() || !selectedRecipientId
+              }
             >
               {sendMessageMutation.isPending ? 'Sending...' : 'Send Message'}
             </Button>
@@ -235,7 +237,8 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
           {/* Debug info - remove in production */}
           {import.meta.env.DEV && (
             <div className="text-caption text-neutral-blue-gray/60 pt-2">
-              Debug: Recipient={selectedRecipientId ? 'selected' : 'none'}, Content={contentValue?.length || 0} chars, Available={messagableUsers.length}
+              Debug: Recipient={selectedRecipientId ? 'selected' : 'none'}, Content=
+              {contentValue?.length || 0} chars, Available={messagableUsers.length}
             </div>
           )}
         </form>

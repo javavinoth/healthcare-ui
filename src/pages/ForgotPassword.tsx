@@ -9,7 +9,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { passwordResetRequestSchema, type PasswordResetRequestFormData } from '@/lib/validations/auth'
+import {
+  passwordResetRequestSchema,
+  type PasswordResetRequestFormData,
+} from '@/lib/validations/auth'
 import { authApi } from '@/lib/api'
 
 /**
@@ -40,7 +43,8 @@ export default function ForgotPassword() {
       setResetSuccess(true)
     },
     onError: (error: any) => {
-      const message = error.response?.data?.message || 'Failed to send reset email. Please try again.'
+      const message =
+        error.response?.data?.message || 'Failed to send reset email. Please try again.'
       setResetError(message)
     },
   })
@@ -133,7 +137,10 @@ export default function ForgotPassword() {
                   {/* Email Field */}
                   <div className="space-y-2">
                     <Label htmlFor="email">
-                      Email Address <span className="text-error" aria-label="required">*</span>
+                      Email Address{' '}
+                      <span className="text-error" aria-label="required">
+                        *
+                      </span>
                     </Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-blue-gray" />

@@ -78,7 +78,7 @@ export const authApi = {
    * Creates a new user with PATIENT role
    */
   register: async (data: RegisterFormData): Promise<User> => {
-    const { confirmPassword, ...requestData } = data
+    const { confirmPassword: _confirmPassword, ...requestData } = data
     const response = await apiClient.post<User>(ENDPOINTS.AUTH.REGISTER, requestData)
     return response.data
   },
@@ -89,7 +89,7 @@ export const authApi = {
    * Requires admin approval before account activation
    */
   registerProvider: async (data: ProviderRegistrationFormData): Promise<User> => {
-    const { confirmPassword, ...requestData } = data
+    const { confirmPassword: _confirmPassword, ...requestData } = data
     const response = await apiClient.post<User>(ENDPOINTS.AUTH.REGISTER_PROVIDER, requestData)
     return response.data
   },
@@ -121,7 +121,11 @@ export const authApi = {
   /**
    * Update current user profile
    */
-  updateProfile: async (data: { firstName: string; lastName: string; phoneNumber?: string }): Promise<User> => {
+  updateProfile: async (data: {
+    firstName: string
+    lastName: string
+    phoneNumber?: string
+  }): Promise<User> => {
     const response = await apiClient.put<User>(ENDPOINTS.USER.UPDATE_PROFILE, data)
     return response.data
   },
@@ -148,7 +152,9 @@ export const authApi = {
    * Request password reset email
    */
   requestPasswordReset: async (email: string): Promise<MessageResponse> => {
-    const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.FORGOT_PASSWORD, { email })
+    const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.FORGOT_PASSWORD, {
+      email,
+    })
     return response.data
   },
 
@@ -156,14 +162,20 @@ export const authApi = {
    * Reset password with token
    */
   resetPassword: async (token: string, password: string): Promise<MessageResponse> => {
-    const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.RESET_PASSWORD, { token, password })
+    const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.RESET_PASSWORD, {
+      token,
+      password,
+    })
     return response.data
   },
 
   /**
    * Change password (authenticated users)
    */
-  changePassword: async (currentPassword: string, newPassword: string): Promise<MessageResponse> => {
+  changePassword: async (
+    currentPassword: string,
+    newPassword: string
+  ): Promise<MessageResponse> => {
     const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.CHANGE_PASSWORD, {
       currentPassword,
       newPassword,
@@ -183,7 +195,9 @@ export const authApi = {
    * Verify 2FA setup with code
    */
   verify2FASetup: async (code: string): Promise<MessageResponse> => {
-    const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.VERIFY_2FA_SETUP, { code })
+    const response = await apiClient.post<MessageResponse>(ENDPOINTS.AUTH.VERIFY_2FA_SETUP, {
+      code,
+    })
     return response.data
   },
 
@@ -260,15 +274,12 @@ export const appointmentsApi = {
   reschedule: async (id: string, newDate: string, newTime: string): Promise<Appointment> => {
     const response = await apiClient.put(`/appointments/${id}/reschedule`, {
       date: newDate,
-      time: newTime
+      time: newTime,
     })
     return mapAppointmentResponse(response.data)
   },
 
-  getAvailableSlots: async (
-    providerId: string,
-    date: string
-  ): Promise<{ slots: string[] }> => {
+  getAvailableSlots: async (providerId: string, date: string): Promise<{ slots: string[] }> => {
     const response = await apiClient.get(`/appointments/providers/${providerId}/available-slots`, {
       params: { date },
     })
@@ -284,25 +295,25 @@ function mapMedicalRecordResponse(backendRecord: any): any {
 
   // Map type from uppercase to lowercase with underscores
   const typeMapping: Record<string, string> = {
-    'LAB_RESULT': 'lab_result',
-    'IMAGING': 'imaging',
-    'VISIT_NOTE': 'visit_note',
-    'PRESCRIPTION': 'prescription',
-    'IMMUNIZATION': 'immunization',
-    'PROCEDURE_NOTE': 'procedure_note',
-    'DISCHARGE_SUMMARY': 'discharge_summary',
-    'REFERRAL': 'visit_note', // Map REFERRAL to visit_note as fallback
+    LAB_RESULT: 'lab_result',
+    IMAGING: 'imaging',
+    VISIT_NOTE: 'visit_note',
+    PRESCRIPTION: 'prescription',
+    IMMUNIZATION: 'immunization',
+    PROCEDURE_NOTE: 'procedure_note',
+    DISCHARGE_SUMMARY: 'discharge_summary',
+    REFERRAL: 'visit_note', // Map REFERRAL to visit_note as fallback
   }
 
   // Derive category from type
   const categoryMapping: Record<string, string> = {
-    'lab_result': 'Lab & Diagnostics',
-    'imaging': 'Imaging & Radiology',
-    'visit_note': 'Clinical Notes',
-    'prescription': 'Medications',
-    'immunization': 'Preventive Care',
-    'procedure_note': 'Procedures',
-    'discharge_summary': 'Hospital Records',
+    lab_result: 'Lab & Diagnostics',
+    imaging: 'Imaging & Radiology',
+    visit_note: 'Clinical Notes',
+    prescription: 'Medications',
+    immunization: 'Preventive Care',
+    procedure_note: 'Procedures',
+    discharge_summary: 'Hospital Records',
   }
 
   const mappedType = typeMapping[backendRecord.type] || backendRecord.type.toLowerCase()
@@ -331,13 +342,14 @@ function mapMedicalRecordResponse(backendRecord: any): any {
     status: backendRecord.status?.toLowerCase() || 'final',
 
     // Map attachment field names
-    attachments: backendRecord.attachments?.map((att: any) => ({
-      id: att.id,
-      name: att.fileName || att.name,
-      type: att.fileType || att.type,
-      size: att.fileSize || att.size,
-      url: att.url,
-    })) || [],
+    attachments:
+      backendRecord.attachments?.map((att: any) => ({
+        id: att.id,
+        name: att.fileName || att.name,
+        type: att.fileType || att.type,
+        size: att.fileSize || att.size,
+        url: att.url,
+      })) || [],
   }
 }
 
@@ -381,10 +393,10 @@ export const medicalRecordsApi = {
 function mapSpringPageToResponse<T>(springPage: any): PaginatedResponse<T> {
   return {
     data: springPage.content || springPage.data || springPage,
-    total: springPage.totalElements || springPage.total || (springPage.content?.length || 0),
-    page: springPage.number !== undefined ? springPage.number : (springPage.page || 0),
-    pageSize: springPage.size || springPage.pageSize || (springPage.content?.length || 0),
-    totalPages: springPage.totalPages || 1
+    total: springPage.totalElements || springPage.total || springPage.content?.length || 0,
+    page: springPage.number !== undefined ? springPage.number : springPage.page || 0,
+    pageSize: springPage.size || springPage.pageSize || springPage.content?.length || 0,
+    totalPages: springPage.totalPages || 1,
   }
 }
 
@@ -402,7 +414,7 @@ export const messagesApi = {
     pageSize: number = 20
   ): Promise<PaginatedResponse<Conversation>> => {
     const response = await apiClient.get('/messages/conversations', {
-      params: { page, size: pageSize, sort: 'updatedAt,desc' }
+      params: { page, size: pageSize, sort: 'updatedAt,desc' },
     })
     return mapSpringPageToResponse(response.data)
   },
@@ -427,10 +439,9 @@ export const messagesApi = {
     page: number = 0,
     pageSize: number = 50
   ): Promise<PaginatedResponse<Message>> => {
-    const response = await apiClient.get(
-      `/messages/conversations/${conversationId}/messages`,
-      { params: { page, size: pageSize, sort: 'sentAt,asc' } }
-    )
+    const response = await apiClient.get(`/messages/conversations/${conversationId}/messages`, {
+      params: { page, size: pageSize, sort: 'sentAt,asc' },
+    })
     return mapSpringPageToResponse(response.data)
   },
 
@@ -461,19 +472,12 @@ export const messagesApi = {
    * @param messageId - Message ID
    * @param file - File to upload
    */
-  uploadAttachment: async (
-    messageId: string,
-    file: File
-  ): Promise<Attachment> => {
+  uploadAttachment: async (messageId: string, file: File): Promise<Attachment> => {
     const formData = new FormData()
     formData.append('file', file)
-    const response = await apiClient.post(
-      `/messages/${messageId}/attachments`,
-      formData,
-      {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      }
-    )
+    const response = await apiClient.post(`/messages/${messageId}/attachments`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
     return response.data
   },
 
@@ -483,9 +487,7 @@ export const messagesApi = {
    * @param attachmentId - Attachment ID
    */
   downloadAttachment: async (attachmentId: string): Promise<any> => {
-    const response = await apiClient.get(
-      `/messages/attachments/${attachmentId}/download`
-    )
+    const response = await apiClient.get(`/messages/attachments/${attachmentId}/download`)
     return response.data
   },
 
@@ -494,14 +496,11 @@ export const messagesApi = {
    * Returns list of users based on role permissions
    * @param params - Optional filters (role, search)
    */
-  getMessageableUsers: async (params?: {
-    role?: string
-    search?: string
-  }): Promise<any[]> => {
+  getMessageableUsers: async (params?: { role?: string; search?: string }): Promise<any[]> => {
     // For now, use a simple approach to fetch all active users
     // Filter will be applied client-side using messaging permissions
     const response = await apiClient.get('/admin/users', {
-      params: { ...params, size: 1000, page: 0, active: true }
+      params: { ...params, size: 1000, page: 0, active: true },
     })
     // Safely extract users array with multiple fallback checks
     const users = response.data?.users || response.data || []
@@ -608,39 +607,45 @@ export const providerApi = {
     return appointments
   },
 
-  getCalendar: async (params: {
-    startDate: string
-    endDate: string
-  }): Promise<any[]> => {
+  getCalendar: async (params: { startDate: string; endDate: string }): Promise<any[]> => {
     const response = await apiClient.get('/provider/calendar', { params })
     // Backend returns array directly, ensure it's an array with safety check
     const calendar = Array.isArray(response.data) ? response.data : []
     return calendar
   },
 
-  checkInAppointment: async (appointmentId: string, data: {
-    notes?: string
-    isLateArrival?: boolean
-    minutesLate?: number
-  }): Promise<any> => {
+  checkInAppointment: async (
+    appointmentId: string,
+    data: {
+      notes?: string
+      isLateArrival?: boolean
+      minutesLate?: number
+    }
+  ): Promise<any> => {
     const response = await apiClient.post(`/provider/appointments/${appointmentId}/check-in`, data)
     return response.data
   },
 
-  completeAppointment: async (appointmentId: string, data: {
-    notes: string
-    followUpRequired?: boolean
-    followUpInstructions?: string
-    followUpDays?: number
-  }): Promise<any> => {
+  completeAppointment: async (
+    appointmentId: string,
+    data: {
+      notes: string
+      followUpRequired?: boolean
+      followUpInstructions?: string
+      followUpDays?: number
+    }
+  ): Promise<any> => {
     const response = await apiClient.post(`/provider/appointments/${appointmentId}/complete`, data)
     return response.data
   },
 
-  markNoShow: async (appointmentId: string, data: {
-    notes?: string
-    patientContacted?: boolean
-  }): Promise<any> => {
+  markNoShow: async (
+    appointmentId: string,
+    data: {
+      notes?: string
+      patientContacted?: boolean
+    }
+  ): Promise<any> => {
     const response = await apiClient.post(`/provider/appointments/${appointmentId}/no-show`, data)
     return response.data
   },
@@ -658,10 +663,7 @@ export const providerApi = {
     return response.data
   },
 
-  getTimeBlocks: async (params: {
-    startDate: string
-    endDate: string
-  }): Promise<any[]> => {
+  getTimeBlocks: async (params: { startDate: string; endDate: string }): Promise<any[]> => {
     const response = await apiClient.get('/provider/schedule/blocks', { params })
     // Backend returns array directly, ensure it's an array with safety check
     const timeBlocks = Array.isArray(response.data) ? response.data : []
@@ -687,9 +689,7 @@ export const providerApi = {
     return response.data
   },
 
-  updateProviderSettings: async (data: {
-    slotDuration: number
-  }): Promise<any> => {
+  updateProviderSettings: async (data: { slotDuration: number }): Promise<any> => {
     const response = await apiClient.put('/provider/settings', data)
     return response.data
   },
@@ -726,20 +726,22 @@ export const providerApi = {
     return response.data
   },
 
-  getTimeOffRequests: async (): Promise<Array<{
-    id: string
-    startDate: string
-    endDate: string
-    reason: string
-    notes?: string
-    status: string
-    durationDays: number
-    approvedBy?: string
-    approvedByName?: string
-    approvedAt?: string
-    createdAt: string
-    updatedAt: string
-  }>> => {
+  getTimeOffRequests: async (): Promise<
+    Array<{
+      id: string
+      startDate: string
+      endDate: string
+      reason: string
+      notes?: string
+      status: string
+      durationDays: number
+      approvedBy?: string
+      approvedByName?: string
+      approvedAt?: string
+      createdAt: string
+      updatedAt: string
+    }>
+  > => {
     const response = await apiClient.get('/provider/time-off')
     // Backend returns array directly, ensure it's an array with safety check
     const timeOffRequests = Array.isArray(response.data) ? response.data : []
@@ -771,14 +773,19 @@ export const providerApi = {
   },
 
   // Prescriptions
-  createPrescription: async (patientId: string, data: PrescriptionFormData): Promise<Prescription> => {
+  createPrescription: async (
+    patientId: string,
+    data: PrescriptionFormData
+  ): Promise<Prescription> => {
     const response = await apiClient.post(`/provider/patients/${patientId}/prescriptions`, data)
     return response.data
   },
 
   getPatientPrescriptions: async (patientId: string, status?: string): Promise<Prescription[]> => {
     const params = status ? { status } : {}
-    const response = await apiClient.get(`/provider/patients/${patientId}/prescriptions`, { params })
+    const response = await apiClient.get(`/provider/patients/${patientId}/prescriptions`, {
+      params,
+    })
     // Backend returns array directly, ensure it's an array with safety check
     const prescriptions = Array.isArray(response.data) ? response.data : []
     return prescriptions
@@ -903,4 +910,3 @@ export default {
   admin: adminApi,
   audit: auditApi,
 }
-

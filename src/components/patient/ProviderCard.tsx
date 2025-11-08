@@ -21,8 +21,10 @@ export default function ProviderCard({
   const initials = `${provider.firstName.charAt(0)}${provider.lastName.charAt(0)}`
 
   // Handle both Provider and ProviderSearchResult types
-  const photoUrl = 'photoUrl' in provider ? provider.photoUrl : ('avatar' in provider ? provider.avatar : undefined)
-  const npi = 'npi' in provider ? provider.npi : ('npiNumber' in provider ? provider.npiNumber : undefined)
+  const photoUrl =
+    'photoUrl' in provider ? provider.photoUrl : 'avatar' in provider ? provider.avatar : undefined
+  const npi =
+    'npi' in provider ? provider.npi : 'npiNumber' in provider ? provider.npiNumber : undefined
   const title = 'title' in provider ? provider.title : undefined
   const rating = 'rating' in provider ? provider.rating : undefined
   const reviewCount = 'reviewCount' in provider ? provider.reviewCount : undefined
@@ -53,7 +55,9 @@ export default function ProviderCard({
                     <Star className="h-4 w-4 fill-warning text-warning" />
                     <span className="text-sm font-medium">{rating.toFixed(1)}</span>
                     {reviewCount !== undefined && (
-                      <span className="text-sm text-neutral-blue-gray/70">({reviewCount} reviews)</span>
+                      <span className="text-sm text-neutral-blue-gray/70">
+                        ({reviewCount} reviews)
+                      </span>
                     )}
                   </div>
                 )}
@@ -71,7 +75,9 @@ export default function ProviderCard({
               {location && (
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
-                  <span>{location.city}, {location.state} {location.zipCode}</span>
+                  <span>
+                    {location.city}, {location.state} {location.zipCode}
+                  </span>
                 </div>
               )}
               {provider.languages && provider.languages.length > 0 && (
@@ -90,9 +96,7 @@ export default function ProviderCard({
 
             {/* Bio */}
             {provider.bio && (
-              <p className="text-sm text-neutral-blue-gray/70 line-clamp-2 pt-1">
-                {provider.bio}
-              </p>
+              <p className="text-sm text-neutral-blue-gray/70 line-clamp-2 pt-1">{provider.bio}</p>
             )}
 
             {/* Select Button */}

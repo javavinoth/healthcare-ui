@@ -54,13 +54,7 @@ export function ProtectedRoute({
 
   // Not authenticated - redirect to login
   if (!isAuthenticated || !sessionValid || !user) {
-    return (
-      <Navigate
-        to={redirectTo}
-        state={{ from: location.pathname }}
-        replace
-      />
-    )
+    return <Navigate to={redirectTo} state={{ from: location.pathname }} replace />
   }
 
   // Check role-based access
@@ -119,8 +113,8 @@ export function AccessDenied() {
           <h1 className="text-h2 mb-4">Access Denied</h1>
 
           <p className="text-body text-neutral-blue-gray mb-6">
-            You don't have permission to access this page. Please contact your administrator if
-            you believe this is an error.
+            You don't have permission to access this page. Please contact your administrator if you
+            believe this is an error.
           </p>
 
           {user && (

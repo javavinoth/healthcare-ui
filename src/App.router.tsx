@@ -66,267 +66,252 @@ function AppRouter() {
         <SessionMonitorWrapper>
           {/* Session Timeout Modal (shown globally when authenticated) */}
           <SessionTimeoutModal />
-        <Suspense
-          fallback={
-            <div className="min-h-screen flex items-center justify-center bg-neutral-light">
-              <div className="text-center">
-                <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
-                <p className="mt-4 text-neutral-blue-gray">Loading...</p>
+          <Suspense
+            fallback={
+              <div className="min-h-screen flex items-center justify-center bg-neutral-light">
+                <div className="text-center">
+                  <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
+                  <p className="mt-4 text-neutral-blue-gray">Loading...</p>
+                </div>
               </div>
-            </div>
-          }
-        >
-          <Routes>
-            {/* Public Routes */}
-            <Route
-              path="/"
-              element={
-                <SmartRedirect unauthenticatedBehavior="children">
-                  <Home />
-                </SmartRedirect>
-              }
-            />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/verify-2fa" element={<Verify2FA />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/access-denied" element={<AccessDenied />} />
+            }
+          >
+            <Routes>
+              {/* Public Routes */}
+              <Route
+                path="/"
+                element={
+                  <SmartRedirect unauthenticatedBehavior="children">
+                    <Home />
+                  </SmartRedirect>
+                }
+              />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/verify-2fa" element={<Verify2FA />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/access-denied" element={<AccessDenied />} />
 
-            {/* Protected Routes - Generic Dashboard (redirects to role-specific) */}
-            <Route
-              path="/dashboard"
-              element={<SmartRedirect unauthenticatedBehavior="/" />}
-            />
+              {/* Protected Routes - Generic Dashboard (redirects to role-specific) */}
+              <Route path="/dashboard" element={<SmartRedirect unauthenticatedBehavior="/" />} />
 
-            {/* Protected Routes - Profile */}
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
+              {/* Protected Routes - Profile */}
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Protected Routes - Patient Portal */}
-            <Route
-              path="/patient/dashboard"
-              element={
-                <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
-                  <PatientDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/patient/appointments"
-              element={
-                <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
-                  <PatientAppointments />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/patient/appointments/book"
-              element={
-                <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
-                  <PatientBookAppointment />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/patient/appointments/:id"
-              element={
-                <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
-                  <PatientAppointmentDetail />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/patient/medical-records"
-              element={
-                <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
-                  <PatientMedicalRecords />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/patient/medical-records/:id"
-              element={
-                <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
-                  <PatientMedicalRecordDetail />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/patient/messages"
-              element={
-                <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
-                  <PatientMessages />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/patient/*"
-              element={<Navigate to="/patient/dashboard" replace />}
-            />
+              {/* Protected Routes - Patient Portal */}
+              <Route
+                path="/patient/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                    <PatientDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/patient/appointments"
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                    <PatientAppointments />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/patient/appointments/book"
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                    <PatientBookAppointment />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/patient/appointments/:id"
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                    <PatientAppointmentDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/patient/medical-records"
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                    <PatientMedicalRecords />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/patient/medical-records/:id"
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                    <PatientMedicalRecordDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/patient/messages"
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.PATIENT]}>
+                    <PatientMessages />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/patient/*" element={<Navigate to="/patient/dashboard" replace />} />
 
-            {/* Protected Routes - Provider Portal */}
-            <Route
-              path="/provider/dashboard"
-              element={
-                <ProtectedRoute
-                  allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}
-                  requiredPermissions={[PERMISSIONS.VIEW_PATIENT_RECORDS]}
-                >
-                  <ProviderDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/provider/messages"
-              element={
-                <ProtectedRoute allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}>
-                  <ProviderMessages />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/provider/patients"
-              element={
-                <ProtectedRoute
-                  allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}
-                  requiredPermissions={[PERMISSIONS.VIEW_PATIENT_RECORDS]}
-                >
-                  <ProviderPatients />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/provider/patients/:id"
-              element={
-                <ProtectedRoute
-                  allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}
-                  requiredPermissions={[PERMISSIONS.VIEW_PATIENT_RECORDS]}
-                >
-                  <ProviderPatientDetail />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/provider/appointments/:id"
-              element={
-                <ProtectedRoute
-                  allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}
-                  requiredPermissions={[PERMISSIONS.VIEW_PATIENT_RECORDS]}
-                >
-                  <ProviderAppointmentDetail />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/provider/appointments"
-              element={
-                <ProtectedRoute
-                  allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}
-                  requiredPermissions={[PERMISSIONS.VIEW_PATIENT_RECORDS]}
-                >
-                  <ProviderAppointments />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/provider/schedule"
-              element={
-                <ProtectedRoute
-                  allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}
-                  requiredPermissions={[PERMISSIONS.MANAGE_SCHEDULE]}
-                >
-                  <ProviderSchedule />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/provider/*"
-              element={<Navigate to="/provider/dashboard" replace />}
-            />
+              {/* Protected Routes - Provider Portal */}
+              <Route
+                path="/provider/dashboard"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}
+                    requiredPermissions={[PERMISSIONS.VIEW_PATIENT_RECORDS]}
+                  >
+                    <ProviderDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/provider/messages"
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}>
+                    <ProviderMessages />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/provider/patients"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}
+                    requiredPermissions={[PERMISSIONS.VIEW_PATIENT_RECORDS]}
+                  >
+                    <ProviderPatients />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/provider/patients/:id"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}
+                    requiredPermissions={[PERMISSIONS.VIEW_PATIENT_RECORDS]}
+                  >
+                    <ProviderPatientDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/provider/appointments/:id"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}
+                    requiredPermissions={[PERMISSIONS.VIEW_PATIENT_RECORDS]}
+                  >
+                    <ProviderAppointmentDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/provider/appointments"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}
+                    requiredPermissions={[PERMISSIONS.VIEW_PATIENT_RECORDS]}
+                  >
+                    <ProviderAppointments />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/provider/schedule"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.DOCTOR, ROLES.NURSE]}
+                    requiredPermissions={[PERMISSIONS.MANAGE_SCHEDULE]}
+                  >
+                    <ProviderSchedule />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/provider/*" element={<Navigate to="/provider/dashboard" replace />} />
 
-            {/* Protected Routes - Admin System */}
-            <Route
-              path="/admin/dashboard"
-              element={
-                <ProtectedRoute
-                  allowedRoles={[ROLES.ADMIN]}
-                  requiredPermissions={[PERMISSIONS.MANAGE_USERS]}
-                >
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/users"
-              element={
-                <ProtectedRoute
-                  allowedRoles={[ROLES.ADMIN]}
-                  requiredPermissions={[PERMISSIONS.MANAGE_USERS]}
-                >
-                  <AdminUserManagement />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/*"
-              element={<Navigate to="/admin/dashboard" replace />}
-            />
+              {/* Protected Routes - Admin System */}
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.ADMIN]}
+                    requiredPermissions={[PERMISSIONS.MANAGE_USERS]}
+                  >
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/users"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.ADMIN]}
+                    requiredPermissions={[PERMISSIONS.MANAGE_USERS]}
+                  >
+                    <AdminUserManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/admin/*" element={<Navigate to="/admin/dashboard" replace />} />
 
-            {/* Protected Routes - Receptionist */}
-            <Route
-              path="/receptionist/dashboard"
-              element={
-                <ProtectedRoute allowedRoles={[ROLES.RECEPTIONIST]}>
-                  <ReceptionistDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/receptionist/messages"
-              element={
-                <ProtectedRoute allowedRoles={[ROLES.RECEPTIONIST]}>
-                  <ReceptionistMessages />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/receptionist/*"
-              element={<Navigate to="/receptionist/dashboard" replace />}
-            />
+              {/* Protected Routes - Receptionist */}
+              <Route
+                path="/receptionist/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.RECEPTIONIST]}>
+                    <ReceptionistDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/receptionist/messages"
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.RECEPTIONIST]}>
+                    <ReceptionistMessages />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/receptionist/*"
+                element={<Navigate to="/receptionist/dashboard" replace />}
+              />
 
-            {/* Protected Routes - Billing Staff */}
-            <Route
-              path="/billing/dashboard"
-              element={
-                <ProtectedRoute allowedRoles={[ROLES.BILLING_STAFF]}>
-                  <BillingDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/billing/messages"
-              element={
-                <ProtectedRoute allowedRoles={[ROLES.BILLING_STAFF]}>
-                  <BillingMessages />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/billing/*"
-              element={<Navigate to="/billing/dashboard" replace />}
-            />
+              {/* Protected Routes - Billing Staff */}
+              <Route
+                path="/billing/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.BILLING_STAFF]}>
+                    <BillingDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/billing/messages"
+                element={
+                  <ProtectedRoute allowedRoles={[ROLES.BILLING_STAFF]}>
+                    <BillingMessages />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/billing/*" element={<Navigate to="/billing/dashboard" replace />} />
 
-            {/* 404 Not Found - Smart redirect based on auth status */}
-            <Route path="*" element={<SmartRedirect unauthenticatedBehavior="/" />} />
-          </Routes>
-        </Suspense>
+              {/* 404 Not Found - Smart redirect based on auth status */}
+              <Route path="*" element={<SmartRedirect unauthenticatedBehavior="/" />} />
+            </Routes>
+          </Suspense>
         </SessionMonitorWrapper>
       </BrowserRouter>
 

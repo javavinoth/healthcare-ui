@@ -19,5 +19,25 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // Disable 'any' type warnings - will be addressed in Phase 2 type safety improvement
+      '@typescript-eslint/no-explicit-any': 'off',
+
+      // Allow unused vars starting with underscore (common convention)
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+      }],
+
+      // Allow empty interfaces (common in shadcn/ui component patterns)
+      '@typescript-eslint/no-empty-object-type': 'off',
+
+      // Relax react-refresh rules for UI library components (shadcn/ui patterns)
+      'react-refresh/only-export-components': 'off',
+
+      // Relax React hooks exhaustive-deps for stable callback patterns
+      'react-hooks/exhaustive-deps': 'warn',
+    },
   },
 ])

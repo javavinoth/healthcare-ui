@@ -126,14 +126,14 @@ export function addSessionChangeListener(listener: SessionChangeListener): void 
  * Remove a session change listener
  */
 export function removeSessionChangeListener(listener: SessionChangeListener): void {
-  listeners = listeners.filter(l => l !== listener)
+  listeners = listeners.filter((l) => l !== listener)
 }
 
 /**
  * Notify all listeners of a session change
  */
 function notifyListeners(sessionId: string | null): void {
-  listeners.forEach(listener => {
+  listeners.forEach((listener) => {
     try {
       listener(sessionId)
     } catch (error) {

@@ -9,7 +9,12 @@ interface NotesListProps {
 }
 
 export default function NotesList({ patientId }: NotesListProps) {
-  const { data: notes, isLoading, isError, error } = useQuery({
+  const {
+    data: notes,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ['provider', 'patients', patientId, 'notes'],
     queryFn: () => providerApi.getPatientVisitNotes(patientId),
   })
@@ -35,7 +40,8 @@ export default function NotesList({ patientId }: NotesListProps) {
         <AlertCircle className="h-8 w-8 text-destructive mx-auto mb-2" />
         <h3 className="text-lg font-semibold text-destructive mb-2">Error Loading Visit Notes</h3>
         <p className="text-sm text-muted-foreground">
-          {(error as any)?.response?.data?.message || 'Failed to load visit notes. Please try again.'}
+          {(error as any)?.response?.data?.message ||
+            'Failed to load visit notes. Please try again.'}
         </p>
       </div>
     )
@@ -47,7 +53,8 @@ export default function NotesList({ patientId }: NotesListProps) {
         <FileText className="h-12 w-12 text-muted-foreground mb-4" />
         <h3 className="text-lg font-semibold mb-2">No Visit Notes</h3>
         <p className="text-sm text-muted-foreground max-w-md">
-          No clinical visit notes have been created for this patient yet. Click "Add Visit Note" to create one.
+          No clinical visit notes have been created for this patient yet. Click "Add Visit Note" to
+          create one.
         </p>
       </div>
     )

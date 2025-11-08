@@ -27,19 +27,24 @@ import { useToast } from '@/components/ui/use-toast'
 import { Loader2, Plus } from 'lucide-react'
 import { format } from 'date-fns'
 
-const timeOffSchema = z.object({
-  startDate: z.string().min(1, 'Start date is required'),
-  endDate: z.string().min(1, 'End date is required'),
-  reason: z.string().min(1, 'Reason is required'),
-  notes: z.string().max(1000, 'Notes cannot exceed 1000 characters').optional(),
-}).refine((data) => {
-  const start = new Date(data.startDate)
-  const end = new Date(data.endDate)
-  return end >= start
-}, {
-  message: 'End date must be on or after start date',
-  path: ['endDate'],
-})
+const timeOffSchema = z
+  .object({
+    startDate: z.string().min(1, 'Start date is required'),
+    endDate: z.string().min(1, 'End date is required'),
+    reason: z.string().min(1, 'Reason is required'),
+    notes: z.string().max(1000, 'Notes cannot exceed 1000 characters').optional(),
+  })
+  .refine(
+    (data) => {
+      const start = new Date(data.startDate)
+      const end = new Date(data.endDate)
+      return end >= start
+    },
+    {
+      message: 'End date must be on or after start date',
+      path: ['endDate'],
+    }
+  )
 
 type TimeOffFormData = z.infer<typeof timeOffSchema>
 
@@ -90,7 +95,8 @@ export default function TimeOffRequestDialog() {
     onError: (error: any) => {
       toast({
         title: 'Request Failed',
-        description: error.response?.data?.message || 'Failed to submit time-off request. Please try again.',
+        description:
+          error.response?.data?.message || 'Failed to submit time-off request. Please try again.',
         variant: 'destructive',
       })
     },
@@ -112,7 +118,8 @@ export default function TimeOffRequestDialog() {
         <DialogHeader>
           <DialogTitle>Request Time Off</DialogTitle>
           <DialogDescription>
-            Submit a time-off request for vacation, sick leave, or other reasons. Your request will require admin approval.
+            Submit a time-off request for vacation, sick leave, or other reasons. Your request will
+            require admin approval.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
@@ -164,9 +171,7 @@ export default function TimeOffRequestDialog() {
                 ))}
               </SelectContent>
             </Select>
-            {errors.reason && (
-              <p className="text-sm text-destructive">{errors.reason.message}</p>
-            )}
+            {errors.reason && <p className="text-sm text-destructive">{errors.reason.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -178,9 +183,7 @@ export default function TimeOffRequestDialog() {
               rows={3}
               className={errors.notes ? 'border-destructive' : ''}
             />
-            {errors.notes && (
-              <p className="text-sm text-destructive">{errors.notes.message}</p>
-            )}
+            {errors.notes && <p className="text-sm text-destructive">{errors.notes.message}</p>}
           </div>
 
           <div className="flex justify-end gap-3 pt-4">

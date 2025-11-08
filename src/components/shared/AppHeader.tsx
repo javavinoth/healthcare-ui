@@ -50,9 +50,7 @@ export default function AppHeader({ title, showBackButton = false, backPath }: A
   const handleLogoClick = () => {
     if (!user) return
 
-    const role = user.role.toLowerCase()
-
-    switch (role) {
+    switch (user.role) {
       case 'patient':
         navigate('/patient/dashboard')
         break
@@ -75,7 +73,10 @@ export default function AppHeader({ title, showBackButton = false, backPath }: A
   }
 
   const getRoleBadgeVariant = (role: string) => {
-    const variants: Record<string, 'default' | 'secondary' | 'success' | 'warning' | 'info' | 'destructive'> = {
+    const variants: Record<
+      string,
+      'default' | 'secondary' | 'success' | 'warning' | 'info' | 'destructive'
+    > = {
       ADMIN: 'destructive',
       DOCTOR: 'success',
       NURSE: 'info',
@@ -96,17 +97,19 @@ export default function AppHeader({ title, showBackButton = false, backPath }: A
         <div className="flex items-center justify-between h-16">
           {/* Left: Logo/Title */}
           <div className="flex items-center gap-4">
-            {showBackButton && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(backPath || -1 as any)}
-                className="mr-2"
-              >
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                Back
-              </Button>
-            )}
+            <div className="flex items-center gap-2">
+              {showBackButton && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate(backPath || (-1 as any))}
+                  aria-label="Go back"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Back
+                </Button>
+              )}
+            </div>
 
             <div
               className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
@@ -150,9 +153,7 @@ export default function AppHeader({ title, showBackButton = false, backPath }: A
                     <p className="text-xs text-neutral-blue-gray/60">{user.email}</p>
                   </div>
                 </div>
-                <Badge variant={getRoleBadgeVariant(user.role)}>
-                  {getRoleDisplay(user.role)}
-                </Badge>
+                <Badge variant={getRoleBadgeVariant(user.role)}>{getRoleDisplay(user.role)}</Badge>
               </div>
 
               {/* Action Buttons */}

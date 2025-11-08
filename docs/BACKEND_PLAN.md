@@ -1,6 +1,7 @@
 # Backend Development Plan - Patient Portal (Phase 1)
 
 ## Overview
+
 This document outlines the backend requirements for supporting the Patient Portal UI implementation. The plan covers REST API endpoints, database schema, authentication, validation, and integration patterns.
 
 ---
@@ -10,12 +11,14 @@ This document outlines the backend requirements for supporting the Patient Porta
 ### 1.1 Appointments API
 
 #### Get Appointments List
+
 ```http
 GET /api/appointments
 Authorization: Bearer <token>
 ```
 
 **Query Parameters:**
+
 - `status` (optional): Filter by appointment status
   - Values: `scheduled`, `confirmed`, `checked_in`, `completed`, `cancelled`, `no_show`
 - `startDate` (optional): ISO 8601 date string
@@ -25,6 +28,7 @@ Authorization: Bearer <token>
 - `limit` (optional): Items per page (default: 20)
 
 **Response (200 OK):**
+
 ```json
 {
   "data": [
@@ -63,6 +67,7 @@ Authorization: Bearer <token>
 ```
 
 **Error Responses:**
+
 - `401 Unauthorized`: Invalid or missing token
 - `403 Forbidden`: User doesn't have permission
 - `500 Internal Server Error`: Server error
@@ -70,12 +75,14 @@ Authorization: Bearer <token>
 ---
 
 #### Get Appointment by ID
+
 ```http
 GET /api/appointments/:id
 Authorization: Bearer <token>
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "id": "string",
@@ -110,6 +117,7 @@ Authorization: Bearer <token>
 ```
 
 **Error Responses:**
+
 - `401 Unauthorized`: Invalid or missing token
 - `403 Forbidden`: User doesn't own this appointment
 - `404 Not Found`: Appointment not found
@@ -118,6 +126,7 @@ Authorization: Bearer <token>
 ---
 
 #### Create Appointment
+
 ```http
 POST /api/appointments
 Authorization: Bearer <token>
@@ -125,6 +134,7 @@ Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
   "providerId": "string (required)",
@@ -138,6 +148,7 @@ Content-Type: application/json
 ```
 
 **Appointment Types:**
+
 - `routine_checkup`
 - `follow_up`
 - `consultation`
@@ -148,6 +159,7 @@ Content-Type: application/json
 - `telehealth`
 
 **Response (201 Created):**
+
 ```json
 {
   "id": "string",
@@ -169,6 +181,7 @@ Content-Type: application/json
 ```
 
 **Error Responses:**
+
 - `400 Bad Request`: Validation errors
 - `401 Unauthorized`: Invalid or missing token
 - `403 Forbidden`: User doesn't have permission
@@ -178,6 +191,7 @@ Content-Type: application/json
 ---
 
 #### Reschedule Appointment
+
 ```http
 PUT /api/appointments/:id/reschedule
 Authorization: Bearer <token>
@@ -185,6 +199,7 @@ Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
   "date": "2025-01-20 (required)",
@@ -194,6 +209,7 @@ Content-Type: application/json
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "id": "string",
@@ -213,6 +229,7 @@ Content-Type: application/json
 ```
 
 **Error Responses:**
+
 - `400 Bad Request`: Invalid date/time or validation errors
 - `401 Unauthorized`: Invalid or missing token
 - `403 Forbidden`: User doesn't own this appointment
@@ -224,6 +241,7 @@ Content-Type: application/json
 ---
 
 #### Cancel Appointment
+
 ```http
 DELETE /api/appointments/:id/cancel
 Authorization: Bearer <token>
@@ -231,6 +249,7 @@ Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
   "reason": "string (required, min 10 chars)"
@@ -238,6 +257,7 @@ Content-Type: application/json
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "message": "Appointment cancelled successfully",
@@ -249,6 +269,7 @@ Content-Type: application/json
 ```
 
 **Error Responses:**
+
 - `400 Bad Request`: Validation errors
 - `401 Unauthorized`: Invalid or missing token
 - `403 Forbidden`: User doesn't own this appointment
@@ -261,6 +282,7 @@ Content-Type: application/json
 ### 1.2 Providers API
 
 #### Search Providers
+
 ```http
 POST /api/appointments/search-providers
 Authorization: Bearer <token>
@@ -268,6 +290,7 @@ Content-Type: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
   "specialty": "string (optional)",
@@ -278,6 +301,7 @@ Content-Type: application/json
 ```
 
 **Specialty Options:**
+
 - `cardiology`
 - `dermatology`
 - `family_medicine`
@@ -294,6 +318,7 @@ Content-Type: application/json
 - `urology`
 
 **Response (200 OK):**
+
 ```json
 {
   "data": [
@@ -330,39 +355,36 @@ Content-Type: application/json
 ```
 
 **Error Responses:**
+
 - `401 Unauthorized`: Invalid or missing token
 - `500 Internal Server Error`: Server error
 
 ---
 
 #### Get Provider Available Slots
+
 ```http
 GET /api/providers/:providerId/available-slots
 Authorization: Bearer <token>
 ```
 
 **Query Parameters:**
+
 - `date` (required): ISO 8601 date string
 - `duration` (optional): Appointment duration in minutes (default: 30)
 
 **Response (200 OK):**
+
 ```json
 {
   "date": "2025-01-15",
   "providerId": "string",
-  "slots": [
-    "09:00 AM",
-    "09:30 AM",
-    "10:00 AM",
-    "10:30 AM",
-    "02:00 PM",
-    "02:30 PM",
-    "03:00 PM"
-  ]
+  "slots": ["09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "02:00 PM", "02:30 PM", "03:00 PM"]
 }
 ```
 
 **Error Responses:**
+
 - `400 Bad Request`: Invalid date format
 - `401 Unauthorized`: Invalid or missing token
 - `404 Not Found`: Provider not found
@@ -373,12 +395,14 @@ Authorization: Bearer <token>
 ### 1.3 Medical Records API
 
 #### Get Medical Records
+
 ```http
 GET /api/medical-records
 Authorization: Bearer <token>
 ```
 
 **Query Parameters:**
+
 - `type` (optional): Filter by record type
   - Values: `lab_result`, `visit_note`, `prescription`, `imaging`, `referral`
 - `startDate` (optional): ISO 8601 date string
@@ -387,6 +411,7 @@ Authorization: Bearer <token>
 - `limit` (optional): Items per page (default: 20)
 
 **Response (200 OK):**
+
 ```json
 {
   "data": [
@@ -428,6 +453,7 @@ Authorization: Bearer <token>
 ```
 
 **Error Responses:**
+
 - `401 Unauthorized`: Invalid or missing token
 - `403 Forbidden`: User doesn't have permission
 - `500 Internal Server Error`: Server error
@@ -435,15 +461,18 @@ Authorization: Bearer <token>
 ---
 
 #### Download Medical Record Attachment
+
 ```http
 GET /api/medical-records/:recordId/attachments/:attachmentId/download
 Authorization: Bearer <token>
 ```
 
 **Response (200 OK):**
+
 - Returns file stream with appropriate Content-Type and Content-Disposition headers
 
 **Error Responses:**
+
 - `401 Unauthorized`: Invalid or missing token
 - `403 Forbidden`: User doesn't own this record
 - `404 Not Found`: Record or attachment not found
@@ -454,6 +483,7 @@ Authorization: Bearer <token>
 ## 2. Database Schema
 
 ### 2.1 Appointments Table
+
 ```sql
 CREATE TABLE appointments (
   id VARCHAR(36) PRIMARY KEY,
@@ -505,6 +535,7 @@ CREATE TABLE appointments (
 ```
 
 ### 2.2 Providers Table (Extended User Information)
+
 ```sql
 CREATE TABLE provider_profiles (
   id VARCHAR(36) PRIMARY KEY,
@@ -536,6 +567,7 @@ CREATE TABLE provider_profiles (
 ```
 
 ### 2.3 Provider Locations Table
+
 ```sql
 CREATE TABLE provider_locations (
   id VARCHAR(36) PRIMARY KEY,
@@ -557,6 +589,7 @@ CREATE TABLE provider_locations (
 ```
 
 ### 2.4 Provider Availability Table
+
 ```sql
 CREATE TABLE provider_availability (
   id VARCHAR(36) PRIMARY KEY,
@@ -575,6 +608,7 @@ CREATE TABLE provider_availability (
 ```
 
 ### 2.5 Medical Records Table
+
 ```sql
 CREATE TABLE medical_records (
   id VARCHAR(36) PRIMARY KEY,
@@ -607,6 +641,7 @@ CREATE TABLE medical_records (
 ```
 
 ### 2.6 Medical Record Attachments Table
+
 ```sql
 CREATE TABLE medical_record_attachments (
   id VARCHAR(36) PRIMARY KEY,
@@ -629,6 +664,7 @@ CREATE TABLE medical_record_attachments (
 ## 3. Authentication & Authorization
 
 ### 3.1 Authentication Requirements
+
 - All endpoints require valid JWT token in `Authorization: Bearer <token>` header
 - Tokens must be validated on every request
 - Token payload must include:
@@ -641,6 +677,7 @@ CREATE TABLE medical_record_attachments (
 ### 3.2 Authorization Rules
 
 #### Appointments
+
 - **GET /api/appointments**: Patients can only view their own appointments
 - **GET /api/appointments/:id**: Patients can only view their own appointments
 - **POST /api/appointments**: Only patients can create appointments
@@ -648,14 +685,17 @@ CREATE TABLE medical_record_attachments (
 - **DELETE /api/appointments/:id/cancel**: Only the appointment owner can cancel
 
 #### Providers
+
 - **POST /api/appointments/search-providers**: Any authenticated user can search
 - **GET /api/providers/:providerId/available-slots**: Any authenticated user can view
 
 #### Medical Records
+
 - **GET /api/medical-records**: Patients can only view their own records
 - **GET /api/medical-records/:recordId/attachments/:attachmentId/download**: Only record owner can download
 
 ### 3.3 Role Checking Implementation
+
 ```javascript
 // Backend must normalize roles to lowercase for comparison
 function hasRole(user, requiredRole) {
@@ -664,7 +704,7 @@ function hasRole(user, requiredRole) {
 
 function hasAnyRole(user, requiredRoles) {
   const userRole = user.role.toLowerCase()
-  return requiredRoles.some(role => role.toLowerCase() === userRole)
+  return requiredRoles.some((role) => role.toLowerCase() === userRole)
 }
 ```
 
@@ -673,30 +713,25 @@ function hasAnyRole(user, requiredRoles) {
 ## 4. Validation Rules
 
 ### 4.1 Appointment Booking Validation
+
 ```javascript
 const appointmentBookingValidation = {
   providerId: {
     required: true,
     type: 'string',
-    minLength: 1
+    minLength: 1,
   },
   date: {
     required: true,
     type: 'date',
     format: 'YYYY-MM-DD',
-    validation: [
-      'Must be today or future date',
-      'Cannot be more than 6 months in advance'
-    ]
+    validation: ['Must be today or future date', 'Cannot be more than 6 months in advance'],
   },
   time: {
     required: true,
     type: 'string',
     format: 'hh:mm AM/PM',
-    validation: [
-      'Must match provider available slots',
-      'Slot must not be already booked'
-    ]
+    validation: ['Must match provider available slots', 'Slot must not be already booked'],
   },
   type: {
     required: true,
@@ -709,65 +744,76 @@ const appointmentBookingValidation = {
       'procedure',
       'lab_work',
       'vaccination',
-      'telehealth'
-    ]
+      'telehealth',
+    ],
   },
   reason: {
     required: true,
     type: 'string',
     minLength: 10,
     maxLength: 500,
-    sanitize: true
+    sanitize: true,
   },
   notes: {
     required: false,
     type: 'string',
     maxLength: 1000,
-    sanitize: true
+    sanitize: true,
   },
   isVirtual: {
     required: false,
     type: 'boolean',
-    default: false
-  }
+    default: false,
+  },
 }
 ```
 
 ### 4.2 Provider Search Validation
+
 ```javascript
 const providerSearchValidation = {
   specialty: {
     required: false,
     type: 'enum',
     values: [
-      'cardiology', 'dermatology', 'family_medicine',
-      'internal_medicine', 'neurology', 'obstetrics_gynecology',
-      'oncology', 'ophthalmology', 'orthopedics',
-      'pediatrics', 'psychiatry', 'radiology',
-      'surgery', 'urology'
-    ]
+      'cardiology',
+      'dermatology',
+      'family_medicine',
+      'internal_medicine',
+      'neurology',
+      'obstetrics_gynecology',
+      'oncology',
+      'ophthalmology',
+      'orthopedics',
+      'pediatrics',
+      'psychiatry',
+      'radiology',
+      'surgery',
+      'urology',
+    ],
   },
   location: {
     required: false,
     type: 'string',
     maxLength: 200,
-    sanitize: true
+    sanitize: true,
   },
   date: {
     required: false,
     type: 'date',
-    format: 'YYYY-MM-DD'
+    format: 'YYYY-MM-DD',
   },
   insuranceAccepted: {
     required: false,
     type: 'string',
     maxLength: 100,
-    sanitize: true
-  }
+    sanitize: true,
+  },
 }
 ```
 
 ### 4.3 Cancellation Validation
+
 ```javascript
 const cancellationValidation = {
   reason: {
@@ -775,8 +821,8 @@ const cancellationValidation = {
     type: 'string',
     minLength: 10,
     maxLength: 500,
-    sanitize: true
-  }
+    sanitize: true,
+  },
 }
 ```
 
@@ -785,6 +831,7 @@ const cancellationValidation = {
 ## 5. Error Handling
 
 ### 5.1 Standard Error Response Format
+
 ```json
 {
   "error": {
@@ -803,6 +850,7 @@ const cancellationValidation = {
 ```
 
 ### 5.2 Error Codes
+
 - `VALIDATION_ERROR`: Request validation failed
 - `AUTHENTICATION_ERROR`: Invalid or missing token
 - `AUTHORIZATION_ERROR`: User doesn't have permission
@@ -813,6 +861,7 @@ const cancellationValidation = {
 - `RATE_LIMIT_EXCEEDED`: Too many requests
 
 ### 5.3 Business Logic Validations
+
 1. **Appointment Booking**:
    - Time slot must be available (not already booked)
    - Date must be in the future
@@ -837,21 +886,12 @@ const cancellationValidation = {
 
 ```javascript
 const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    process.env.FRONTEND_URL
-  ],
+  origin: ['http://localhost:5173', 'http://localhost:3000', process.env.FRONTEND_URL],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'X-CSRF-Token'
-  ],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-CSRF-Token'],
   exposedHeaders: ['X-Total-Count', 'X-Page', 'X-Per-Page'],
-  maxAge: 86400 // 24 hours
+  maxAge: 86400, // 24 hours
 }
 ```
 
@@ -860,35 +900,39 @@ const corsOptions = {
 ## 7. Security Requirements
 
 ### 7.1 HIPAA Compliance
+
 - All PHI (Protected Health Information) must be encrypted at rest and in transit
 - Audit logging for all data access and modifications
 - Data retention policies must be enforced
 - Patient consent must be tracked for data sharing
 
 ### 7.2 Rate Limiting
+
 ```javascript
 const rateLimits = {
   general: {
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // 100 requests per 15 minutes
+    max: 100, // 100 requests per 15 minutes
   },
   auth: {
     windowMs: 15 * 60 * 1000,
-    max: 5 // 5 login attempts per 15 minutes
+    max: 5, // 5 login attempts per 15 minutes
   },
   appointments: {
     windowMs: 60 * 60 * 1000, // 1 hour
-    max: 10 // 10 appointment bookings per hour
-  }
+    max: 10, // 10 appointment bookings per hour
+  },
 }
 ```
 
 ### 7.3 Input Sanitization
+
 - All text inputs must be sanitized to prevent XSS
 - SQL injection prevention using parameterized queries
 - File uploads must be validated (type, size, content)
 
 ### 7.4 CSRF Protection
+
 - CSRF tokens required for all state-changing operations
 - Token must be included in request headers: `X-CSRF-Token`
 
@@ -897,16 +941,18 @@ const rateLimits = {
 ## 8. Caching Strategy
 
 ### 8.1 Cache-Control Headers
+
 ```javascript
 const cacheStrategies = {
   appointments: 'no-store', // Never cache PHI
   medicalRecords: 'no-store', // Never cache PHI
   providers: 'public, max-age=300', // 5 minutes
-  availableSlots: 'private, max-age=60' // 1 minute
+  availableSlots: 'private, max-age=60', // 1 minute
 }
 ```
 
 ### 8.2 ETags
+
 - Implement ETag support for provider search results
 - Client sends `If-None-Match` header
 - Server returns `304 Not Modified` if content unchanged
@@ -916,17 +962,20 @@ const cacheStrategies = {
 ## 9. Performance Requirements
 
 ### 9.1 Response Time Targets
+
 - API endpoint response time: < 200ms (95th percentile)
 - Search providers: < 500ms (95th percentile)
 - File downloads: < 2s for files up to 10MB
 
 ### 9.2 Database Optimization
+
 - Use database indexes on frequently queried fields
 - Implement pagination for all list endpoints
 - Use database connection pooling
 - Consider read replicas for heavy read operations
 
 ### 9.3 Query Optimization
+
 ```sql
 -- Example: Efficient appointment query with provider join
 SELECT
@@ -951,12 +1000,14 @@ LIMIT 3;
 ## 10. Testing Requirements
 
 ### 10.1 Unit Tests
+
 - Test all validation functions
 - Test authorization logic
 - Test business logic (slot availability, booking conflicts)
 - Test error handling
 
 ### 10.2 Integration Tests
+
 - Test complete appointment booking flow
 - Test appointment rescheduling flow
 - Test appointment cancellation flow
@@ -964,6 +1015,7 @@ LIMIT 3;
 - Test medical records retrieval
 
 ### 10.3 Load Tests
+
 - Simulate 100 concurrent users booking appointments
 - Test database performance under load
 - Test API rate limiting
@@ -973,6 +1025,7 @@ LIMIT 3;
 ## 11. Monitoring & Logging
 
 ### 11.1 Audit Logs
+
 ```javascript
 const auditLogEntry = {
   timestamp: '2025-01-10T14:30:00Z',
@@ -988,18 +1041,20 @@ const auditLogEntry = {
   details: {
     providerId: 'string',
     date: '2025-01-15',
-    time: '10:00 AM'
-  }
+    time: '10:00 AM',
+  },
 }
 ```
 
 ### 11.2 Application Logs
+
 - Log all API requests with request ID
 - Log all errors with stack traces
 - Log slow queries (> 1 second)
 - Log authentication failures
 
 ### 11.3 Metrics to Track
+
 - API response times (p50, p95, p99)
 - Error rates by endpoint
 - Database query performance
@@ -1011,6 +1066,7 @@ const auditLogEntry = {
 ## 12. API Integration Checklist
 
 ### Phase 1: Core Setup
+
 - [ ] Set up database schema and migrations
 - [ ] Implement authentication middleware
 - [ ] Implement authorization middleware
@@ -1019,6 +1075,7 @@ const auditLogEntry = {
 - [ ] Set up audit logging
 
 ### Phase 2: Appointments API
+
 - [ ] Implement GET /api/appointments (list)
 - [ ] Implement GET /api/appointments/:id (detail)
 - [ ] Implement POST /api/appointments (create)
@@ -1029,6 +1086,7 @@ const auditLogEntry = {
 - [ ] Add integration tests for appointment flows
 
 ### Phase 3: Providers API
+
 - [ ] Implement POST /api/appointments/search-providers
 - [ ] Implement GET /api/providers/:providerId/available-slots
 - [ ] Seed provider data (at least 20 providers across specialties)
@@ -1037,6 +1095,7 @@ const auditLogEntry = {
 - [ ] Add integration tests for provider endpoints
 
 ### Phase 4: Medical Records API
+
 - [ ] Implement GET /api/medical-records
 - [ ] Implement GET /api/medical-records/:recordId/attachments/:attachmentId/download
 - [ ] Set up file storage (S3 or local)
@@ -1046,6 +1105,7 @@ const auditLogEntry = {
 - [ ] Add integration tests for file downloads
 
 ### Phase 5: Testing & Documentation
+
 - [ ] Complete API documentation (Swagger/OpenAPI)
 - [ ] Perform load testing
 - [ ] Perform security audit
@@ -1100,17 +1160,20 @@ SESSION_TIMEOUT=900000
 ## 14. Deployment Considerations
 
 ### 14.1 Infrastructure
+
 - Use load balancer for horizontal scaling
 - Set up database read replicas for read-heavy operations
 - Use CDN for static assets and provider photos
 - Implement health check endpoint: `GET /health`
 
 ### 14.2 Database Migrations
+
 - Use migration tool (e.g., Flyway, Liquibase, or framework-specific tool)
 - Version all schema changes
 - Test migrations in staging environment first
 
 ### 14.3 Rollback Strategy
+
 - Keep at least 3 previous versions deployable
 - Database migrations must be backward compatible
 - Implement feature flags for new features
@@ -1137,6 +1200,7 @@ SESSION_TIMEOUT=900000
 ## Appendix A: Sample Test Data
 
 ### Sample Providers
+
 ```json
 {
   "id": "provider-1",
@@ -1156,6 +1220,7 @@ SESSION_TIMEOUT=900000
 ```
 
 ### Sample Appointments
+
 ```json
 {
   "id": "appt-1",
@@ -1172,6 +1237,7 @@ SESSION_TIMEOUT=900000
 ```
 
 ### Sample Medical Records
+
 ```json
 {
   "id": "record-1",

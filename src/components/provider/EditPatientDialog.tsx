@@ -16,7 +16,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useToast } from '@/components/ui/use-toast'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { X } from 'lucide-react'
 import type { PatientDetail } from '@/types'
@@ -32,7 +38,11 @@ const patientSchema = z.object({
   addressLine2: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
-  zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code').optional().or(z.literal('')),
+  zipCode: z
+    .string()
+    .regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code')
+    .optional()
+    .or(z.literal('')),
   insuranceProvider: z.string().optional(),
   insurancePolicyNumber: z.string().optional(),
   insuranceGroupNumber: z.string().optional(),
@@ -49,18 +59,12 @@ interface EditPatientDialogProps {
   patient: PatientDetail
 }
 
-export default function EditPatientDialog({
-  open,
-  onOpenChange,
-  patient,
-}: EditPatientDialogProps) {
+export default function EditPatientDialog({ open, onOpenChange, patient }: EditPatientDialogProps) {
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const [allergies, setAllergies] = useState<string[]>(patient.allergies || [])
   const [newAllergy, setNewAllergy] = useState('')
-  const [medications, setMedications] = useState<string[]>(
-    patient.currentMedications || []
-  )
+  const [medications, setMedications] = useState<string[]>(patient.currentMedications || [])
   const [newMedication, setNewMedication] = useState('')
 
   const {
@@ -147,9 +151,7 @@ export default function EditPatientDialog({
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Patient Information</DialogTitle>
-          <DialogDescription>
-            Update patient demographics and medical information
-          </DialogDescription>
+          <DialogDescription>Update patient demographics and medical information</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -168,18 +170,14 @@ export default function EditPatientDialog({
                   <Label htmlFor="firstName">First Name *</Label>
                   <Input id="firstName" {...register('firstName')} />
                   {errors.firstName && (
-                    <p className="text-sm text-destructive mt-1">
-                      {errors.firstName.message}
-                    </p>
+                    <p className="text-sm text-destructive mt-1">{errors.firstName.message}</p>
                   )}
                 </div>
                 <div>
                   <Label htmlFor="lastName">Last Name *</Label>
                   <Input id="lastName" {...register('lastName')} />
                   {errors.lastName && (
-                    <p className="text-sm text-destructive mt-1">
-                      {errors.lastName.message}
-                    </p>
+                    <p className="text-sm text-destructive mt-1">{errors.lastName.message}</p>
                   )}
                 </div>
               </div>
@@ -202,9 +200,7 @@ export default function EditPatientDialog({
                       <SelectItem value="MALE">Male</SelectItem>
                       <SelectItem value="FEMALE">Female</SelectItem>
                       <SelectItem value="OTHER">Other</SelectItem>
-                      <SelectItem value="PREFER_NOT_TO_SAY">
-                        Prefer not to say
-                      </SelectItem>
+                      <SelectItem value="PREFER_NOT_TO_SAY">Prefer not to say</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -233,11 +229,7 @@ export default function EditPatientDialog({
                   {allergies.map((allergy) => (
                     <Badge key={allergy} variant="destructive">
                       {allergy}
-                      <button
-                        type="button"
-                        onClick={() => removeAllergy(allergy)}
-                        className="ml-2"
-                      >
+                      <button type="button" onClick={() => removeAllergy(allergy)} className="ml-2">
                         <X className="h-3 w-3" />
                       </button>
                     </Badge>
@@ -253,9 +245,7 @@ export default function EditPatientDialog({
                     value={newMedication}
                     onChange={(e) => setNewMedication(e.target.value)}
                     placeholder="Add medication"
-                    onKeyPress={(e) =>
-                      e.key === 'Enter' && (e.preventDefault(), addMedication())
-                    }
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addMedication())}
                   />
                   <Button type="button" onClick={addMedication}>
                     Add
@@ -268,10 +258,7 @@ export default function EditPatientDialog({
                       className="flex items-center justify-between bg-gray-100 p-2 rounded"
                     >
                       <span className="text-sm">{medication}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeMedication(medication)}
-                      >
+                      <button type="button" onClick={() => removeMedication(medication)}>
                         <X className="h-4 w-4" />
                       </button>
                     </div>
@@ -303,9 +290,7 @@ export default function EditPatientDialog({
                   <Label htmlFor="zipCode">ZIP Code</Label>
                   <Input id="zipCode" {...register('zipCode')} />
                   {errors.zipCode && (
-                    <p className="text-sm text-destructive mt-1">
-                      {errors.zipCode.message}
-                    </p>
+                    <p className="text-sm text-destructive mt-1">{errors.zipCode.message}</p>
                   )}
                 </div>
               </div>
@@ -345,9 +330,7 @@ export default function EditPatientDialog({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="emergencyContactRelationship">
-                    Relationship
-                  </Label>
+                  <Label htmlFor="emergencyContactRelationship">Relationship</Label>
                   <Input
                     id="emergencyContactRelationship"
                     {...register('emergencyContactRelationship')}

@@ -31,7 +31,19 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
-import { format, startOfWeek, endOfWeek, addDays, addWeeks, addMonths, subDays, subWeeks, subMonths, startOfMonth, endOfMonth } from 'date-fns'
+import {
+  format,
+  startOfWeek,
+  endOfWeek,
+  addDays,
+  addWeeks,
+  addMonths,
+  subDays,
+  subWeeks,
+  subMonths,
+  startOfMonth,
+  endOfMonth,
+} from 'date-fns'
 
 type AppointmentEvent = {
   id: string
@@ -65,8 +77,7 @@ export default function ProviderAppointmentsPage() {
   const [startDate, setStartDate] = useState(startOfWeek(today))
   const [endDate, setEndDate] = useState(endOfWeek(today))
   const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [selectedAppointment, setSelectedAppointment] =
-    useState<AppointmentEvent | null>(null)
+  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentEvent | null>(null)
   const [dialogState, setDialogState] = useState<DialogState>({
     checkIn: false,
     complete: false,
@@ -108,12 +119,13 @@ export default function ProviderAppointmentsPage() {
     // Sort dates
     return Object.keys(grouped)
       .sort()
-      .reduce((acc, date) => {
-        acc[date] = grouped[date].sort((a, b) =>
-          a.startTime.localeCompare(b.startTime)
-        )
-        return acc
-      }, {} as Record<string, AppointmentEvent[]>)
+      .reduce(
+        (acc, date) => {
+          acc[date] = grouped[date].sort((a, b) => a.startTime.localeCompare(b.startTime))
+          return acc
+        },
+        {} as Record<string, AppointmentEvent[]>
+      )
   }, [appointments])
 
   // Quick date range selectors
@@ -176,10 +188,7 @@ export default function ProviderAppointmentsPage() {
     }
   }
 
-  const openDialog = (
-    type: keyof DialogState,
-    appointment: AppointmentEvent
-  ) => {
+  const openDialog = (type: keyof DialogState, appointment: AppointmentEvent) => {
     setSelectedAppointment(appointment)
     setDialogState({ ...dialogState, [type]: true })
   }
@@ -209,7 +218,7 @@ export default function ProviderAppointmentsPage() {
   if (isLoading) {
     return (
       <div className="h-screen flex flex-col bg-gray-50">
-        <AppHeader title="Appointments" />
+        <AppHeader title="Appointments" showBackButton backPath="/provider/dashboard" />
         <div className="flex-1 overflow-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="space-y-4">
@@ -227,7 +236,7 @@ export default function ProviderAppointmentsPage() {
   if (isError) {
     return (
       <div className="h-screen flex flex-col bg-gray-50">
-        <AppHeader title="Appointments" />
+        <AppHeader title="Appointments" showBackButton backPath="/provider/dashboard" />
         <div className="flex-1 overflow-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 text-center">
@@ -247,14 +256,11 @@ export default function ProviderAppointmentsPage() {
   return (
     <div className="h-screen flex flex-col bg-gray-50">
       <AppHeader title="Appointments" />
-
       <div className="flex-1 overflow-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Appointment Schedule
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Appointment Schedule</h1>
             <p className="text-sm text-muted-foreground">
               Manage your appointments and patient visits
             </p>
@@ -284,25 +290,13 @@ export default function ProviderAppointmentsPage() {
               </div>
 
               <div className="flex gap-2 flex-wrap">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setDateRange('today')}
-                >
+                <Button variant="outline" size="sm" onClick={() => setDateRange('today')}>
                   Today
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setDateRange('week')}
-                >
+                <Button variant="outline" size="sm" onClick={() => setDateRange('week')}>
                   This Week
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setDateRange('month')}
-                >
+                <Button variant="outline" size="sm" onClick={() => setDateRange('month')}>
                   This Month
                 </Button>
 
@@ -320,11 +314,7 @@ export default function ProviderAppointmentsPage() {
                     </SelectContent>
                   </Select>
                 )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setBlockTimeDialogOpen(true)}
-                >
+                <Button variant="outline" size="sm" onClick={() => setBlockTimeDialogOpen(true)}>
                   <Clock className="h-4 w-4 mr-2" />
                   Block Time
                 </Button>
@@ -335,23 +325,16 @@ export default function ProviderAppointmentsPage() {
             {viewMode === 'calendar' && (
               <div className="flex items-center justify-between bg-white rounded-lg border p-4">
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigateCalendar('prev')}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => navigateCalendar('prev')}>
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigateCalendar('next')}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => navigateCalendar('next')}>
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                   <div className="text-sm font-semibold ml-2">
                     {calendarViewMode === 'day' && format(currentDate, 'EEEE, MMMM d, yyyy')}
-                    {calendarViewMode === 'week' && `${format(startOfWeek(currentDate), 'MMM d')} - ${format(endOfWeek(currentDate), 'MMM d, yyyy')}`}
+                    {calendarViewMode === 'week' &&
+                      `${format(startOfWeek(currentDate), 'MMM d')} - ${format(endOfWeek(currentDate), 'MMM d, yyyy')}`}
                     {calendarViewMode === 'month' && format(currentDate, 'MMMM yyyy')}
                   </div>
                 </div>
@@ -398,9 +381,8 @@ export default function ProviderAppointmentsPage() {
           {/* Date Range Display */}
           {viewMode === 'list' && (
             <div className="mb-4 text-sm text-muted-foreground">
-              Showing: {format(startDate, 'MMM d, yyyy')} -{' '}
-              {format(endDate, 'MMM d, yyyy')} ({appointments.length}{' '}
-              {appointments.length === 1 ? 'appointment' : 'appointments'})
+              Showing: {format(startDate, 'MMM d, yyyy')} - {format(endDate, 'MMM d, yyyy')} (
+              {appointments.length} {appointments.length === 1 ? 'appointment' : 'appointments'})
             </div>
           )}
 
@@ -432,31 +414,30 @@ export default function ProviderAppointmentsPage() {
               ) : (
                 <div className="space-y-8">
                   {Object.entries(groupedAppointments).map(([date, dayAppts]) => (
-                <div key={date}>
-                  <h2 className="text-lg font-semibold mb-4 text-gray-900">
-                    {format(new Date(date), 'EEEE, MMMM d, yyyy')}
-                  </h2>
-                  <div className="space-y-3">
-                    {dayAppts.map((apt) => (
-                      <AppointmentCard
-                        key={apt.id}
-                        appointment={apt}
-                        onCheckIn={() => openDialog('checkIn', apt)}
-                        onComplete={() => openDialog('complete', apt)}
-                        onNoShow={() => openDialog('noShow', apt)}
-                        getStatusBadge={getStatusBadge}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
+                    <div key={date}>
+                      <h2 className="text-lg font-semibold mb-4 text-gray-900">
+                        {format(new Date(date), 'EEEE, MMMM d, yyyy')}
+                      </h2>
+                      <div className="space-y-3">
+                        {dayAppts.map((apt) => (
+                          <AppointmentCard
+                            key={apt.id}
+                            appointment={apt}
+                            onCheckIn={() => openDialog('checkIn', apt)}
+                            onComplete={() => openDialog('complete', apt)}
+                            onNoShow={() => openDialog('noShow', apt)}
+                            getStatusBadge={getStatusBadge}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </>
           )}
         </div>
       </div>
-
       {/* Dialogs */}
       {selectedAppointment && (
         <>
@@ -492,7 +473,7 @@ export default function ProviderAppointmentsPage() {
           />
         </>
       )}
-n      {/* Block Time Dialog */}
+      n {/* Block Time Dialog */}
       <BlockTimeDialog
         open={blockTimeDialogOpen}
         onOpenChange={setBlockTimeDialogOpen}
@@ -520,14 +501,12 @@ function AppointmentCard({
   }
 }) {
   const statusInfo = getStatusBadge(appointment.status)
-  const canCheckIn =
-    appointment.status === 'SCHEDULED' || appointment.status === 'CONFIRMED'
+  const canCheckIn = appointment.status === 'SCHEDULED' || appointment.status === 'CONFIRMED'
   const canComplete =
     appointment.status === 'CHECKED_IN' ||
     appointment.status === 'CONFIRMED' ||
     appointment.status === 'SCHEDULED'
-  const canMarkNoShow =
-    appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED'
+  const canMarkNoShow = appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED'
 
   return (
     <Card className="p-4 hover:shadow-md transition-shadow">

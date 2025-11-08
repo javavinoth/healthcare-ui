@@ -36,10 +36,7 @@ export default function PatientDetailPage() {
   })
 
   // Fetch patient timeline
-  const {
-    data: timeline,
-    isLoading: isLoadingTimeline,
-  } = useQuery({
+  const { data: timeline, isLoading: isLoadingTimeline } = useQuery({
     queryKey: ['patient-timeline', id],
     queryFn: () => providerApi.getPatientTimeline(id!),
     enabled: !!id,
@@ -76,17 +73,13 @@ export default function PatientDetailPage() {
         <div className="flex-1 overflow-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 text-center">
-              <h3 className="text-lg font-semibold text-destructive mb-2">
-                Error Loading Patient
-              </h3>
+              <h3 className="text-lg font-semibold text-destructive mb-2">Error Loading Patient</h3>
               <p className="text-sm text-muted-foreground mb-4">
                 {patientError instanceof Error
                   ? patientError.message
                   : 'Patient not found or you do not have permission to access this patient'}
               </p>
-              <Button onClick={() => navigate('/provider/patients')}>
-                Back to Patients
-              </Button>
+              <Button onClick={() => navigate('/provider/patients')}>Back to Patients</Button>
             </div>
           </div>
         </div>
@@ -138,12 +131,8 @@ export default function PatientDetailPage() {
                   <UserIcon className="h-5 w-5 text-blue-700" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">
-                    {patient.totalAppointments || 0}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Total Appointments
-                  </p>
+                  <p className="text-2xl font-bold">{patient.totalAppointments || 0}</p>
+                  <p className="text-sm text-muted-foreground">Total Appointments</p>
                 </div>
               </div>
             </div>
@@ -154,12 +143,8 @@ export default function PatientDetailPage() {
                   <FileText className="h-5 w-5 text-purple-700" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">
-                    {patient.totalRecords || 0}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Medical Records
-                  </p>
+                  <p className="text-2xl font-bold">{patient.totalRecords || 0}</p>
+                  <p className="text-sm text-muted-foreground">Medical Records</p>
                 </div>
               </div>
             </div>
@@ -193,10 +178,7 @@ export default function PatientDetailPage() {
             </TabsContent>
 
             <TabsContent value="timeline">
-              <MedicalTimeline
-                events={timeline || []}
-                isLoading={isLoadingTimeline}
-              />
+              <MedicalTimeline events={timeline || []} isLoading={isLoadingTimeline} />
             </TabsContent>
 
             <TabsContent value="notes">

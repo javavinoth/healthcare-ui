@@ -6,7 +6,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { providerApi } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
 import { Loader2 } from 'lucide-react'
 
@@ -70,7 +76,8 @@ export default function ProviderSettingsForm() {
     onError: (error: any) => {
       toast({
         title: 'Update Failed',
-        description: error.response?.data?.message || 'Failed to update settings. Please try again.',
+        description:
+          error.response?.data?.message || 'Failed to update settings. Please try again.',
         variant: 'destructive',
       })
     },
@@ -94,11 +101,14 @@ export default function ProviderSettingsForm() {
         <div>
           <Label htmlFor="slotDuration">Appointment Slot Duration</Label>
           <p className="text-sm text-gray-500 mt-1 mb-3">
-            Choose how long each appointment slot should be. This will be used when patients book appointments.
+            Choose how long each appointment slot should be. This will be used when patients book
+            appointments.
           </p>
           <Select
             value={slotDuration.toString()}
-            onValueChange={(value) => setValue('slotDuration', parseInt(value), { shouldDirty: true })}
+            onValueChange={(value) =>
+              setValue('slotDuration', parseInt(value), { shouldDirty: true })
+            }
           >
             <SelectTrigger id="slotDuration" className="w-full sm:w-[300px]">
               <SelectValue placeholder="Select duration" />
@@ -115,8 +125,8 @@ export default function ProviderSettingsForm() {
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-900">
-            <strong>Note:</strong> Changing your slot duration will affect future appointment bookings. Existing
-            appointments will not be affected.
+            <strong>Note:</strong> Changing your slot duration will affect future appointment
+            bookings. Existing appointments will not be affected.
           </p>
         </div>
       </div>

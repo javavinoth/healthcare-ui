@@ -5,9 +5,18 @@ import { format } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { appointmentBookingSchema, type AppointmentBookingFormData } from '@/lib/validations/appointments'
+import {
+  appointmentBookingSchema,
+  type AppointmentBookingFormData,
+} from '@/lib/validations/appointments'
 import type { AppointmentType } from '@/types'
 
 interface AppointmentBookingFormProps {
@@ -22,7 +31,11 @@ interface AppointmentBookingFormProps {
 }
 
 const appointmentTypes: { value: AppointmentType; label: string; description: string }[] = [
-  { value: 'ROUTINE_CHECKUP', label: 'Routine Checkup', description: 'Annual physical or wellness visit' },
+  {
+    value: 'ROUTINE_CHECKUP',
+    label: 'Routine Checkup',
+    description: 'Annual physical or wellness visit',
+  },
   { value: 'FOLLOW_UP', label: 'Follow-up', description: 'Follow-up from previous visit' },
   { value: 'CONSULTATION', label: 'Consultation', description: 'New patient consultation' },
   { value: 'URGENT_CARE', label: 'Urgent Care', description: 'Non-emergency urgent care' },
@@ -109,9 +122,7 @@ export default function AppointmentBookingForm({
                 ))}
               </SelectContent>
             </Select>
-            {errors.type && (
-              <p className="text-sm text-error">{errors.type.message}</p>
-            )}
+            {errors.type && <p className="text-sm text-error">{errors.type.message}</p>}
           </div>
 
           {/* Date Selection */}
@@ -132,9 +143,7 @@ export default function AppointmentBookingForm({
               })}
               className={errors.date ? 'border-error' : ''}
             />
-            {errors.date && (
-              <p className="text-sm text-error">{errors.date.message}</p>
-            )}
+            {errors.date && <p className="text-sm text-error">{errors.date.message}</p>}
           </div>
 
           {/* Time Slot Selection */}
@@ -147,10 +156,7 @@ export default function AppointmentBookingForm({
                 Loading available time slots...
               </div>
             ) : availableSlots.length > 0 ? (
-              <Select
-                value={selectedTime}
-                onValueChange={(value) => setValue('time', value)}
-              >
+              <Select value={selectedTime} onValueChange={(value) => setValue('time', value)}>
                 <SelectTrigger id="time" className={errors.time ? 'border-error' : ''}>
                   <SelectValue placeholder="Select a time slot" />
                 </SelectTrigger>
@@ -167,12 +173,12 @@ export default function AppointmentBookingForm({
               </Select>
             ) : (
               <div className="text-sm text-neutral-blue-gray/70 p-3 border rounded-md bg-neutral-light">
-                {selectedDate ? 'No available slots for this date. Please select another date.' : 'Please select a date first to see available time slots.'}
+                {selectedDate
+                  ? 'No available slots for this date. Please select another date.'
+                  : 'Please select a date first to see available time slots.'}
               </div>
             )}
-            {errors.time && (
-              <p className="text-sm text-error">{errors.time.message}</p>
-            )}
+            {errors.time && <p className="text-sm text-error">{errors.time.message}</p>}
           </div>
 
           {/* Virtual Appointment Checkbox */}
@@ -204,9 +210,7 @@ export default function AppointmentBookingForm({
                 errors.reason ? 'border-error' : 'border-neutral-blue-gray/30'
               } px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2`}
             />
-            {errors.reason && (
-              <p className="text-sm text-error">{errors.reason.message}</p>
-            )}
+            {errors.reason && <p className="text-sm text-error">{errors.reason.message}</p>}
             <p className="text-xs text-neutral-blue-gray/60">
               Minimum 10 characters, maximum 500 characters
             </p>
@@ -222,9 +226,7 @@ export default function AppointmentBookingForm({
               {...register('notes')}
               className="w-full rounded-md border border-neutral-blue-gray/30 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             />
-            {errors.notes && (
-              <p className="text-sm text-error">{errors.notes.message}</p>
-            )}
+            {errors.notes && <p className="text-sm text-error">{errors.notes.message}</p>}
           </div>
 
           {/* Action Buttons */}
@@ -240,11 +242,7 @@ export default function AppointmentBookingForm({
                 Cancel
               </Button>
             )}
-            <Button
-              type="submit"
-              disabled={isLoading || isSubmitting}
-              className="flex-1"
-            >
+            <Button type="submit" disabled={isLoading || isSubmitting} className="flex-1">
               {isLoading || isSubmitting ? 'Booking...' : 'Book Appointment'}
             </Button>
           </div>

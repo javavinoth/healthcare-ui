@@ -155,10 +155,7 @@ export default function ConversationList({
                         </p>
                       </div>
                       {hasUnread && (
-                        <Badge
-                          variant="default"
-                          className="bg-primary text-white ml-2"
-                        >
+                        <Badge variant="default" className="bg-primary text-white ml-2">
                           {conversation.unreadCount}
                         </Badge>
                       )}
@@ -183,10 +180,9 @@ export default function ConversationList({
                           {conversation.lastMessage.content}
                         </p>
                         <p className="text-caption text-neutral-blue-gray/50 flex-shrink-0">
-                          {formatDistanceToNow(
-                            new Date(conversation.lastMessage.sentAt),
-                            { addSuffix: true }
-                          )}
+                          {formatDistanceToNow(new Date(conversation.lastMessage.sentAt), {
+                            addSuffix: true,
+                          })}
                         </p>
                       </div>
                     )}

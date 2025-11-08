@@ -33,9 +33,7 @@ export default function BillingDashboard() {
   })
 
   const recentAppointments = appointmentsData || []
-  const pendingBillingCount = recentAppointments.filter(
-    (apt) => apt.status === 'completed'
-  ).length
+  const pendingBillingCount = recentAppointments.filter((apt) => apt.status === 'completed').length
 
   return (
     <div className="h-screen flex flex-col bg-neutral-light">
@@ -47,9 +45,7 @@ export default function BillingDashboard() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-h1 text-neutral-blue-gray">
-                  Welcome back, {user?.firstName}!
-                </h1>
+                <h1 className="text-h1 text-neutral-blue-gray">Welcome back, {user?.firstName}!</h1>
                 <p className="text-body text-neutral-blue-gray/70 mt-1">
                   Here's your billing overview
                 </p>
@@ -76,12 +72,8 @@ export default function BillingDashboard() {
                       <DollarSign className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <p className="text-caption text-neutral-blue-gray/70">
-                        Pending Billing
-                      </p>
-                      <p className="text-h2 text-neutral-blue-gray mt-1">
-                        {pendingBillingCount}
-                      </p>
+                      <p className="text-caption text-neutral-blue-gray/70">Pending Billing</p>
+                      <p className="text-h2 text-neutral-blue-gray mt-1">{pendingBillingCount}</p>
                       <p className="text-caption text-neutral-blue-gray/70 mt-1">
                         Requires processing
                       </p>
@@ -95,12 +87,8 @@ export default function BillingDashboard() {
                       <TrendingUp className="h-6 w-6 text-wellness" />
                     </div>
                     <div>
-                      <p className="text-caption text-neutral-blue-gray/70">
-                        This Month
-                      </p>
-                      <p className="text-h2 text-neutral-blue-gray mt-1">
-                        -
-                      </p>
+                      <p className="text-caption text-neutral-blue-gray/70">This Month</p>
+                      <p className="text-h2 text-neutral-blue-gray mt-1">-</p>
                       <p className="text-caption text-neutral-blue-gray/70 mt-1">
                         Revenue processed
                       </p>
@@ -114,15 +102,9 @@ export default function BillingDashboard() {
                       <MessageSquare className="h-6 w-6 text-info" />
                     </div>
                     <div>
-                      <p className="text-caption text-neutral-blue-gray/70">
-                        Messages
-                      </p>
-                      <p className="text-h2 text-neutral-blue-gray mt-1">
-                        -
-                      </p>
-                      <p className="text-caption text-neutral-blue-gray/70 mt-1">
-                        View inbox
-                      </p>
+                      <p className="text-caption text-neutral-blue-gray/70">Messages</p>
+                      <p className="text-h2 text-neutral-blue-gray mt-1">-</p>
+                      <p className="text-caption text-neutral-blue-gray/70 mt-1">View inbox</p>
                     </div>
                   </div>
                 </div>
@@ -163,10 +145,7 @@ export default function BillingDashboard() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-h2 text-neutral-blue-gray">Recent Billing Activity</h2>
               {recentAppointments.length > 0 && (
-                <Button
-                  variant="link"
-                  onClick={() => navigate('/billing/reports')}
-                >
+                <Button variant="link" onClick={() => navigate('/billing/reports')}>
                   View all
                 </Button>
               )}
@@ -185,9 +164,7 @@ export default function BillingDashboard() {
             ) : recentAppointments.length === 0 ? (
               <div className="bg-white rounded-lg p-8 border border-neutral-blue-gray/10 text-center">
                 <FileText className="h-12 w-12 text-neutral-blue-gray/30 mx-auto mb-4" />
-                <p className="text-h3 text-neutral-blue-gray mb-2">
-                  No billing activity
-                </p>
+                <p className="text-h3 text-neutral-blue-gray mb-2">No billing activity</p>
                 <p className="text-body text-neutral-blue-gray/70">
                   There are no recent billing records to display.
                 </p>

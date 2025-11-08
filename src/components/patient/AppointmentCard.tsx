@@ -12,7 +12,13 @@ interface AppointmentCardProps {
   compact?: boolean
 }
 
-const statusConfig: Record<AppointmentStatus, { variant: 'default' | 'secondary' | 'success' | 'warning' | 'destructive' | 'info', label: string }> = {
+const statusConfig: Record<
+  AppointmentStatus,
+  {
+    variant: 'default' | 'secondary' | 'success' | 'warning' | 'destructive' | 'info'
+    label: string
+  }
+> = {
   scheduled: { variant: 'default', label: 'Scheduled' },
   confirmed: { variant: 'success', label: 'Confirmed' },
   checked_in: { variant: 'info', label: 'Checked In' },
@@ -66,12 +72,16 @@ export default function AppointmentCard({
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                <span>{appointment.startTime} - {appointment.endTime}</span>
+                <span>
+                  {appointment.startTime} - {appointment.endTime}
+                </span>
               </div>
               {appointment.type && (
                 <div className="flex items-center gap-2">
                   <span className="font-medium">Type:</span>
-                  <span className="capitalize">{appointment.type.toLowerCase().replace('_', ' ')}</span>
+                  <span className="capitalize">
+                    {appointment.type.toLowerCase().replace('_', ' ')}
+                  </span>
                 </div>
               )}
               {appointment.isVirtual ? (
@@ -107,11 +117,7 @@ export default function AppointmentCard({
                   </Button>
                 )}
                 {onViewDetails && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => onViewDetails(appointment.id)}
-                  >
+                  <Button size="sm" variant="outline" onClick={() => onViewDetails(appointment.id)}>
                     View Details
                   </Button>
                 )}

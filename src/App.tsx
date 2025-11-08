@@ -33,7 +33,10 @@ function App() {
                 <Button variant="ghost" className="text-white hover:bg-primary-dark">
                   Sign In
                 </Button>
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-primary">
+                <Button
+                  variant="outline"
+                  className="border-white text-white hover:bg-white hover:text-primary"
+                >
                   Patient Portal
                 </Button>
               </nav>
@@ -48,7 +51,8 @@ function App() {
             <h2 className="text-h1 mb-4">Welcome to Your Healthcare Dashboard</h2>
             <p className="text-body text-neutral-blue-gray max-w-2xl mx-auto">
               Access your medical records, book appointments, and communicate with your healthcare
-              providers - all in one secure platform designed with your privacy and accessibility in mind.
+              providers - all in one secure platform designed with your privacy and accessibility in
+              mind.
             </p>
           </section>
 
@@ -81,9 +85,7 @@ function App() {
                   </div>
                   <CardTitle>Medical Records</CardTitle>
                 </div>
-                <CardDescription>
-                  View your lab results, imaging, and visit notes
-                </CardDescription>
+                <CardDescription>View your lab results, imaging, and visit notes</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button variant="secondary" className="w-full">
@@ -101,9 +103,7 @@ function App() {
                   </div>
                   <CardTitle>Secure Messaging</CardTitle>
                 </div>
-                <CardDescription>
-                  Communicate securely with your healthcare team
-                </CardDescription>
+                <CardDescription>Communicate securely with your healthcare team</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button variant="outline" className="w-full">
@@ -180,10 +180,12 @@ function App() {
           <section className="space-y-4">
             <h3 className="text-h3 mb-4">Alert Components</h3>
             <div className="alert alert-success">
-              <strong>Success!</strong> Your appointment has been confirmed for October 25, 2025 at 2:00 PM.
+              <strong>Success!</strong> Your appointment has been confirmed for October 25, 2025 at
+              2:00 PM.
             </div>
             <div className="alert alert-info">
-              <strong>Information:</strong> Your lab results are now available in your medical records.
+              <strong>Information:</strong> Your lab results are now available in your medical
+              records.
             </div>
             <div className="alert alert-warning">
               <strong>Reminder:</strong> You have an upcoming appointment in 24 hours.

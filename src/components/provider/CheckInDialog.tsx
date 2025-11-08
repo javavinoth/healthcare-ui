@@ -28,11 +28,7 @@ interface CheckInDialogProps {
   }
 }
 
-export default function CheckInDialog({
-  open,
-  onOpenChange,
-  appointment,
-}: CheckInDialogProps) {
+export default function CheckInDialog({ open, onOpenChange, appointment }: CheckInDialogProps) {
   const [notes, setNotes] = useState('')
   const [isLateArrival, setIsLateArrival] = useState(false)
   const [minutesLate, setMinutesLate] = useState<number | undefined>()
@@ -40,11 +36,8 @@ export default function CheckInDialog({
   const queryClient = useQueryClient()
 
   const checkInMutation = useMutation({
-    mutationFn: (data: {
-      notes?: string
-      isLateArrival: boolean
-      minutesLate?: number
-    }) => providerApi.checkInAppointment(appointment.id, data),
+    mutationFn: (data: { notes?: string; isLateArrival: boolean; minutesLate?: number }) =>
+      providerApi.checkInAppointment(appointment.id, data),
     onSuccess: () => {
       toast({
         title: 'Patient Checked In',
@@ -90,8 +83,7 @@ export default function CheckInDialog({
             Check In Patient
           </DialogTitle>
           <DialogDescription>
-            Check in {appointment.patientName} for their {appointment.time}{' '}
-            appointment
+            Check in {appointment.patientName} for their {appointment.time} appointment
           </DialogDescription>
         </DialogHeader>
 
@@ -122,9 +114,7 @@ export default function CheckInDialog({
                 max="120"
                 value={minutesLate || ''}
                 onChange={(e) =>
-                  setMinutesLate(
-                    e.target.value ? parseInt(e.target.value) : undefined
-                  )
+                  setMinutesLate(e.target.value ? parseInt(e.target.value) : undefined)
                 }
                 placeholder="Enter minutes late"
               />
@@ -142,9 +132,7 @@ export default function CheckInDialog({
               rows={3}
               maxLength={1000}
             />
-            <p className="text-xs text-muted-foreground">
-              {notes.length}/1000 characters
-            </p>
+            <p className="text-xs text-muted-foreground">{notes.length}/1000 characters</p>
           </div>
         </div>
 

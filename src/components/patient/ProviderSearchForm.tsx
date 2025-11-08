@@ -4,7 +4,13 @@ import { Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Card, CardContent } from '@/components/ui/card'
 import { providerSearchSchema, type ProviderSearchFormData } from '@/lib/validations/appointments'
 
@@ -85,18 +91,13 @@ export default function ProviderSearchForm({
                 {...register('search')}
                 className={errors.search ? 'border-error' : ''}
               />
-              {errors.search && (
-                <p className="text-sm text-error">{errors.search.message}</p>
-              )}
+              {errors.search && <p className="text-sm text-error">{errors.search.message}</p>}
             </div>
 
             {/* Specialty Filter */}
             <div className="space-y-2">
               <Label htmlFor="specialty">Specialty</Label>
-              <Select
-                value={specialty}
-                onValueChange={(value) => setValue('specialty', value)}
-              >
+              <Select value={specialty} onValueChange={(value) => setValue('specialty', value)}>
                 <SelectTrigger id="specialty">
                   <SelectValue placeholder="All specialties" />
                 </SelectTrigger>
@@ -114,11 +115,7 @@ export default function ProviderSearchForm({
             {/* Location Filter */}
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                placeholder="City or ZIP code"
-                {...register('location')}
-              />
+              <Input id="location" placeholder="City or ZIP code" {...register('location')} />
             </div>
 
             {/* Accepting New Patients */}
@@ -144,12 +141,7 @@ export default function ProviderSearchForm({
 
           {/* Action Buttons */}
           <div className="flex gap-2 justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleReset}
-              disabled={isLoading}
-            >
+            <Button type="button" variant="outline" onClick={handleReset} disabled={isLoading}>
               <X className="h-4 w-4 mr-1" />
               Reset
             </Button>

@@ -13,45 +13,40 @@ export type MessagingPermissionMatrix = Record<UserRole, UserRole[]>
  */
 export const MESSAGING_PERMISSIONS: MessagingPermissionMatrix = {
   // Patients can message healthcare providers and support staff
-  [ROLES.PATIENT]: [
-    ROLES.DOCTOR,
-    ROLES.NURSE,
-    ROLES.RECEPTIONIST,
-    ROLES.BILLING_STAFF,
-  ],
+  [ROLES.PATIENT]: [ROLES.DOCTOR, ROLES.NURSE, ROLES.RECEPTIONIST, ROLES.BILLING_STAFF],
 
   // Doctors can message patients, other providers, support staff, and admins
   [ROLES.DOCTOR]: [
     ROLES.PATIENT,
-    ROLES.DOCTOR,    // Consultations
-    ROLES.NURSE,     // Care coordination
+    ROLES.DOCTOR, // Consultations
+    ROLES.NURSE, // Care coordination
     ROLES.RECEPTIONIST, // Scheduling
-    ROLES.ADMIN,     // Escalations
+    ROLES.ADMIN, // Escalations
   ],
 
   // Nurses can message patients, doctors, other nurses, receptionists, and admins
   [ROLES.NURSE]: [
     ROLES.PATIENT,
-    ROLES.DOCTOR,    // Care coordination
-    ROLES.NURSE,     // Handoffs
+    ROLES.DOCTOR, // Care coordination
+    ROLES.NURSE, // Handoffs
     ROLES.RECEPTIONIST, // Scheduling
-    ROLES.ADMIN,     // Escalations
+    ROLES.ADMIN, // Escalations
   ],
 
   // Receptionists can message patients, providers, other receptionists, and admins
   [ROLES.RECEPTIONIST]: [
-    ROLES.PATIENT,   // Appointments
-    ROLES.DOCTOR,    // Scheduling
-    ROLES.NURSE,     // Scheduling
+    ROLES.PATIENT, // Appointments
+    ROLES.DOCTOR, // Scheduling
+    ROLES.NURSE, // Scheduling
     ROLES.RECEPTIONIST, // Coordination
-    ROLES.ADMIN,     // Escalations
+    ROLES.ADMIN, // Escalations
   ],
 
   // Billing staff can message patients, other billing staff, and admins
   [ROLES.BILLING_STAFF]: [
-    ROLES.PATIENT,   // Billing questions
+    ROLES.PATIENT, // Billing questions
     ROLES.BILLING_STAFF, // Internal coordination
-    ROLES.ADMIN,     // Escalations
+    ROLES.ADMIN, // Escalations
   ],
 
   // Admins can message everyone

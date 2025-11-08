@@ -53,7 +53,8 @@ export const APPOINTMENT_ENDPOINTS = {
   UPDATE: (id: number | string) => `/appointments/${id}`,
   CANCEL: (id: number | string) => `/appointments/${id}/cancel`,
   RESCHEDULE: (id: number | string) => `/appointments/${id}/reschedule`,
-  AVAILABLE_SLOTS: (providerId: number | string) => `/appointments/providers/${providerId}/available-slots`,
+  AVAILABLE_SLOTS: (providerId: number | string) =>
+    `/appointments/providers/${providerId}/available-slots`,
   SEARCH_PROVIDERS: '/appointments/search-providers',
 } as const
 
@@ -111,8 +112,10 @@ export const PROVIDER_ENDPOINTS = {
   APPOINTMENTS: '/provider/appointments',
   CALENDAR: '/provider/calendar',
   CHECK_IN: (appointmentId: number | string) => `/provider/appointments/${appointmentId}/check-in`,
-  COMPLETE_APPOINTMENT: (appointmentId: number | string) => `/provider/appointments/${appointmentId}/complete`,
-  MARK_NO_SHOW: (appointmentId: number | string) => `/provider/appointments/${appointmentId}/no-show`,
+  COMPLETE_APPOINTMENT: (appointmentId: number | string) =>
+    `/provider/appointments/${appointmentId}/complete`,
+  MARK_NO_SHOW: (appointmentId: number | string) =>
+    `/provider/appointments/${appointmentId}/no-show`,
 
   // Schedule Management
   CREATE_TIME_BLOCK: '/provider/schedule/block',
@@ -135,10 +138,14 @@ export const PROVIDER_ENDPOINTS = {
   GET_NOTE: (noteId: number | string) => `/provider/notes/${noteId}`,
 
   // Prescriptions
-  CREATE_PRESCRIPTION: (patientId: number | string) => `/provider/patients/${patientId}/prescriptions`,
-  GET_PATIENT_PRESCRIPTIONS: (patientId: number | string) => `/provider/patients/${patientId}/prescriptions`,
-  GET_PRESCRIPTION: (prescriptionId: number | string) => `/provider/prescriptions/${prescriptionId}`,
-  UPDATE_PRESCRIPTION_STATUS: (prescriptionId: number | string) => `/provider/prescriptions/${prescriptionId}/status`,
+  CREATE_PRESCRIPTION: (patientId: number | string) =>
+    `/provider/patients/${patientId}/prescriptions`,
+  GET_PATIENT_PRESCRIPTIONS: (patientId: number | string) =>
+    `/provider/patients/${patientId}/prescriptions`,
+  GET_PRESCRIPTION: (prescriptionId: number | string) =>
+    `/provider/prescriptions/${prescriptionId}`,
+  UPDATE_PRESCRIPTION_STATUS: (prescriptionId: number | string) =>
+    `/provider/prescriptions/${prescriptionId}/status`,
 } as const
 
 /**
