@@ -65,7 +65,7 @@ export default function ProviderDashboard() {
   const specialty = dashboardData?.specialty || 'Healthcare Provider'
 
   // Check if schedule is configured (at least one day is active)
-  const isScheduleConfigured = settings?.availability?.some((day: any) => day.isActive) || false
+  const isScheduleConfigured = settings?.availability?.some((day) => day.isActive) || false
 
   // Check localStorage for prompt dismissal
   useEffect(() => {
@@ -315,7 +315,7 @@ export default function ProviderDashboard() {
               </div>
             ) : (
               <div className="space-y-4">
-                {todayAppointments.map((appointment: any) => (
+                {todayAppointments.map((appointment) => (
                   <div
                     key={appointment.id}
                     className="flex items-center gap-4 p-4 rounded-lg border border-neutral-blue-gray/10 hover:border-primary/30 hover:bg-primary/5 transition-colors cursor-pointer"

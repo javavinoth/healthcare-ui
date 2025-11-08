@@ -85,8 +85,9 @@ export default function Profile() {
       setProfileError(null)
       setTimeout(() => setProfileSuccess(false), 3000)
     },
-    onError: (error: any) => {
-      setProfileError(error.response?.data?.message || 'Failed to update profile')
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
+      setProfileError(apiError.response?.data?.message || 'Failed to update profile')
       setProfileSuccess(false)
     },
   })
@@ -106,8 +107,9 @@ export default function Profile() {
       resetPasswordForm()
       setTimeout(() => setPasswordSuccess(false), 3000)
     },
-    onError: (error: any) => {
-      setPasswordError(error.response?.data?.message || 'Failed to change password')
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
+      setPasswordError(apiError.response?.data?.message || 'Failed to change password')
       setPasswordSuccess(false)
     },
   })
@@ -126,8 +128,9 @@ export default function Profile() {
         console.error('Failed to refresh user data:', error)
       }
     },
-    onError: (error: any) => {
-      setTwoFactorError(error.response?.data?.message || 'Failed to enable 2FA')
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
+      setTwoFactorError(apiError.response?.data?.message || 'Failed to enable 2FA')
     },
   })
 
@@ -142,8 +145,9 @@ export default function Profile() {
       setTwoFactorCode('')
       setTwoFactorError(null)
     },
-    onError: (error: any) => {
-      setTwoFactorError(error.response?.data?.message || 'Invalid verification code')
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
+      setTwoFactorError(apiError.response?.data?.message || 'Invalid verification code')
     },
   })
 
@@ -156,8 +160,9 @@ export default function Profile() {
       }
       setTwoFactorError(null)
     },
-    onError: (error: any) => {
-      setTwoFactorError(error.response?.data?.message || 'Failed to disable 2FA')
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
+      setTwoFactorError(apiError.response?.data?.message || 'Failed to disable 2FA')
     },
   })
 

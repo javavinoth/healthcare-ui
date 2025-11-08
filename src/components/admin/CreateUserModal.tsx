@@ -43,7 +43,15 @@ export default function CreateUserModal({ open, onClose }: CreateUserModalProps)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const createUserMutation = useMutation({
-    mutationFn: (data: any) => adminApi.createUser(data),
+    mutationFn: (data: {
+      email: string
+      password?: string
+      firstName: string
+      lastName: string
+      phoneNumber?: string
+      role: string
+      sendInvitation?: boolean
+    }) => adminApi.createUser(data),
     onSuccess: () => {
       toast({
         title: 'Success',
@@ -55,10 +63,11 @@ export default function CreateUserModal({ open, onClose }: CreateUserModalProps)
       queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] })
       handleClose()
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         title: 'Error',
-        description: error.response?.data?.message || 'Failed to create user',
+        description: apiError.response?.data?.message || 'Failed to create user',
         variant: 'destructive',
       })
     },
@@ -106,7 +115,15 @@ export default function CreateUserModal({ open, onClose }: CreateUserModalProps)
       return
     }
 
-    const submitData: any = {
+    const submitData: {
+      email: string
+      password?: string
+      firstName: string
+      lastName: string
+      phoneNumber?: string
+      role: string
+      sendInvitation?: boolean
+    } = {
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim(),
       email: formData.email.trim(),

@@ -47,8 +47,8 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
   const messagableUsers = useMemo(() => {
     if (!user || !allUsers) return []
     // Filter out the current user and apply role-based permissions
-    const otherUsers = allUsers.filter((u: any) => u.id !== user.id)
-    return filterMessagableUsers(user.role as any, otherUsers)
+    const otherUsers = allUsers.filter((u) => u.id !== user.id)
+    return filterMessagableUsers(user.role, otherUsers)
   }, [user, allUsers])
 
   const {
@@ -85,10 +85,11 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
       reset()
       setSelectedRecipientId('')
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const err = error as Error
       toast({
         title: 'Failed to send message',
-        description: error?.message || 'Please try again.',
+        description: err?.message || 'Please try again.',
         variant: 'destructive',
       })
     },
@@ -156,7 +157,7 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
                   <SelectValue placeholder="Select a recipient" />
                 </SelectTrigger>
                 <SelectContent>
-                  {messagableUsers?.map((recipient: any) => (
+                  {messagableUsers?.map((recipient) => (
                     <SelectItem key={recipient.id} value={recipient.id}>
                       {recipient.firstName} {recipient.lastName} - {getRoleLabel(recipient.role)}
                     </SelectItem>

@@ -57,10 +57,11 @@ export default function BlockTimeDialog({ open, onOpenChange, defaultDate }: Blo
       })
       handleClose()
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         title: 'Error',
-        description: error.response?.data?.message || 'Failed to create time block',
+        description: apiError.response?.data?.message || 'Failed to create time block',
         variant: 'destructive',
       })
     },

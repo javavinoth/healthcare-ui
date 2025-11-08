@@ -73,11 +73,12 @@ export default function ProviderSettingsForm() {
         description: 'Your appointment settings have been saved successfully.',
       })
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         title: 'Update Failed',
         description:
-          error.response?.data?.message || 'Failed to update settings. Please try again.',
+          apiError.response?.data?.message || 'Failed to update settings. Please try again.',
         variant: 'destructive',
       })
     },

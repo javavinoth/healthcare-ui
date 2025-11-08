@@ -43,6 +43,7 @@ import type {
   ProviderSettingsResponse,
   AdminUserResponse,
   AvailabilityEntry,
+  ProviderSearchResult,
 } from '@/types'
 
 /**
@@ -223,27 +224,29 @@ export const authApi = {
 /**
  * Helper function to map backend appointment response to frontend format
  */
-function mapAppointmentResponse(backendAppointment: any): any {
-  if (!backendAppointment) return null
+function mapAppointmentResponse(backendAppointment: Record<string, unknown>): Appointment {
+  if (!backendAppointment) return null as unknown as Appointment
 
   return {
     ...backendAppointment,
     // Map provider object to provider name strings
-    providerName: backendAppointment.provider
-      ? `${backendAppointment.provider.firstName} ${backendAppointment.provider.lastName}`
+    providerName: (backendAppointment.provider as Record<string, unknown>)
+      ? `${(backendAppointment.provider as Record<string, unknown>).firstName} ${(backendAppointment.provider as Record<string, unknown>).lastName}`
       : 'Unknown Provider',
-    providerSpecialty: backendAppointment.provider?.specialty,
+    providerSpecialty: (backendAppointment.provider as Record<string, unknown>)?.specialty as
+      | string
+      | undefined,
 
     // Map single time field to startTime/endTime
-    startTime: backendAppointment.time || '',
-    endTime: backendAppointment.time || '', // Could calculate end time based on duration
+    startTime: (backendAppointment.time as string) || '',
+    endTime: (backendAppointment.time as string) || '', // Could calculate end time based on duration
 
     // Map uppercase status to lowercase
-    status: backendAppointment.status?.toLowerCase() || 'scheduled',
+    status: (backendAppointment.status as string)?.toLowerCase() || 'scheduled',
 
     // Type is already uppercase (already matches)
     type: backendAppointment.type,
-  }
+  } as Appointment
 }
 
 /**
@@ -300,8 +303,8 @@ export const appointmentsApi = {
 /**
  * Helper function to map backend medical record response to frontend format
  */
-function mapMedicalRecordResponse(backendRecord: any): any {
-  if (!backendRecord) return null
+function mapMedicalRecordResponse(backendRecord: Record<string, unknown>): MedicalRecord {
+  if (!backendRecord) return null as unknown as MedicalRecord
 
   // Map type from uppercase to lowercase with underscores
   const typeMapping: Record<string, string> = {
@@ -326,41 +329,47 @@ function mapMedicalRecordResponse(backendRecord: any): any {
     discharge_summary: 'Hospital Records',
   }
 
-  const mappedType = typeMapping[backendRecord.type] || backendRecord.type.toLowerCase()
+  const mappedType =
+    typeMapping[backendRecord.type as string] || (backendRecord.type as string).toLowerCase()
 
   return {
     ...backendRecord,
     // Map provider object to provider name string
-    provider: backendRecord.provider
-      ? `${backendRecord.provider.firstName} ${backendRecord.provider.lastName}`
+    provider: (backendRecord.provider as Record<string, unknown>)
+      ? `${(backendRecord.provider as Record<string, unknown>).firstName} ${(backendRecord.provider as Record<string, unknown>).lastName}`
       : 'Unknown Provider',
 
     // Map type to lowercase with underscores
     type: mappedType,
 
     // Map recordDate to date
-    date: backendRecord.recordDate || backendRecord.date,
+    date: (backendRecord.recordDate || backendRecord.date) as string,
 
     // Map description to both content and summary
-    content: backendRecord.description || backendRecord.content || '',
-    summary: backendRecord.description || backendRecord.summary || '',
+    content: (backendRecord.description || backendRecord.content || '') as string,
+    summary: (backendRecord.description || backendRecord.summary || '') as string,
 
     // Add category based on type
     category: categoryMapping[mappedType] || 'Other',
 
     // Default status to 'final' if not provided
-    status: backendRecord.status?.toLowerCase() || 'final',
+    status: ((backendRecord.status as string)?.toLowerCase() || 'final') as
+      | 'final'
+      | 'preliminary'
+      | 'amended',
 
     // Map attachment field names
     attachments:
-      backendRecord.attachments?.map((att: any) => ({
-        id: att.id,
-        name: att.fileName || att.name,
-        type: att.fileType || att.type,
-        size: att.fileSize || att.size,
-        url: att.url,
-      })) || [],
-  }
+      (backendRecord.attachments as Record<string, unknown>[])?.map(
+        (att: Record<string, unknown>) => ({
+          id: att.id as string,
+          name: (att.fileName || att.name) as string,
+          type: (att.fileType || att.type) as string,
+          size: (att.fileSize || att.size) as number,
+          url: att.url as string,
+        })
+      ) || [],
+  } as MedicalRecord
 }
 
 /**
@@ -417,13 +426,22 @@ export const medicalRecordsApi = {
 /**
  * Helper function to convert Spring Boot Page to PaginatedResponse
  */
-function mapSpringPageToResponse<T>(springPage: any): PaginatedResponse<T> {
+function mapSpringPageToResponse<T>(springPage: Record<string, unknown>): PaginatedResponse<T> {
   return {
-    data: springPage.content || springPage.data || springPage,
-    total: springPage.totalElements || springPage.total || springPage.content?.length || 0,
-    page: springPage.number !== undefined ? springPage.number : springPage.page || 0,
-    pageSize: springPage.size || springPage.pageSize || springPage.content?.length || 0,
-    totalPages: springPage.totalPages || 1,
+    data: (springPage.content || springPage.data || springPage) as T[],
+    total: (springPage.totalElements ||
+      springPage.total ||
+      (springPage.content as unknown[])?.length ||
+      0) as number,
+    page:
+      springPage.number !== undefined
+        ? (springPage.number as number)
+        : ((springPage.page || 0) as number),
+    pageSize: (springPage.size ||
+      springPage.pageSize ||
+      (springPage.content as unknown[])?.length ||
+      0) as number,
+    totalPages: (springPage.totalPages || 1) as number,
   }
 }
 
@@ -517,7 +535,7 @@ export const messagesApi = {
    * Uses authenticated API client to download with proper auth headers
    * @param attachmentId - Attachment ID
    */
-  downloadAttachment: async (attachmentId: string): Promise<any> => {
+  downloadAttachment: async (attachmentId: string): Promise<Blob> => {
     const response = await apiClient.get(ENDPOINTS.MESSAGES.DOWNLOAD_ATTACHMENT(attachmentId))
     return response.data
   },
@@ -527,7 +545,7 @@ export const messagesApi = {
    * Returns list of users based on role permissions
    * @param params - Optional filters (role, search)
    */
-  getMessageableUsers: async (params?: { role?: string; search?: string }): Promise<any[]> => {
+  getMessageableUsers: async (params?: { role?: string; search?: string }): Promise<User[]> => {
     // For now, use a simple approach to fetch all active users
     // Filter will be applied client-side using messaging permissions
     const response = await apiClient.get(ENDPOINTS.ADMIN.LIST_USERS, {
@@ -548,7 +566,7 @@ export const providersApi = {
     location?: string
     acceptingNewPatients?: boolean
     search?: string
-  }): Promise<any[]> => {
+  }): Promise<ProviderSearchResult[]> => {
     const response = await apiClient.post(ENDPOINTS.APPOINTMENTS.SEARCH_PROVIDERS, params)
     // Backend returns array directly, ensure it's an array with safety check
     const providers = Array.isArray(response.data) ? response.data : []
@@ -878,7 +896,7 @@ export const adminApi = {
     return response.data
   },
 
-  getStats: async (): Promise<any> => {
+  getStats: async (): Promise<Record<string, number>> => {
     const response = await apiClient.get(ENDPOINTS.ADMIN.STATS)
     return response.data
   },

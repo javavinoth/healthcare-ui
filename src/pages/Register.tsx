@@ -81,8 +81,9 @@ export default function Register() {
         })
       }, 2000)
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || 'Registration failed. Please try again.'
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
+      const message = apiError.response?.data?.message || 'Registration failed. Please try again.'
       setRegisterError(message)
     },
   })
@@ -102,8 +103,9 @@ export default function Register() {
         })
       }, 3000)
     },
-    onError: (error: any) => {
-      const message = error.response?.data?.message || 'Registration failed. Please try again.'
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
+      const message = apiError.response?.data?.message || 'Registration failed. Please try again.'
       setRegisterError(message)
     },
   })
@@ -279,7 +281,10 @@ export default function Register() {
             )}
 
             {/* Role Selection Tabs */}
-            <Tabs value={selectedRole} onValueChange={(v) => setSelectedRole(v as any)}>
+            <Tabs
+              value={selectedRole}
+              onValueChange={(v) => setSelectedRole(v as 'patient' | 'provider')}
+            >
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger value="patient" className="min-h-[44px]">
                   <User className="mr-2 h-4 w-4" />

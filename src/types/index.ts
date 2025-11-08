@@ -587,6 +587,7 @@ export interface PrescriptionFormData {
 export interface AdminUserResponse extends User {
   phoneNumber?: string
   active: boolean
+  emailVerified?: boolean
   accountLocked: boolean
   failedLoginAttempts: number
   lastLoginIp?: string

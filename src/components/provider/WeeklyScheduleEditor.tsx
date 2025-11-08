@@ -65,9 +65,7 @@ export default function WeeklyScheduleEditor() {
   useEffect(() => {
     if (settings?.availability && settings.availability.length > 0) {
       // Map backend data to form structure
-      const availabilityMap = new Map(
-        settings.availability.map((item: any) => [item.dayOfWeek, item])
-      )
+      const availabilityMap = new Map(settings.availability.map((item) => [item.dayOfWeek, item]))
 
       const formData = DAYS_OF_WEEK.map((day) => {
         const existingData = availabilityMap.get(day.key)
@@ -95,11 +93,12 @@ export default function WeeklyScheduleEditor() {
         description: 'Your weekly availability has been saved successfully.',
       })
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         title: 'Update Failed',
         description:
-          error.response?.data?.message || 'Failed to update schedule. Please try again.',
+          apiError.response?.data?.message || 'Failed to update schedule. Please try again.',
         variant: 'destructive',
       })
     },
@@ -109,7 +108,7 @@ export default function WeeklyScheduleEditor() {
     updateMutation.mutate(data)
   }
 
-  const updateDay = (index: number, field: keyof DayFormData, value: any) => {
+  const updateDay = (index: number, field: keyof DayFormData, value: string | boolean) => {
     const newAvailability = [...availability]
     newAvailability[index] = { ...newAvailability[index], [field]: value }
     setValue('availability', newAvailability)
@@ -348,7 +347,7 @@ export default function WeeklyScheduleEditor() {
             onClick={() => {
               if (settings?.availability) {
                 const availabilityMap = new Map(
-                  settings.availability.map((item: any) => [item.dayOfWeek, item])
+                  settings.availability.map((item) => [item.dayOfWeek, item])
                 )
                 const formData = DAYS_OF_WEEK.map((day) => {
                   const existingData = availabilityMap.get(day.key)

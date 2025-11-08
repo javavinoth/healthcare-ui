@@ -47,7 +47,7 @@ export default function ProviderAppointmentDetail() {
     enabled: !!id,
   })
 
-  const appointment = appointments.find((apt: any) => apt.id === id)
+  const appointment = appointments.find((apt) => apt.id === id)
 
   const openDialog = (type: keyof typeof dialogState) => {
     setDialogState({ ...dialogState, [type]: true })

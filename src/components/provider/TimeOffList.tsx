@@ -69,10 +69,12 @@ export default function TimeOffList() {
         description: 'Your time-off request has been cancelled.',
       })
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         title: 'Cancellation Failed',
-        description: error.response?.data?.message || 'Failed to cancel request. Please try again.',
+        description:
+          apiError.response?.data?.message || 'Failed to cancel request. Please try again.',
         variant: 'destructive',
       })
     },

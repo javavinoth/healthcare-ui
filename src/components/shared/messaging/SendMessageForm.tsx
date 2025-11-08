@@ -101,10 +101,11 @@ export default function SendMessageForm({ conversationId, recipientId }: SendMes
         variant: 'success',
       })
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const err = error as Error
       toast({
         title: 'Failed to send message',
-        description: error?.message || 'Please try again.',
+        description: err?.message || 'Please try again.',
         variant: 'destructive',
       })
     },

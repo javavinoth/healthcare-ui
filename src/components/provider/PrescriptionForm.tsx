@@ -136,11 +136,12 @@ export default function PrescriptionForm({
       setOpen(false)
       reset()
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         title: 'Failed to Create Prescription',
         description:
-          error.response?.data?.message || 'Failed to create prescription. Please try again.',
+          apiError.response?.data?.message || 'Failed to create prescription. Please try again.',
         variant: 'destructive',
       })
     },

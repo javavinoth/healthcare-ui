@@ -53,11 +53,12 @@ export default function MarkNoShowDialog({
       // Reset form and close
       handleClose()
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         variant: 'destructive',
         title: 'Failed to Mark No-Show',
-        description: error.response?.data?.message || 'Failed to mark appointment as no-show',
+        description: apiError.response?.data?.message || 'Failed to mark appointment as no-show',
       })
     },
   })

@@ -58,9 +58,10 @@ export default function ResetPassword() {
         navigate('/login')
       }, 3000)
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       const message =
-        error.response?.data?.message ||
+        apiError.response?.data?.message ||
         'Failed to reset password. The link may have expired. Please request a new one.'
       setResetError(message)
     },

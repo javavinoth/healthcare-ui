@@ -92,11 +92,13 @@ export default function TimeOffRequestDialog() {
       setOpen(false)
       reset()
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         title: 'Request Failed',
         description:
-          error.response?.data?.message || 'Failed to submit time-off request. Please try again.',
+          apiError.response?.data?.message ||
+          'Failed to submit time-off request. Please try again.',
         variant: 'destructive',
       })
     },

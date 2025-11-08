@@ -58,13 +58,13 @@ export default function PrescriptionsList({ patientId }: PrescriptionsListProps)
   }
 
   if (isError) {
+    const apiError = error as { response?: { data?: { message?: string } } }
     return (
       <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 text-center">
         <AlertCircle className="h-8 w-8 text-destructive mx-auto mb-2" />
         <h3 className="text-lg font-semibold text-destructive mb-2">Error Loading Prescriptions</h3>
         <p className="text-sm text-muted-foreground">
-          {(error as any)?.response?.data?.message ||
-            'Failed to load prescriptions. Please try again.'}
+          {apiError?.response?.data?.message || 'Failed to load prescriptions. Please try again.'}
         </p>
       </div>
     )

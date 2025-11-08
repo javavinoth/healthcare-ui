@@ -60,9 +60,10 @@ export default function Login() {
         navigate(dashboardPath)
       }
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       const message =
-        error.response?.data?.message || 'Invalid email or password. Please try again.'
+        apiError.response?.data?.message || 'Invalid email or password. Please try again.'
       setLoginError(message)
     },
   })

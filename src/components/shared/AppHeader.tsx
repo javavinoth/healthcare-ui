@@ -102,7 +102,7 @@ export default function AppHeader({ title, showBackButton = false, backPath }: A
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate(backPath || (-1 as any))}
+                  onClick={() => (backPath ? navigate(backPath) : navigate(-1))}
                   aria-label="Go back"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />

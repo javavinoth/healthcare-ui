@@ -50,11 +50,12 @@ export default function CheckInDialog({ open, onOpenChange, appointment }: Check
       // Reset form and close
       handleClose()
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         variant: 'destructive',
         title: 'Check-in Failed',
-        description: error.response?.data?.message || 'Failed to check in patient',
+        description: apiError.response?.data?.message || 'Failed to check in patient',
       })
     },
   })

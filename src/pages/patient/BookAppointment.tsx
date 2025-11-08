@@ -79,11 +79,15 @@ export default function BookAppointment() {
         variant: 'success',
       })
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const message =
+        error instanceof Error
+          ? error.message
+          : (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+            'Failed to book appointment. Please try again.'
       toast({
         title: 'Booking failed',
-        description:
-          error.response?.data?.message || 'Failed to book appointment. Please try again.',
+        description: message,
         variant: 'destructive',
       })
     },

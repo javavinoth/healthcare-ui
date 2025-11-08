@@ -111,10 +111,11 @@ export default function EditPatientDialog({ open, onOpenChange, patient }: EditP
       })
       onOpenChange(false)
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const err = error as Error
       toast({
         title: 'Error updating patient',
-        description: error.message || 'An error occurred',
+        description: err.message || 'An error occurred',
         variant: 'destructive',
       })
     },

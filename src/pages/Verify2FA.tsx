@@ -60,9 +60,10 @@ export default function Verify2FA() {
         navigate('/dashboard')
       }
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       const message =
-        error.response?.data?.message || 'Invalid verification code. Please try again.'
+        apiError.response?.data?.message || 'Invalid verification code. Please try again.'
       setVerifyError(message)
       // Clear code on error
       setCodeDigits(['', '', '', '', '', ''])

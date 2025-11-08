@@ -19,8 +19,8 @@ export default function Schedule() {
   })
 
   // Check if schedule is configured (at least one day is active)
-  const isScheduleConfigured = settings?.availability?.some((day: any) => day.isActive) || false
-  const activeDaysCount = settings?.availability?.filter((day: any) => day.isActive).length || 0
+  const isScheduleConfigured = settings?.availability?.some((day) => day.isActive) || false
+  const activeDaysCount = settings?.availability?.filter((day) => day.isActive).length || 0
 
   return (
     <div className="h-screen flex flex-col bg-neutral-light">

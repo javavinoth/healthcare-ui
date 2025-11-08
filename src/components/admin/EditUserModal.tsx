@@ -54,7 +54,12 @@ export default function EditUserModal({ open, onClose, userId }: EditUserModalPr
   }, [user])
 
   const updateUserMutation = useMutation({
-    mutationFn: (data: any) => adminApi.updateUser(userId!, data),
+    mutationFn: (data: {
+      firstName: string
+      lastName: string
+      phoneNumber?: string
+      active?: boolean
+    }) => adminApi.updateUser(userId!, data),
     onSuccess: () => {
       toast({
         title: 'Success',
@@ -65,10 +70,11 @@ export default function EditUserModal({ open, onClose, userId }: EditUserModalPr
       queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] })
       handleClose()
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         title: 'Error',
-        description: error.response?.data?.message || 'Failed to update user',
+        description: apiError.response?.data?.message || 'Failed to update user',
         variant: 'destructive',
       })
     },
@@ -96,7 +102,12 @@ export default function EditUserModal({ open, onClose, userId }: EditUserModalPr
       return
     }
 
-    const submitData: any = {
+    const submitData: {
+      firstName: string
+      lastName: string
+      phoneNumber?: string
+      active?: boolean
+    } = {
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim(),
       active: formData.active,

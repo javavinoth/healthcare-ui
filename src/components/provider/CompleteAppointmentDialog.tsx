@@ -60,11 +60,12 @@ export default function CompleteAppointmentDialog({
       // Reset form and close
       handleClose()
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         variant: 'destructive',
         title: 'Failed to Complete',
-        description: error.response?.data?.message || 'Failed to complete appointment',
+        description: apiError.response?.data?.message || 'Failed to complete appointment',
       })
     },
   })

@@ -42,9 +42,10 @@ export default function ForgotPassword() {
       setResetError(null)
       setResetSuccess(true)
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       const message =
-        error.response?.data?.message || 'Failed to send reset email. Please try again.'
+        apiError.response?.data?.message || 'Failed to send reset email. Please try again.'
       setResetError(message)
     },
   })

@@ -106,10 +106,15 @@ export default function AppointmentDetail() {
         variant: 'success',
       })
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const message =
+        error instanceof Error
+          ? error.message
+          : (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+            'Failed to reschedule appointment.'
       toast({
         title: 'Reschedule failed',
-        description: error.response?.data?.message || 'Failed to reschedule appointment.',
+        description: message,
         variant: 'destructive',
       })
     },
@@ -132,10 +137,15 @@ export default function AppointmentDetail() {
       })
       navigate('/patient/appointments')
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const message =
+        error instanceof Error
+          ? error.message
+          : (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+            'Failed to cancel appointment.'
       toast({
         title: 'Cancellation failed',
-        description: error.response?.data?.message || 'Failed to cancel appointment.',
+        description: message,
         variant: 'destructive',
       })
     },
@@ -256,7 +266,7 @@ export default function AppointmentDetail() {
                   </p>
                 )}
               </div>
-              <Badge variant={statusInfo.variant as any}>{statusInfo.label}</Badge>
+              <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-6">

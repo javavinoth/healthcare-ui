@@ -101,11 +101,12 @@ export default function VisitNoteForm({
       setOpen(false)
       reset()
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         title: 'Failed to Create Note',
         description:
-          error.response?.data?.message || 'Failed to create visit note. Please try again.',
+          apiError.response?.data?.message || 'Failed to create visit note. Please try again.',
         variant: 'destructive',
       })
     },

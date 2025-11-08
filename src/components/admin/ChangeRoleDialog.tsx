@@ -60,10 +60,11 @@ export default function ChangeRoleDialog({ open, onClose, userId }: ChangeRoleDi
       queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] })
       handleClose()
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { message?: string } } }
       toast({
         title: 'Error',
-        description: error.response?.data?.message || 'Failed to change user role',
+        description: apiError.response?.data?.message || 'Failed to change user role',
         variant: 'destructive',
       })
     },

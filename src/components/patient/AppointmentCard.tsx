@@ -61,7 +61,19 @@ export default function AppointmentCard({
                   )}
                 </div>
               </div>
-              <Badge variant={statusInfo.variant as any}>{statusInfo.label}</Badge>
+              <Badge
+                variant={
+                  statusInfo.variant as
+                    | 'default'
+                    | 'secondary'
+                    | 'destructive'
+                    | 'outline'
+                    | null
+                    | undefined
+                }
+              >
+                {statusInfo.label}
+              </Badge>
             </div>
 
             {/* Appointment Details */}

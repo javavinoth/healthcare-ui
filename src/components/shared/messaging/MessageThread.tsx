@@ -93,7 +93,11 @@ export default function MessageThread({ conversationId }: MessageThreadProps) {
   })
 
   // Handle attachment download
-  const handleDownloadAttachment = async (attachment: any) => {
+  const handleDownloadAttachment = async (attachment: {
+    id: string
+    name: string
+    type: string
+  }) => {
     try {
       // Use authenticated API client to download
       const response = await messagesApi.downloadAttachment(attachment.id)
@@ -101,7 +105,9 @@ export default function MessageThread({ conversationId }: MessageThreadProps) {
       // Show mock response in development mode
       toast({
         title: 'Attachment Info',
-        description: response.message || `${attachment.name} - File storage not implemented yet`,
+        description:
+          (response as { message?: string }).message ||
+          `${attachment.name} - File storage not implemented yet`,
         variant: 'default',
       })
 
@@ -116,10 +122,11 @@ export default function MessageThread({ conversationId }: MessageThreadProps) {
       // a.download = attachment.name
       // a.click()
       // window.URL.revokeObjectURL(url)
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error
       toast({
         title: 'Download failed',
-        description: error?.message || 'Unable to download attachment',
+        description: err?.message || 'Unable to download attachment',
         variant: 'destructive',
       })
     }
