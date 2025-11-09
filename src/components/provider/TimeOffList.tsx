@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { providerApi } from '@/lib/api'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -70,11 +71,10 @@ export default function TimeOffList() {
       })
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
+      const message = extractErrorMessage(error, 'Failed to cancel request. Please try again.')
       toast({
         title: 'Cancellation Failed',
-        description:
-          apiError.response?.data?.message || 'Failed to cancel request. Please try again.',
+        description: message,
         variant: 'destructive',
       })
     },

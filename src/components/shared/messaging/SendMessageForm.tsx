@@ -10,6 +10,7 @@ import { messagesApi } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import { sendMessageSchema, type SendMessageFormData } from '@/lib/validations/messaging'
 import { cn } from '@/lib/utils'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 
 interface SendMessageFormProps {
   conversationId?: string
@@ -102,10 +103,10 @@ export default function SendMessageForm({ conversationId, recipientId }: SendMes
       })
     },
     onError: (error: unknown) => {
-      const err = error as Error
+      const message = extractErrorMessage(error, 'Failed to send message. Please try again.')
       toast({
         title: 'Failed to send message',
-        description: err?.message || 'Please try again.',
+        description: message,
         variant: 'destructive',
       })
     },

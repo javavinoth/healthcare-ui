@@ -15,6 +15,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 import { providerApi } from '@/lib/api'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 import { CheckCircle } from 'lucide-react'
 
 interface CompleteAppointmentDialogProps {
@@ -61,11 +62,11 @@ export default function CompleteAppointmentDialog({
       handleClose()
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
+      const message = extractErrorMessage(error, 'Failed to complete appointment')
       toast({
         variant: 'destructive',
         title: 'Failed to Complete',
-        description: apiError.response?.data?.message || 'Failed to complete appointment',
+        description: message,
       })
     },
   })

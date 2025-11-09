@@ -14,6 +14,11 @@ import {
   type PasswordResetConfirmFormData,
 } from '@/lib/validations/auth'
 import { authApi } from '@/lib/api'
+import {
+  extractErrorMessage,
+  getValidationErrors,
+  formatValidationErrors,
+} from '@/lib/utils/apiError'
 
 /**
  * Reset Password Page
@@ -59,11 +64,18 @@ export default function ResetPassword() {
       }, 3000)
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      const message =
-        apiError.response?.data?.message ||
-        'Failed to reset password. The link may have expired. Please request a new one.'
-      setResetError(message)
+      // Check for validation errors first
+      const validationErrors = getValidationErrors(error)
+      if (Object.keys(validationErrors).length > 0) {
+        const formattedErrors = formatValidationErrors(error)
+        setResetError(formattedErrors)
+      } else {
+        const message = extractErrorMessage(
+          error,
+          'Failed to reset password. The link may have expired. Please request a new one.'
+        )
+        setResetError(message)
+      }
     },
   })
 

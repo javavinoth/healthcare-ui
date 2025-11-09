@@ -20,6 +20,7 @@ import { messagesApi } from '@/lib/api'
 import { sendMessageSchema, type SendMessageFormData } from '@/lib/validations/messaging'
 import { filterMessagableUsers } from '@/lib/constants/messagingPermissions'
 import { cn } from '@/lib/utils'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 
 interface NewMessageDialogProps {
   open: boolean
@@ -86,10 +87,10 @@ export default function NewMessageDialog({ open, onOpenChange }: NewMessageDialo
       setSelectedRecipientId('')
     },
     onError: (error: unknown) => {
-      const err = error as Error
+      const message = extractErrorMessage(error, 'Failed to send message. Please try again.')
       toast({
         title: 'Failed to send message',
-        description: err?.message || 'Please try again.',
+        description: message,
         variant: 'destructive',
       })
     },

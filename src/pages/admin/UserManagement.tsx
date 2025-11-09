@@ -46,6 +46,7 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import AppHeader from '@/components/shared/AppHeader'
 import { adminApi } from '@/lib/api'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 import CreateUserModal from '@/components/admin/CreateUserModal'
 import EditUserModal from '@/components/admin/EditUserModal'
 import ChangeRoleDialog from '@/components/admin/ChangeRoleDialog'
@@ -99,8 +100,8 @@ export default function UserManagement() {
   })
 
   const users = usersData?.data || []
-  const totalPages = usersData?.totalPages || 0
-  const totalElements = usersData?.total || 0
+  const totalPages = usersData?.pagination?.totalPages || 0
+  const totalElements = usersData?.pagination?.totalElements || 0
 
   // Mutations for user actions
   const activateMutation = useMutation({
@@ -113,10 +114,11 @@ export default function UserManagement() {
       queryClient.invalidateQueries({ queryKey: ['admin', 'users'] })
       queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] })
     },
-    onError: () => {
+    onError: (error: unknown) => {
+      const message = extractErrorMessage(error, 'Failed to activate user')
       toast({
         title: 'Error',
-        description: 'Failed to activate user',
+        description: message,
         variant: 'destructive',
       })
     },
@@ -132,10 +134,11 @@ export default function UserManagement() {
       queryClient.invalidateQueries({ queryKey: ['admin', 'users'] })
       queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] })
     },
-    onError: () => {
+    onError: (error: unknown) => {
+      const message = extractErrorMessage(error, 'Failed to deactivate user')
       toast({
         title: 'Error',
-        description: 'Failed to deactivate user',
+        description: message,
         variant: 'destructive',
       })
     },
@@ -149,10 +152,11 @@ export default function UserManagement() {
         description: 'Invitation email sent successfully',
       })
     },
-    onError: () => {
+    onError: (error: unknown) => {
+      const message = extractErrorMessage(error, 'Failed to send invitation email')
       toast({
         title: 'Error',
-        description: 'Failed to send invitation email',
+        description: message,
         variant: 'destructive',
       })
     },

@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useToast } from '@/components/ui/use-toast'
 import { providerApi } from '@/lib/api'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 import { AlertCircle } from 'lucide-react'
 
 interface MarkNoShowDialogProps {
@@ -54,11 +55,11 @@ export default function MarkNoShowDialog({
       handleClose()
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
+      const message = extractErrorMessage(error, 'Failed to mark appointment as no-show')
       toast({
         variant: 'destructive',
         title: 'Failed to Mark No-Show',
-        description: apiError.response?.data?.message || 'Failed to mark appointment as no-show',
+        description: message,
       })
     },
   })

@@ -262,26 +262,74 @@ export interface ConversationParticipant {
 
 /**
  * API Response types
+ * Updated to match backend standardized response format
+ */
+
+/**
+ * Response metadata (included in all API responses)
+ */
+export interface ResponseMeta {
+  timestamp: string
+  requestId: string
+  apiVersion: string
+}
+
+/**
+ * Standard success response wrapper
  */
 export interface ApiResponse<T> {
   success: boolean
-  data?: T
-  message?: string
-  error?: ApiError
+  data: T
+  message?: string | null
+  meta: ResponseMeta
 }
 
+/**
+ * Pagination metadata (for paginated responses)
+ */
+export interface PaginationMeta {
+  currentPage: number
+  pageSize: number
+  totalElements: number
+  totalPages: number
+  hasNext: boolean
+  hasPrevious: boolean
+}
+
+/**
+ * Paginated response wrapper
+ */
+export interface PaginatedResponse<T> {
+  success: boolean
+  data: T[]
+  pagination: PaginationMeta
+  message?: string | null
+  meta: ResponseMeta
+}
+
+/**
+ * Error response structure (returned on failures)
+ */
+export interface ErrorResponse {
+  success: false
+  timestamp: string
+  status: number
+  error: string
+  message: string
+  errorCode: string
+  path: string
+  validationErrors?: Record<string, string>
+  meta: ResponseMeta
+}
+
+/**
+ * @deprecated Use ErrorResponse instead
+ * Keeping for backward compatibility during migration
+ */
 export interface ApiError {
   code: string
   message: string
   details?: Record<string, unknown>
-}
-
-export interface PaginatedResponse<T> {
-  data: T[]
-  total: number
-  page: number
-  pageSize: number
-  totalPages: number
 }
 
 /**

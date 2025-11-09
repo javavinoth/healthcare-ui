@@ -14,6 +14,7 @@ import {
   type PasswordResetRequestFormData,
 } from '@/lib/validations/auth'
 import { authApi } from '@/lib/api'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 
 /**
  * Forgot Password Page
@@ -43,9 +44,7 @@ export default function ForgotPassword() {
       setResetSuccess(true)
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      const message =
-        apiError.response?.data?.message || 'Failed to send reset email. Please try again.'
+      const message = extractErrorMessage(error, 'Failed to send reset email. Please try again.')
       setResetError(message)
     },
   })

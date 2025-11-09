@@ -13,6 +13,7 @@ import { loginSchema, type LoginFormData } from '@/lib/validations/auth'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import { getRoleDashboardPath } from '@/lib/utils/routing'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 
 /**
  * Login Page Component
@@ -61,9 +62,7 @@ export default function Login() {
       }
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      const message =
-        apiError.response?.data?.message || 'Invalid email or password. Please try again.'
+      const message = extractErrorMessage(error, 'Invalid email or password. Please try again.')
       setLoginError(message)
     },
   })

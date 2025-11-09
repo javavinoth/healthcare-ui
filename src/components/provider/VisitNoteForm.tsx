@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 import { Loader2, FileText, Plus } from 'lucide-react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
@@ -102,11 +103,10 @@ export default function VisitNoteForm({
       reset()
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
+      const message = extractErrorMessage(error, 'Failed to create visit note. Please try again.')
       toast({
         title: 'Failed to Create Note',
-        description:
-          apiError.response?.data?.message || 'Failed to create visit note. Please try again.',
+        description: message,
         variant: 'destructive',
       })
     },

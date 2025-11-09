@@ -424,24 +424,98 @@ export const medicalRecordsApi = {
 }
 
 /**
- * Helper function to convert Spring Boot Page to PaginatedResponse
+ * Helper function to extract paginated data from API response
+ *
+ * The response interceptor unwraps the new backend format and attaches pagination metadata:
+ * - response.data: The actual data array (T[])
+ * - response.pagination: The pagination metadata object
+ *
+ * New Backend Format (before interceptor unwrapping):
+ * {
+ *   success: true,
+ *   data: T[],
+ *   pagination: {
+ *     currentPage: number,
+ *     pageSize: number,
+ *     totalElements: number,
+ *     totalPages: number,
+ *     hasNext: boolean,
+ *     hasPrevious: boolean
+ *   },
+ *   meta: { ... }
+ * }
+ *
+ * After interceptor unwrapping:
+ * - response.data = T[]
+ * - response.pagination = { currentPage, pageSize, ... }
  */
-function mapSpringPageToResponse<T>(springPage: Record<string, unknown>): PaginatedResponse<T> {
+function mapSpringPageToResponse<T>(
+  response:
+    | {
+        data: T[]
+        pagination?: {
+          currentPage: number
+          pageSize: number
+          totalElements: number
+          totalPages: number
+          hasNext: boolean
+          hasPrevious: boolean
+        }
+      }
+    | Record<string, unknown>
+): PaginatedResponse<T> {
+  // Check if this is the new format (interceptor-unwrapped response)
+  if ('pagination' in response && response.pagination && 'data' in response) {
+    const paginationResponse = response as {
+      data: T[]
+      pagination: {
+        currentPage: number
+        pageSize: number
+        totalElements: number
+        totalPages: number
+        hasNext: boolean
+        hasPrevious: boolean
+      }
+    }
+    return {
+      success: true,
+      data: paginationResponse.data,
+      pagination: paginationResponse.pagination,
+      meta: {
+        timestamp: new Date().toISOString(),
+        requestId: 'client-generated',
+        apiVersion: 'v1',
+      },
+    }
+  }
+
+  // Fallback to old Spring Boot Page format (for backward compatibility)
+  const springPage = response as Record<string, unknown>
   return {
+    success: true,
     data: (springPage.content || springPage.data || springPage) as T[],
-    total: (springPage.totalElements ||
-      springPage.total ||
-      (springPage.content as unknown[])?.length ||
-      0) as number,
-    page:
-      springPage.number !== undefined
-        ? (springPage.number as number)
-        : ((springPage.page || 0) as number),
-    pageSize: (springPage.size ||
-      springPage.pageSize ||
-      (springPage.content as unknown[])?.length ||
-      0) as number,
-    totalPages: (springPage.totalPages || 1) as number,
+    pagination: {
+      currentPage:
+        springPage.number !== undefined
+          ? (springPage.number as number)
+          : ((springPage.page || 0) as number),
+      pageSize: (springPage.size ||
+        springPage.pageSize ||
+        (springPage.content as unknown[])?.length ||
+        0) as number,
+      totalElements: (springPage.totalElements ||
+        springPage.total ||
+        (springPage.content as unknown[])?.length ||
+        0) as number,
+      totalPages: (springPage.totalPages || 1) as number,
+      hasNext: false, // Not available in old format
+      hasPrevious: false, // Not available in old format
+    },
+    meta: {
+      timestamp: new Date().toISOString(),
+      requestId: 'client-generated',
+      apiVersion: 'v1',
+    },
   }
 }
 
@@ -461,7 +535,7 @@ export const messagesApi = {
     const response = await apiClient.get(ENDPOINTS.MESSAGES.CONVERSATIONS, {
       params: { page, size: pageSize, sort: 'updatedAt,desc' },
     })
-    return mapSpringPageToResponse(response.data)
+    return mapSpringPageToResponse(response)
   },
 
   /**
@@ -487,7 +561,7 @@ export const messagesApi = {
     const response = await apiClient.get(ENDPOINTS.MESSAGES.CONVERSATION_MESSAGES(conversationId), {
       params: { page, size: pageSize, sort: 'sentAt,asc' },
     })
-    return mapSpringPageToResponse(response.data)
+    return mapSpringPageToResponse(response)
   },
 
   /**
@@ -855,7 +929,7 @@ export const adminApi = {
     sortDir?: string
   }): Promise<PaginatedResponse<AdminUserResponse>> => {
     const response = await apiClient.get(ENDPOINTS.ADMIN.LIST_USERS, { params })
-    return mapSpringPageToResponse(response.data)
+    return mapSpringPageToResponse(response)
   },
 
   getUserById: async (id: string): Promise<AdminUserResponse> => {
@@ -921,7 +995,7 @@ export const auditApi = {
     size?: number
   }): Promise<PaginatedResponse<AuditLogResponse>> => {
     const response = await apiClient.get(ENDPOINTS.AUDIT.LIST, { params })
-    return mapSpringPageToResponse(response.data)
+    return mapSpringPageToResponse(response)
   },
 
   /**
@@ -932,7 +1006,7 @@ export const auditApi = {
     size?: number
   }): Promise<PaginatedResponse<AuditLogResponse>> => {
     const response = await apiClient.get(ENDPOINTS.AUDIT.MY_LOGS, { params })
-    return mapSpringPageToResponse(response.data)
+    return mapSpringPageToResponse(response)
   },
 
   /**
@@ -943,7 +1017,7 @@ export const auditApi = {
     params?: { page?: number; size?: number }
   ): Promise<PaginatedResponse<AuditLogResponse>> => {
     const response = await apiClient.get(ENDPOINTS.AUDIT.USER_LOGS(userId), { params })
-    return mapSpringPageToResponse(response.data)
+    return mapSpringPageToResponse(response)
   },
 
   /**
@@ -954,7 +1028,7 @@ export const auditApi = {
     params?: { page?: number; size?: number }
   ): Promise<PaginatedResponse<AuditLogResponse>> => {
     const response = await apiClient.get(ENDPOINTS.AUDIT.PATIENT_LOGS(patientId), { params })
-    return mapSpringPageToResponse(response.data)
+    return mapSpringPageToResponse(response)
   },
 }
 

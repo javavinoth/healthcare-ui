@@ -27,6 +27,7 @@ import { Badge } from '@/components/ui/badge'
 import { X } from 'lucide-react'
 import type { PatientDetail } from '@/types'
 import { providerApi } from '@/lib/api'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 
 const patientSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -112,10 +113,10 @@ export default function EditPatientDialog({ open, onOpenChange, patient }: EditP
       onOpenChange(false)
     },
     onError: (error: unknown) => {
-      const err = error as Error
+      const message = extractErrorMessage(error, 'An error occurred')
       toast({
         title: 'Error updating patient',
-        description: err.message || 'An error occurred',
+        description: message,
         variant: 'destructive',
       })
     },

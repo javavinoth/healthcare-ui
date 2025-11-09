@@ -137,17 +137,19 @@ export default function PatientsPage() {
               </div>
 
               {/* Pagination */}
-              {patientsData && patientsData.totalPages > 1 && (
-                <PatientPagination
-                  currentPage={patientsData.page}
-                  totalPages={patientsData.totalPages}
-                  totalElements={patientsData.total}
-                  pageSize={patientsData.pageSize}
-                  hasNext={patientsData.page < patientsData.totalPages - 1}
-                  hasPrevious={patientsData.page > 0}
-                  onPageChange={handlePageChange}
-                />
-              )}
+              {patientsData &&
+                patientsData.pagination &&
+                patientsData.pagination.totalPages > 1 && (
+                  <PatientPagination
+                    currentPage={patientsData.pagination.currentPage}
+                    totalPages={patientsData.pagination.totalPages}
+                    totalElements={patientsData.pagination.totalElements}
+                    pageSize={patientsData.pagination.pageSize}
+                    hasNext={patientsData.pagination.hasNext}
+                    hasPrevious={patientsData.pagination.hasPrevious}
+                    onPageChange={handlePageChange}
+                  />
+                )}
             </>
           )}
         </div>

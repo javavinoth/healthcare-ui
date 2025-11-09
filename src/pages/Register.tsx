@@ -24,6 +24,11 @@ import {
   type ProviderRegistrationFormData,
 } from '@/lib/validations/auth'
 import { authApi } from '@/lib/api'
+import {
+  extractErrorMessage,
+  getValidationErrors,
+  formatValidationErrors,
+} from '@/lib/utils/apiError'
 
 /**
  * Register Page Component
@@ -82,9 +87,15 @@ export default function Register() {
       }, 2000)
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      const message = apiError.response?.data?.message || 'Registration failed. Please try again.'
-      setRegisterError(message)
+      // Check for validation errors first
+      const validationErrors = getValidationErrors(error)
+      if (Object.keys(validationErrors).length > 0) {
+        const formattedErrors = formatValidationErrors(error)
+        setRegisterError(formattedErrors)
+      } else {
+        const message = extractErrorMessage(error, 'Registration failed. Please try again.')
+        setRegisterError(message)
+      }
     },
   })
 
@@ -104,9 +115,15 @@ export default function Register() {
       }, 3000)
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      const message = apiError.response?.data?.message || 'Registration failed. Please try again.'
-      setRegisterError(message)
+      // Check for validation errors first
+      const validationErrors = getValidationErrors(error)
+      if (Object.keys(validationErrors).length > 0) {
+        const formattedErrors = formatValidationErrors(error)
+        setRegisterError(formattedErrors)
+      } else {
+        const message = extractErrorMessage(error, 'Registration failed. Please try again.')
+        setRegisterError(message)
+      }
     },
   })
 

@@ -12,6 +12,11 @@ import AppointmentBookingForm from '@/components/patient/AppointmentBookingForm'
 import EmptyState from '@/components/patient/EmptyState'
 import { providersApi, appointmentsApi } from '@/lib/api'
 import { useToast } from '@/components/ui/use-toast'
+import {
+  extractErrorMessage,
+  getValidationErrors,
+  formatValidationErrors,
+} from '@/lib/utils/apiError'
 import type {
   ProviderSearchFormData,
   AppointmentBookingFormData,
@@ -80,11 +85,12 @@ export default function BookAppointment() {
       })
     },
     onError: (error: unknown) => {
+      // Check for validation errors first
+      const validationErrors = getValidationErrors(error)
       const message =
-        error instanceof Error
-          ? error.message
-          : (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-            'Failed to book appointment. Please try again.'
+        Object.keys(validationErrors).length > 0
+          ? formatValidationErrors(error)
+          : extractErrorMessage(error, 'Failed to book appointment. Please try again.')
       toast({
         title: 'Booking failed',
         description: message,

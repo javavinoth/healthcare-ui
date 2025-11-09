@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { providerApi } from '@/lib/api'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
@@ -74,11 +75,10 @@ export default function ProviderSettingsForm() {
       })
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
+      const message = extractErrorMessage(error, 'Failed to update settings. Please try again.')
       toast({
         title: 'Update Failed',
-        description:
-          apiError.response?.data?.message || 'Failed to update settings. Please try again.',
+        description: message,
         variant: 'destructive',
       })
     },

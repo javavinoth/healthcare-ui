@@ -127,7 +127,13 @@ apiClient.interceptors.request.use(
 
 /**
  * Response Interceptor
- * Handles authentication, errors, and response logging
+ * Handles authentication, errors, response unwrapping, and logging
+ *
+ * Automatically unwraps the new backend response format:
+ * - Success: { success: true, data: T, message?, meta }
+ * - Paginated: { success: true, data: T[], pagination, message?, meta }
+ *
+ * After unwrapping, response.data contains the actual data (not the wrapper)
  */
 apiClient.interceptors.response.use(
   (response) => {
@@ -136,21 +142,79 @@ apiClient.interceptors.response.use(
       console.log('[API Response]', {
         status: response.status,
         url: response.config.url,
+        success: response.data?.success,
+        hasData: !!response.data?.data,
+        hasPagination: !!response.data?.pagination,
+        requestId: response.data?.meta?.requestId,
         // Don't log response data as it may contain PHI
       })
+    }
+
+    // Unwrap the new backend response format
+    // Check if response has the new wrapper format (success, data, meta)
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'success' in response.data &&
+      'meta' in response.data
+    ) {
+      // For paginated responses, preserve pagination metadata
+      if ('pagination' in response.data && response.data.pagination) {
+        // Store pagination in a special property for access in API functions
+        const unwrappedData = response.data.data
+        const pagination = response.data.pagination
+
+        // Create a new response object with pagination accessible
+        response.data = unwrappedData
+        // Attach pagination metadata to response for mapSpringPageToResponse
+        ;(response as unknown as { pagination?: unknown }).pagination = pagination
+      } else {
+        // Regular response - unwrap data
+        response.data = response.data.data
+      }
     }
 
     return response
   },
   (error: AxiosError) => {
+    // Extract error information from new ErrorResponse format
+    const errorData = error.response?.data as
+      | {
+          success?: false
+          message?: string
+          errorCode?: string
+          status?: number
+          validationErrors?: Record<string, string>
+          meta?: { requestId?: string }
+        }
+      | undefined
+
     // Handle specific error codes
     if (error.response) {
       const status = error.response.status
+      const message = errorData?.message || 'An error occurred'
+      const errorCode = errorData?.errorCode
+      const requestId = errorData?.meta?.requestId
+
+      // Log error details in development
+      if (import.meta.env.VITE_ENABLE_DEBUG_LOGS === 'true' && import.meta.env.DEV) {
+        console.error('[API Error]', {
+          status,
+          message,
+          errorCode,
+          requestId,
+          url: error.config?.url,
+          hasValidationErrors: !!errorData?.validationErrors,
+        })
+      }
 
       switch (status) {
         case 401:
           // Unauthorized - Session expired or invalid
-          console.warn('[API] Unauthorized - redirecting to login')
+          console.warn('[API] Unauthorized - redirecting to login', {
+            errorCode,
+            requestId,
+          })
           // Clear all auth tokens
           clearTokens()
           // Redirect to login page
@@ -161,12 +225,26 @@ apiClient.interceptors.response.use(
 
         case 403:
           // Forbidden - User doesn't have permission
-          console.warn('[API] Forbidden - insufficient permissions')
+          console.warn('[API] Forbidden - insufficient permissions', {
+            message,
+            errorCode,
+            requestId,
+          })
+          break
+
+        case 422:
+          // Unprocessable Entity - Business logic error or validation failure
+          console.warn('[API] Validation or business logic error', {
+            message,
+            errorCode,
+            requestId,
+            validationErrors: errorData?.validationErrors,
+          })
           break
 
         case 429:
           // Too many requests - Rate limiting
-          console.warn('[API] Rate limit exceeded')
+          console.warn('[API] Rate limit exceeded', { message, requestId })
           break
 
         case 500:
@@ -174,11 +252,21 @@ apiClient.interceptors.response.use(
         case 503:
         case 504:
           // Server errors
-          console.error('[API] Server error:', status)
+          console.error('[API] Server error:', {
+            status,
+            message,
+            errorCode,
+            requestId,
+          })
           break
 
         default:
-          console.error('[API] Error:', status)
+          console.error('[API] Error:', {
+            status,
+            message,
+            errorCode,
+            requestId,
+          })
       }
     } else if (error.request) {
       // Request was made but no response received

@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label'
 import { twoFactorSchema, type TwoFactorFormData } from '@/lib/validations/auth'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 
 /**
  * Two-Factor Authentication Verification Page
@@ -61,9 +62,7 @@ export default function Verify2FA() {
       }
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      const message =
-        apiError.response?.data?.message || 'Invalid verification code. Please try again.'
+      const message = extractErrorMessage(error, 'Invalid verification code. Please try again.')
       setVerifyError(message)
       // Clear code on error
       setCodeDigits(['', '', '', '', '', ''])

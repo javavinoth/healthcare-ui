@@ -28,6 +28,7 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import AppHeader from '@/components/shared/AppHeader'
 import { appointmentsApi } from '@/lib/api'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 import { useToast } from '@/components/ui/use-toast'
 import type { AppointmentStatus } from '@/types'
 
@@ -107,11 +108,7 @@ export default function AppointmentDetail() {
       })
     },
     onError: (error: unknown) => {
-      const message =
-        error instanceof Error
-          ? error.message
-          : (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-            'Failed to reschedule appointment.'
+      const message = extractErrorMessage(error, 'Failed to reschedule appointment.')
       toast({
         title: 'Reschedule failed',
         description: message,
@@ -138,11 +135,7 @@ export default function AppointmentDetail() {
       navigate('/patient/appointments')
     },
     onError: (error: unknown) => {
-      const message =
-        error instanceof Error
-          ? error.message
-          : (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-            'Failed to cancel appointment.'
+      const message = extractErrorMessage(error, 'Failed to cancel appointment.')
       toast({
         title: 'Cancellation failed',
         description: message,

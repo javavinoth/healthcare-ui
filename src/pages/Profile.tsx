@@ -27,6 +27,7 @@ import {
 } from '@/lib/validations/auth'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 
 /**
  * Profile & Settings Page
@@ -86,8 +87,8 @@ export default function Profile() {
       setTimeout(() => setProfileSuccess(false), 3000)
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      setProfileError(apiError.response?.data?.message || 'Failed to update profile')
+      const message = extractErrorMessage(error)
+      setProfileError(message || 'Failed to update profile')
       setProfileSuccess(false)
     },
   })
@@ -108,8 +109,8 @@ export default function Profile() {
       setTimeout(() => setPasswordSuccess(false), 3000)
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      setPasswordError(apiError.response?.data?.message || 'Failed to change password')
+      const message = extractErrorMessage(error)
+      setPasswordError(message || 'Failed to change password')
       setPasswordSuccess(false)
     },
   })
@@ -129,8 +130,8 @@ export default function Profile() {
       }
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      setTwoFactorError(apiError.response?.data?.message || 'Failed to enable 2FA')
+      const message = extractErrorMessage(error)
+      setTwoFactorError(message || 'Failed to enable 2FA')
     },
   })
 
@@ -146,8 +147,8 @@ export default function Profile() {
       setTwoFactorError(null)
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      setTwoFactorError(apiError.response?.data?.message || 'Invalid verification code')
+      const message = extractErrorMessage(error)
+      setTwoFactorError(message || 'Invalid verification code')
     },
   })
 
@@ -161,8 +162,8 @@ export default function Profile() {
       setTwoFactorError(null)
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
-      setTwoFactorError(apiError.response?.data?.message || 'Failed to disable 2FA')
+      const message = extractErrorMessage(error, 'Failed to disable 2FA')
+      setTwoFactorError(message)
     },
   })
 

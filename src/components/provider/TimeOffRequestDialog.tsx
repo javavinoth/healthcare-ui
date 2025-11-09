@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 import { Loader2, Plus } from 'lucide-react'
 import { format } from 'date-fns'
 
@@ -93,12 +94,13 @@ export default function TimeOffRequestDialog() {
       reset()
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
+      const message = extractErrorMessage(
+        error,
+        'Failed to submit time-off request. Please try again.'
+      )
       toast({
         title: 'Request Failed',
-        description:
-          apiError.response?.data?.message ||
-          'Failed to submit time-off request. Please try again.',
+        description: message,
         variant: 'destructive',
       })
     },

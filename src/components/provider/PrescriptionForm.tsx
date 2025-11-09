@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
+import { extractErrorMessage } from '@/lib/utils/apiError'
 import { Loader2, Pill, Plus } from 'lucide-react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAuthStore } from '@/stores/authStore'
@@ -137,11 +138,10 @@ export default function PrescriptionForm({
       reset()
     },
     onError: (error: unknown) => {
-      const apiError = error as { response?: { data?: { message?: string } } }
+      const message = extractErrorMessage(error, 'Failed to create prescription. Please try again.')
       toast({
         title: 'Failed to Create Prescription',
-        description:
-          apiError.response?.data?.message || 'Failed to create prescription. Please try again.',
+        description: message,
         variant: 'destructive',
       })
     },
