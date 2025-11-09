@@ -385,13 +385,14 @@ export default function Register() {
                   <div className="space-y-2">
                     <Label htmlFor="patient-phoneNumber">
                       Phone Number{' '}
-                      <span className="text-neutral-blue-gray text-sm">(optional)</span>
+                      <span className="text-error">*</span>
                     </Label>
                     <Input
                       id="patient-phoneNumber"
                       type="tel"
                       autoComplete="tel"
-                      placeholder="+1234567890"
+                      maxLength={10}
+                      placeholder="+91-1234567890"
                       {...patientForm.register('phoneNumber')}
                     />
                     {patientForm.formState.errors.phoneNumber && (

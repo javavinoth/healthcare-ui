@@ -149,9 +149,11 @@ export const registrationSchema = z
     lastName: z.string().min(1, 'Last name is required').max(100, 'Last name is too long').trim(),
     phoneNumber: z
       .string()
-      .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number (E.164 format)')
-      .optional()
-      .or(z.literal('')),
+       .min(1, "Phone number is required")
+     .regex(
+  /^\+?[1-9]\d{9,14}$/,
+  "Please enter a valid phone number (e.g. +919876543210)"
+),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
