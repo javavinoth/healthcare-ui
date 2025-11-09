@@ -90,7 +90,8 @@ export const authApi = {
    */
   register: async (data: RegisterFormData): Promise<User> => {
     const { confirmPassword: _confirmPassword, ...requestData } = data
-    const response = await apiClient.post<User>(ENDPOINTS.AUTH.REGISTER, requestData)
+    const updatedRequestData = {...requestData,phoneNumber: `+91${data.phoneNumber}`,};
+    const response = await apiClient.post<User>(ENDPOINTS.AUTH.REGISTER, updatedRequestData)
     return response.data
   },
 
