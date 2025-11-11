@@ -155,7 +155,15 @@ export const PROVIDER_ENDPOINTS = {
 
 /**
  * Admin Portal Endpoints
- * Protected endpoints for system administrators
+ * Protected endpoints for administrators (SYSTEM_ADMIN and HOSPITAL_ADMIN)
+ *
+ * SYSTEM_ADMIN restrictions:
+ * - CREATE_USER: Can only create HOSPITAL_ADMIN users
+ * - STATS: Returns global platform statistics
+ *
+ * HOSPITAL_ADMIN access:
+ * - CREATE_USER: Can create all user types except SYSTEM_ADMIN
+ * - STATS: Returns facility-specific statistics
  */
 export const ADMIN_ENDPOINTS = {
   // User Management
@@ -167,9 +175,56 @@ export const ADMIN_ENDPOINTS = {
   ACTIVATE_USER: (id: number | string) => `/admin/users/${id}/activate`,
   DEACTIVATE_USER: (id: number | string) => `/admin/users/${id}/deactivate`,
   SEND_INVITATION: (id: number | string) => `/admin/users/${id}/send-invitation`,
+  GET_USER_HOSPITAL_ASSIGNMENTS: (id: number | string) => `/admin/users/${id}/hospital-assignments`,
 
-  // Statistics
+  // Statistics (scope depends on role)
   STATS: '/admin/stats',
+} as const
+
+/**
+ * Hospital Management Endpoints
+ * Protected endpoints for hospital/location/department/staff management
+ * Requires MANAGE_FACILITY permission (SYSTEM_ADMIN or HOSPITAL_ADMIN roles)
+ *
+ * SYSTEM_ADMIN: Full access to all hospitals (platform-level)
+ * HOSPITAL_ADMIN: Access limited to assigned hospitals (facility-level)
+ */
+export const HOSPITAL_ENDPOINTS = {
+  // Hospital CRUD
+  CREATE: '/hospitals',
+  LIST: '/hospitals',
+  LIST_ACTIVE: '/hospitals/active',
+  GET_BY_ID: (id: number | string) => `/hospitals/${id}`,
+  GET_DETAILS: (id: number | string) => `/hospitals/${id}/details`,
+  UPDATE: (id: number | string) => `/hospitals/${id}`,
+  DELETE: (id: number | string) => `/hospitals/${id}`,
+
+  // Hospital Approval Workflow (SYSTEM_ADMIN & HOSPITAL_ADMIN)
+  CREATE_WITH_ADMIN: '/hospitals/with-admin',
+  MARK_READY_FOR_REVIEW: (id: number | string) => `/hospitals/${id}/ready-for-review`,
+  PENDING_REVIEW: '/hospitals/pending-review',
+  APPROVE: (id: number | string) => `/hospitals/${id}/approve`,
+  REJECT: (id: number | string) => `/hospitals/${id}/reject`,
+
+  // Location Management
+  CREATE_LOCATION: '/hospitals/locations',
+  GET_HOSPITAL_LOCATIONS: (hospitalId: number | string) => `/hospitals/${hospitalId}/locations`,
+  UPDATE_LOCATION: (id: number | string) => `/hospitals/locations/${id}`,
+  DELETE_LOCATION: (id: number | string) => `/hospitals/locations/${id}`,
+
+  // Department Management
+  CREATE_DEPARTMENT: '/hospitals/departments',
+  GET_HOSPITAL_DEPARTMENTS: (hospitalId: number | string) => `/hospitals/${hospitalId}/departments`,
+  UPDATE_DEPARTMENT: (id: number | string) => `/hospitals/departments/${id}`,
+  DELETE_DEPARTMENT: (id: number | string) => `/hospitals/departments/${id}`,
+
+  // Staff Assignment Management
+  CREATE_ASSIGNMENT: '/hospitals/assignments',
+  GET_HOSPITAL_STAFF: (hospitalId: number | string) => `/hospitals/${hospitalId}/staff`,
+  GET_DEPARTMENT_STAFF: (departmentId: number | string) =>
+    `/hospitals/departments/${departmentId}/staff`,
+  UPDATE_ASSIGNMENT: (id: number | string) => `/hospitals/assignments/${id}`,
+  DELETE_ASSIGNMENT: (id: number | string) => `/hospitals/assignments/${id}`,
 } as const
 
 /**
@@ -204,6 +259,7 @@ export const ENDPOINTS = {
   PATIENTS: PATIENT_ENDPOINTS,
   PROVIDER: PROVIDER_ENDPOINTS,
   ADMIN: ADMIN_ENDPOINTS,
+  HOSPITALS: HOSPITAL_ENDPOINTS,
   AUDIT: AUDIT_ENDPOINTS,
 } as const
 
@@ -216,5 +272,6 @@ export type MessageEndpoints = typeof MESSAGE_ENDPOINTS
 export type PatientEndpoints = typeof PATIENT_ENDPOINTS
 export type ProviderEndpoints = typeof PROVIDER_ENDPOINTS
 export type AdminEndpoints = typeof ADMIN_ENDPOINTS
+export type HospitalEndpoints = typeof HOSPITAL_ENDPOINTS
 export type AuditEndpoints = typeof AUDIT_ENDPOINTS
 export type Endpoints = typeof ENDPOINTS

@@ -21,7 +21,7 @@ export const MESSAGING_PERMISSIONS: MessagingPermissionMatrix = {
     ROLES.DOCTOR, // Consultations
     ROLES.NURSE, // Care coordination
     ROLES.RECEPTIONIST, // Scheduling
-    ROLES.ADMIN, // Escalations
+    ROLES.HOSPITAL_ADMIN, // Escalations
   ],
 
   // Nurses can message patients, doctors, other nurses, receptionists, and admins
@@ -30,7 +30,7 @@ export const MESSAGING_PERMISSIONS: MessagingPermissionMatrix = {
     ROLES.DOCTOR, // Care coordination
     ROLES.NURSE, // Handoffs
     ROLES.RECEPTIONIST, // Scheduling
-    ROLES.ADMIN, // Escalations
+    ROLES.HOSPITAL_ADMIN, // Escalations
   ],
 
   // Receptionists can message patients, providers, other receptionists, and admins
@@ -39,25 +39,28 @@ export const MESSAGING_PERMISSIONS: MessagingPermissionMatrix = {
     ROLES.DOCTOR, // Scheduling
     ROLES.NURSE, // Scheduling
     ROLES.RECEPTIONIST, // Coordination
-    ROLES.ADMIN, // Escalations
+    ROLES.HOSPITAL_ADMIN, // Escalations
   ],
 
   // Billing staff can message patients, other billing staff, and admins
   [ROLES.BILLING_STAFF]: [
     ROLES.PATIENT, // Billing questions
     ROLES.BILLING_STAFF, // Internal coordination
-    ROLES.ADMIN, // Escalations
+    ROLES.HOSPITAL_ADMIN, // Escalations
   ],
 
-  // Admins can message everyone
-  [ROLES.ADMIN]: [
+  // Hospital Admins can message everyone in their facility
+  [ROLES.HOSPITAL_ADMIN]: [
     ROLES.PATIENT,
     ROLES.DOCTOR,
     ROLES.NURSE,
     ROLES.RECEPTIONIST,
     ROLES.BILLING_STAFF,
-    ROLES.ADMIN,
+    ROLES.HOSPITAL_ADMIN,
   ],
+
+  // System Admins typically don't use messaging, but can message hospital admins
+  [ROLES.SYSTEM_ADMIN]: [ROLES.HOSPITAL_ADMIN, ROLES.SYSTEM_ADMIN],
 }
 
 /**

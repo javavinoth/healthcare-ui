@@ -112,9 +112,9 @@ export const profileSchema = z.object({
   lastName: z.string().min(1, 'Last name is required').max(100, 'Last name is too long').trim(),
   phoneNumber: z
     .string()
-    .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number (E.164 format)')
-    .optional()
-    .or(z.literal('')),
+    .min(1, 'Phone number is required')
+    .regex(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian mobile number (e.g., 9876543210)')
+    .trim(),
 })
 
 export type ProfileFormData = z.infer<typeof profileSchema>

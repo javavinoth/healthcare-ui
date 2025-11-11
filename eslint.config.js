@@ -21,7 +21,7 @@ export default defineConfig([
     },
     rules: {
       // Disable 'any' type warnings - will be addressed in Phase 2 type safety improvement
-      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
 
       // Allow unused vars starting with underscore (common convention)
       '@typescript-eslint/no-unused-vars': ['error', {

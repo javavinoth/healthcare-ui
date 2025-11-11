@@ -21,7 +21,7 @@ export default function Dashboard() {
       navigate('/patient/appointments')
     } else if (user?.role === 'doctor' || user?.role === 'nurse') {
       navigate('/provider/appointments')
-    } else if (user?.role === 'admin') {
+    } else if (user?.role === 'hospital_admin') {
       toast({
         title: 'Coming Soon',
         description: 'Admin appointment management is coming soon!',
@@ -51,8 +51,8 @@ export default function Dashboard() {
       navigate('/receptionist/messages')
     } else if (user?.role === 'billing_staff') {
       navigate('/billing/messages')
-    } else if (user?.role === 'admin') {
-      // Admins can use any messaging interface, default to patient view
+    } else if (user?.role === 'hospital_admin') {
+      // Hospital admins can use any messaging interface, default to patient view
       navigate('/patient/messages')
     } else {
       toast({

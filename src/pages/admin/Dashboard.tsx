@@ -1,6 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { Users, UserPlus, CheckCircle2, AlertCircle, Shield } from 'lucide-react'
+import {
+  Users,
+  UserPlus,
+  CheckCircle2,
+  AlertCircle,
+  Shield,
+  Building2,
+  MapPin,
+  Layers,
+  ChevronRight,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -113,7 +123,7 @@ export default function AdminDashboard() {
                 title="Total Users"
                 value={stats?.totalUsers || 0}
                 icon={Users}
-                description={`${stats?.activeUsers || 0} active`}
+                description="All platform users"
                 iconColor="text-primary"
                 iconBgColor="bg-primary/10"
               />
@@ -161,6 +171,81 @@ export default function AdminDashboard() {
               />
             </>
           )}
+        </div>
+
+        {/* Hospital Management Section */}
+        <div className="mb-8">
+          <h2 className="text-h2 text-neutral-blue-gray mb-4">Hospital Management</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Hospitals Card */}
+            <Card
+              className="cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => navigate('/admin/hospitals')}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-primary-blue/10 rounded-lg">
+                      <Building2 className="h-6 w-6 text-primary-blue" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-neutral-blue-gray">Hospitals</h3>
+                      <p className="text-sm text-neutral-blue-gray/60 mt-1">
+                        Manage hospital facilities
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-neutral-blue-gray/40" />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Locations Card */}
+            <Card
+              className="cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => navigate('/admin/locations')}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-wellness/10 rounded-lg">
+                      <MapPin className="h-6 w-6 text-wellness" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-neutral-blue-gray">Locations</h3>
+                      <p className="text-sm text-neutral-blue-gray/60 mt-1">
+                        Manage buildings and floors
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-neutral-blue-gray/40" />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Departments Card */}
+            <Card
+              className="cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => navigate('/admin/departments')}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-accent-teal/10 rounded-lg">
+                      <Layers className="h-6 w-6 text-accent-teal" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-neutral-blue-gray">Departments</h3>
+                      <p className="text-sm text-neutral-blue-gray/60 mt-1">
+                        Manage hospital departments
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-neutral-blue-gray/40" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Recent Users */}

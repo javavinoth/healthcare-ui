@@ -90,6 +90,13 @@ export default function CreateUserModal({ open, onClose }: CreateUserModalProps)
       newErrors.email = 'Invalid email format'
     }
 
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber = 'Phone number is required'
+    } else if (!/^[6-9]\d{9}$/.test(formData.phoneNumber.trim())) {
+      newErrors.phoneNumber =
+        'Please enter a valid 10-digit Indian mobile number (e.g., 9876543210)'
+    }
+
     if (!formData.role) {
       newErrors.role = 'Role is required'
     }
@@ -120,19 +127,16 @@ export default function CreateUserModal({ open, onClose }: CreateUserModalProps)
       password?: string
       firstName: string
       lastName: string
-      phoneNumber?: string
+      phoneNumber: string
       role: string
       sendInvitation?: boolean
     } = {
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim(),
       email: formData.email.trim(),
+      phoneNumber: formData.phoneNumber.trim(),
       role: formData.role,
       sendInvitation: formData.sendInvitation,
-    }
-
-    if (formData.phoneNumber.trim()) {
-      submitData.phoneNumber = formData.phoneNumber.trim()
     }
 
     // Only send password if not sending invitation and password is provided
@@ -216,14 +220,21 @@ export default function CreateUserModal({ open, onClose }: CreateUserModalProps)
 
           {/* Phone Number */}
           <div>
-            <Label htmlFor="phoneNumber">Phone Number</Label>
+            <Label htmlFor="phoneNumber">
+              Phone Number <span className="text-error">*</span>
+            </Label>
             <Input
               id="phoneNumber"
               type="tel"
               value={formData.phoneNumber}
               onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-              placeholder="+1 (555) 123-4567"
+              placeholder="9876543210"
+              className={errors.phoneNumber ? 'border-error' : ''}
             />
+            <p className="text-xs text-neutral-blue-gray/60 mt-1">
+              10-digit mobile number starting with 6-9 (required)
+            </p>
+            {errors.phoneNumber && <p className="text-sm text-error mt-1">{errors.phoneNumber}</p>}
           </div>
 
           {/* Role */}
