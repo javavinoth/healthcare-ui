@@ -40,8 +40,12 @@ const ReceptionistDashboard = lazy(() => import('@/pages/receptionist/Dashboard'
 const ReceptionistMessages = lazy(() => import('@/pages/receptionist/Messages'))
 const BillingDashboard = lazy(() => import('@/pages/billing/Dashboard'))
 const BillingMessages = lazy(() => import('@/pages/billing/Messages'))
-const AdminDashboard = lazy(() => import('@/pages/admin/Dashboard'))
+const PlatformDashboard = lazy(() => import('@/pages/platform/Dashboard'))
+const HospitalAdminDashboard = lazy(() => import('@/pages/admin/HospitalAdminDashboard'))
 const AdminUserManagement = lazy(() => import('@/pages/admin/UserManagement'))
+const AdminHospitalManagement = lazy(() => import('@/pages/admin/HospitalManagement'))
+const AdminLocationManagement = lazy(() => import('@/pages/admin/LocationManagement'))
+const AdminDepartmentManagement = lazy(() => import('@/pages/admin/DepartmentManagement'))
 
 // Permissions
 import { ROLES, PERMISSIONS } from '@/lib/constants/roles'
@@ -242,30 +246,119 @@ function AppRouter() {
               />
               <Route path="/provider/*" element={<Navigate to="/provider/dashboard" replace />} />
 
-              {/* Protected Routes - Admin System */}
+              {/* Protected Routes - Platform Administration (SYSTEM_ADMIN) */}
               <Route
-                path="/admin/dashboard"
+                path="/platform/dashboard"
                 element={
                   <ProtectedRoute
-                    allowedRoles={[ROLES.ADMIN]}
-                    requiredPermissions={[PERMISSIONS.MANAGE_USERS]}
+                    allowedRoles={[ROLES.SYSTEM_ADMIN]}
+                    requiredPermissions={[PERMISSIONS.VIEW_GLOBAL_STATS]}
                   >
-                    <AdminDashboard />
+                    <PlatformDashboard />
                   </ProtectedRoute>
                 }
               />
               <Route
-                path="/admin/users"
+                path="/platform/hospitals"
                 element={
                   <ProtectedRoute
-                    allowedRoles={[ROLES.ADMIN]}
+                    allowedRoles={[ROLES.SYSTEM_ADMIN]}
+                    requiredPermissions={[PERMISSIONS.MANAGE_PLATFORM]}
+                  >
+                    <AdminHospitalManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/platform/locations"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.SYSTEM_ADMIN]}
+                    requiredPermissions={[PERMISSIONS.MANAGE_PLATFORM]}
+                  >
+                    <AdminLocationManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/platform/departments"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.SYSTEM_ADMIN]}
+                    requiredPermissions={[PERMISSIONS.MANAGE_PLATFORM]}
+                  >
+                    <AdminDepartmentManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/platform/*" element={<Navigate to="/platform/dashboard" replace />} />
+
+              {/* Protected Routes - Hospital Administration (HOSPITAL_ADMIN) */}
+              <Route
+                path="/hospital-admin/dashboard"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.HOSPITAL_ADMIN]}
+                    requiredPermissions={[PERMISSIONS.MANAGE_FACILITY]}
+                  >
+                    <HospitalAdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/hospital-admin/users"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.HOSPITAL_ADMIN]}
                     requiredPermissions={[PERMISSIONS.MANAGE_USERS]}
                   >
                     <AdminUserManagement />
                   </ProtectedRoute>
                 }
               />
-              <Route path="/admin/*" element={<Navigate to="/admin/dashboard" replace />} />
+              <Route
+                path="/hospital-admin/hospitals"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.HOSPITAL_ADMIN]}
+                    requiredPermissions={[PERMISSIONS.MANAGE_FACILITY]}
+                  >
+                    <AdminHospitalManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/hospital-admin/locations"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.HOSPITAL_ADMIN]}
+                    requiredPermissions={[PERMISSIONS.MANAGE_FACILITY]}
+                  >
+                    <AdminLocationManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/hospital-admin/departments"
+                element={
+                  <ProtectedRoute
+                    allowedRoles={[ROLES.HOSPITAL_ADMIN]}
+                    requiredPermissions={[PERMISSIONS.MANAGE_FACILITY]}
+                  >
+                    <AdminDepartmentManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/hospital-admin/*"
+                element={<Navigate to="/hospital-admin/dashboard" replace />}
+              />
+
+              {/* Backward Compatibility - Redirect /admin to /hospital-admin */}
+              <Route
+                path="/admin/*"
+                element={<Navigate to="/hospital-admin/dashboard" replace />}
+              />
 
               {/* Protected Routes - Receptionist */}
               <Route

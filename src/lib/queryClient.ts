@@ -172,6 +172,50 @@ export const queryKeys = {
   healthMetrics: {
     all: (patientId: string, type?: string) => ['health-metrics', patientId, type] as const,
   },
+
+  // Platform Administration (SYSTEM_ADMIN)
+  platform: {
+    stats: ['platform', 'stats'] as const,
+    hospitals: (filters?: Record<string, unknown>) => ['platform', 'hospitals', filters] as const,
+    hospitalAdmins: (filters?: Record<string, unknown>) => ['platform', 'admins', filters] as const,
+    recentHospitals: (limit?: number) => ['platform', 'recent-hospitals', limit] as const,
+  },
+
+  // Hospital Management
+  hospitals: {
+    all: (filters?: Record<string, unknown>) => ['hospitals', 'list', filters] as const,
+    active: ['hospitals', 'active'] as const,
+    detail: (id: string) => ['hospitals', 'detail', id] as const,
+    detailsFull: (id: string) => ['hospitals', 'details', id] as const,
+    // Approval workflow
+    pendingReview: (filters?: Record<string, unknown>) =>
+      ['hospitals', 'pending-review', filters] as const,
+    pendingCount: ['hospitals', 'pending-count'] as const,
+  },
+
+  // Location Management
+  locations: {
+    all: (hospitalId?: string, filters?: Record<string, unknown>) =>
+      ['locations', 'list', hospitalId, filters] as const,
+    byHospital: (hospitalId: string) => ['locations', 'hospital', hospitalId] as const,
+  },
+
+  // Department Management
+  departments: {
+    all: (hospitalId?: string, filters?: Record<string, unknown>) =>
+      ['departments', 'list', hospitalId, filters] as const,
+    byHospital: (hospitalId: string) => ['departments', 'hospital', hospitalId] as const,
+  },
+
+  // Staff Assignments
+  staffAssignments: {
+    all: (filters?: Record<string, unknown>) => ['staff-assignments', 'list', filters] as const,
+    byHospital: (hospitalId: string, filters?: Record<string, unknown>) =>
+      ['staff-assignments', 'hospital', hospitalId, filters] as const,
+    byDepartment: (departmentId: string) =>
+      ['staff-assignments', 'department', departmentId] as const,
+    byUser: (userId: string) => ['staff-assignments', 'user', userId] as const,
+  },
 } as const
 
 /**
@@ -193,6 +237,48 @@ export function invalidateAppointments(): Promise<void> {
 export function invalidateMessages(): Promise<void> {
   return queryClient.invalidateQueries({
     queryKey: ['messages'],
+  })
+}
+
+/**
+ * Invalidate hospital-related queries
+ */
+export function invalidateHospitals(): Promise<void> {
+  return queryClient.invalidateQueries({
+    queryKey: ['hospitals'],
+  })
+}
+
+export function invalidateLocations(hospitalId?: string): Promise<void> {
+  if (hospitalId) {
+    return queryClient.invalidateQueries({
+      queryKey: ['locations', 'hospital', hospitalId],
+    })
+  }
+  return queryClient.invalidateQueries({
+    queryKey: ['locations'],
+  })
+}
+
+export function invalidateDepartments(hospitalId?: string): Promise<void> {
+  if (hospitalId) {
+    return queryClient.invalidateQueries({
+      queryKey: ['departments', 'hospital', hospitalId],
+    })
+  }
+  return queryClient.invalidateQueries({
+    queryKey: ['departments'],
+  })
+}
+
+export function invalidateStaffAssignments(hospitalId?: string): Promise<void> {
+  if (hospitalId) {
+    return queryClient.invalidateQueries({
+      queryKey: ['staff-assignments', 'hospital', hospitalId],
+    })
+  }
+  return queryClient.invalidateQueries({
+    queryKey: ['staff-assignments'],
   })
 }
 

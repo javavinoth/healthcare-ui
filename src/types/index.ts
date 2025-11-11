@@ -76,7 +76,7 @@ export interface ProviderSearchResult {
 }
 
 export interface Admin extends User {
-  role: 'admin' | 'billing_staff' | 'receptionist'
+  role: 'hospital_admin' | 'system_admin' | 'billing_staff' | 'receptionist'
   department?: string
 }
 
@@ -643,6 +643,25 @@ export interface AdminUserResponse extends User {
   updatedBy?: string
 }
 
+/**
+ * Platform-level statistics (SYSTEM_ADMIN)
+ */
+export interface PlatformStatsResponse {
+  scope: 'GLOBAL'
+  totalUsers: number
+  totalPatients: number
+  totalDoctors: number
+  totalNurses: number
+  totalAdmins: number // Deprecated, use totalHospitalAdmins
+  totalSystemAdmins: number
+  totalHospitalAdmins: number
+  totalBillingStaff: number
+  totalReceptionists: number
+  pendingVerifications: number
+  totalHospitals?: number
+  activeHospitals?: number
+}
+
 // ============================================================================
 // Provider Portal Types
 // ============================================================================
@@ -770,4 +789,332 @@ export interface AuditLogResponse {
   phiAccessed: boolean
   patientId?: string
   complianceNotes?: string
+}
+
+// ============================================================================
+// Hospital Management Types
+// ============================================================================
+
+/**
+ * Employment Type for staff assignments
+ */
+export type EmploymentType = 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'PER_DIEM' | 'VOLUNTEER'
+
+/**
+ * Hospital Type enum
+ */
+export type HospitalType =
+  | 'GENERAL'
+  | 'SPECIALTY'
+  | 'TEACHING'
+  | 'RESEARCH'
+  | 'COMMUNITY'
+  | 'CRITICAL_ACCESS'
+  | 'REHABILITATION'
+  | 'PSYCHIATRIC'
+
+/**
+ * Hospital Status enum
+ */
+export type HospitalStatus =
+  | 'PENDING'
+  | 'READY_FOR_REVIEW'
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'UNDER_CONSTRUCTION'
+  | 'TEMPORARILY_CLOSED'
+
+/**
+ * Trauma Level enum
+ */
+export type TraumaLevel = 'LEVEL_I' | 'LEVEL_II' | 'LEVEL_III' | 'LEVEL_IV' | 'NONE'
+
+/**
+ * Hospital Location (Geographic)
+ * Represents the physical address/location of a hospital
+ * Different from Location which represents internal hospital locations
+ */
+export interface HospitalLocation {
+  id: string
+  hospitalId: string
+  hospitalName: string
+  address: string
+  district: string
+  pincode: string
+  state: string
+  countryCode: string
+  metadata?: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * Hospital entity
+ * Represents a healthcare facility/organization
+ */
+export interface Hospital {
+  id: string
+  name: string
+  code?: string
+  hospitalType: HospitalType
+  email?: string
+  phone?: string
+  website?: string
+  // New: Geographic location (replaces flat address fields)
+  location: HospitalLocation | null
+  licenseNumber?: string
+  taxId?: string
+  bedCapacity?: number
+  traumaLevel?: TraumaLevel
+  emergencyServices?: boolean
+  accreditationInfo?: string
+  metadata?: string
+  status: HospitalStatus
+  // Approval workflow fields
+  readyForReview: boolean
+  reviewedBy: string | null
+  reviewedByName: string | null
+  reviewedAt: string | null
+  rejectionReason: string | null
+  createdAt: string
+  updatedAt: string
+  // Deprecated fields (for backward compatibility)
+  addressLine1?: string
+  addressLine2?: string
+  city?: string
+  state?: string
+  zipCode?: string
+  country?: string
+  address?: string
+  phoneNumber?: string
+  active?: boolean
+}
+
+/**
+ * Location within a hospital
+ * E.g., Building A, Floor 3, Wing B
+ */
+export interface Location {
+  id: string
+  hospitalId: string
+  hospitalName?: string
+  name: string
+  code: string
+  address?: string
+  floor?: string
+  buildingNumber?: string
+  phoneNumber?: string
+  active: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * Department within a hospital
+ * E.g., Cardiology, Emergency, Radiology
+ */
+export interface Department {
+  id: string
+  hospitalId: string
+  hospitalName?: string
+  name: string
+  code: string
+  description?: string
+  phoneNumber?: string
+  active: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * Staff assignment to hospital
+ * Links users (doctors, nurses, staff) to hospitals with specific roles
+ */
+export interface HospitalStaffAssignment {
+  id: string
+  userId: string
+  userName?: string
+  userRole?: string
+  hospitalId: string
+  hospitalName?: string
+  locationIds?: string[]
+  locations?: Location[]
+  departmentIds?: string[]
+  departments?: Department[]
+  employmentType: EmploymentType
+  isPrimary: boolean
+  startDate: string
+  endDate?: string
+  active: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+/**
+ * Hospital with full details (including locations, departments, staff)
+ */
+export interface HospitalDetail extends Hospital {
+  locations?: Location[]
+  departments?: Department[]
+  staffCount?: number
+}
+
+/**
+ * Form data types for hospital management
+ */
+export interface CreateHospitalFormData {
+  name: string
+  code?: string
+  hospitalType: HospitalType
+  email?: string
+  phone?: string
+  fax?: string
+  website?: string
+  addressLine1: string
+  addressLine2?: string
+  city: string
+  state: string
+  zipCode: string
+  country?: string
+  licenseNumber?: string
+  taxId?: string
+  bedCapacity?: number
+  traumaLevel?: TraumaLevel
+  emergencyServices?: boolean
+  accreditationInfo?: string
+  metadata?: string
+}
+
+export interface UpdateHospitalFormData extends CreateHospitalFormData {
+  status: HospitalStatus
+}
+
+/**
+ * Hospital Approval Workflow Request/Response Types
+ */
+
+/**
+ * Request to create hospital with admin in one operation
+ * SYSTEM_ADMIN only - creates hospital with PENDING status + hospital admin user
+ */
+export interface CreateHospitalWithAdminRequest {
+  hospitalName: string
+  district: string
+  pincode: string
+  state: string
+  adminFirstName: string
+  adminLastName: string
+  adminEmail: string
+  adminPhone: string
+  sendInvitation?: boolean
+}
+
+/**
+ * Response from creating hospital with admin
+ */
+export interface CreateHospitalWithAdminResponse {
+  hospital: Hospital
+  adminUserId: string
+  adminEmail: string
+  adminFullName: string
+  message: string
+}
+
+/**
+ * Request to mark hospital as ready for review
+ * HOSPITAL_ADMIN only - marks their hospital as complete and ready for approval
+ */
+export interface MarkReadyForReviewRequest {
+  notes?: string
+}
+
+/**
+ * Request to approve or reject a hospital
+ * SYSTEM_ADMIN only
+ */
+export interface ApproveRejectHospitalRequest {
+  approved: boolean
+  rejectionReason?: string
+}
+
+export interface CreateLocationFormData {
+  hospitalId: string
+  name: string
+  code: string
+  address?: string
+  floor?: string
+  buildingNumber?: string
+  phoneNumber?: string
+}
+
+export interface UpdateLocationFormData extends CreateLocationFormData {
+  active: boolean
+}
+
+export interface CreateDepartmentFormData {
+  hospitalId: string
+  name: string
+  code: string
+  description?: string
+  phoneNumber?: string
+}
+
+export interface UpdateDepartmentFormData extends CreateDepartmentFormData {
+  active: boolean
+}
+
+export interface CreateStaffAssignmentFormData {
+  userId: string
+  hospitalId: string
+  locationIds?: string[]
+  departmentIds?: string[]
+  employmentType: EmploymentType
+  isPrimary: boolean
+  startDate: string
+  endDate?: string
+}
+
+export interface UpdateStaffAssignmentFormData extends CreateStaffAssignmentFormData {
+  active: boolean
+}
+
+/**
+ * Filter types for hospital management
+ */
+export interface HospitalFilters {
+  search?: string
+  status?: HospitalStatus
+  active?: boolean // Deprecated, use status instead
+  hospitalType?: HospitalType
+  page?: number
+  size?: number
+  sortBy?: string
+  sortDir?: 'ASC' | 'DESC'
+}
+
+export interface LocationFilters {
+  hospitalId?: string
+  search?: string
+  active?: boolean
+  page?: number
+  size?: number
+}
+
+export interface DepartmentFilters {
+  hospitalId?: string
+  search?: string
+  active?: boolean
+  page?: number
+  size?: number
+}
+
+export interface StaffAssignmentFilters {
+  hospitalId?: string
+  userId?: string
+  departmentId?: string
+  role?: UserRole
+  employmentType?: EmploymentType
+  active?: boolean
+  page?: number
+  size?: number
 }

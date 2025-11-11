@@ -214,8 +214,10 @@ export default function Profile() {
       case 'doctor':
       case 'nurse':
         return '/provider/dashboard'
-      case 'admin':
-        return '/admin/dashboard'
+      case 'hospital_admin':
+        return '/hospital-admin/dashboard'
+      case 'system_admin':
+        return '/platform/dashboard'
       case 'receptionist':
         return '/receptionist/dashboard'
       case 'billing_staff':

@@ -58,8 +58,11 @@ export default function AppHeader({ title, showBackButton = false, backPath }: A
       case 'nurse':
         navigate('/provider/dashboard')
         break
-      case 'admin':
-        navigate('/admin/dashboard')
+      case 'system_admin':
+        navigate('/platform/dashboard')
+        break
+      case 'hospital_admin':
+        navigate('/hospital-admin/dashboard')
         break
       case 'receptionist':
         navigate('/receptionist/messages')
@@ -77,7 +80,9 @@ export default function AppHeader({ title, showBackButton = false, backPath }: A
       string,
       'default' | 'secondary' | 'success' | 'warning' | 'info' | 'destructive'
     > = {
-      ADMIN: 'destructive',
+      SYSTEM_ADMIN: 'destructive',
+      HOSPITAL_ADMIN: 'destructive',
+      ADMIN: 'destructive', // Deprecated, but kept for backward compatibility
       DOCTOR: 'success',
       NURSE: 'info',
       PATIENT: 'default',

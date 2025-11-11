@@ -78,7 +78,7 @@ export default function BillingMessagesPage() {
                         ? 'bg-info'
                         : selectedConversation?.participants[0]?.role === 'billing_staff'
                           ? 'bg-warning'
-                          : selectedConversation?.participants[0]?.role === 'admin'
+                          : selectedConversation?.participants[0]?.role === 'hospital_admin'
                             ? 'bg-error'
                             : 'bg-secondary'
                     }`}

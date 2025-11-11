@@ -7,7 +7,9 @@ export const ROLES = {
   PATIENT: 'patient',
   DOCTOR: 'doctor',
   NURSE: 'nurse',
-  ADMIN: 'admin',
+  SYSTEM_ADMIN: 'system_admin',
+  HOSPITAL_ADMIN: 'hospital_admin',
+  ADMIN: 'hospital_admin', // Deprecated: Use HOSPITAL_ADMIN instead
   BILLING_STAFF: 'billing_staff',
   RECEPTIONIST: 'receptionist',
 } as const
@@ -29,7 +31,12 @@ export const PERMISSIONS = {
   PRESCRIBE_MEDICATION: 'prescribe_medication',
   ORDER_LABS: 'order_labs',
 
-  // Admin permissions
+  // System Admin permissions (Platform-level)
+  MANAGE_PLATFORM: 'manage_platform',
+  CREATE_HOSPITAL_ADMINS: 'create_hospital_admins',
+  VIEW_GLOBAL_STATS: 'view_global_stats',
+
+  // Hospital Admin permissions (Facility-level)
   MANAGE_USERS: 'manage_users',
   VIEW_REPORTS: 'view_reports',
   MANAGE_FACILITY: 'manage_facility',
@@ -88,7 +95,14 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     PERMISSIONS.MESSAGE_PROVIDERS,
     PERMISSIONS.MESSAGE_STAFF,
   ],
-  [ROLES.ADMIN]: [
+  [ROLES.SYSTEM_ADMIN]: [
+    PERMISSIONS.MANAGE_PLATFORM,
+    PERMISSIONS.CREATE_HOSPITAL_ADMINS,
+    PERMISSIONS.VIEW_GLOBAL_STATS,
+    PERMISSIONS.MANAGE_FACILITY,
+    PERMISSIONS.USE_MESSAGING,
+  ],
+  [ROLES.HOSPITAL_ADMIN]: [
     PERMISSIONS.MANAGE_USERS,
     PERMISSIONS.VIEW_REPORTS,
     PERMISSIONS.MANAGE_FACILITY,

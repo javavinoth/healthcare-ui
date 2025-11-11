@@ -24,8 +24,12 @@ export function getRoleDashboardPath(role: UserRole): string {
     case ROLES.NURSE:
       return '/provider/dashboard'
 
-    case ROLES.ADMIN:
-      return '/admin/dashboard'
+    case ROLES.SYSTEM_ADMIN:
+      return '/platform/dashboard'
+
+    case ROLES.HOSPITAL_ADMIN:
+    case ROLES.ADMIN: // Deprecated, but kept for backward compatibility
+      return '/hospital-admin/dashboard'
 
     case ROLES.RECEPTIONIST:
       return '/receptionist/dashboard'

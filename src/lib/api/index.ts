@@ -42,8 +42,28 @@ import type {
   TimeOffResponse,
   ProviderSettingsResponse,
   AdminUserResponse,
+  PlatformStatsResponse,
   AvailabilityEntry,
   ProviderSearchResult,
+  Hospital,
+  HospitalDetail,
+  Location,
+  Department,
+  HospitalStaffAssignment,
+  CreateHospitalFormData,
+  UpdateHospitalFormData,
+  CreateHospitalWithAdminRequest,
+  CreateHospitalWithAdminResponse,
+  MarkReadyForReviewRequest,
+  ApproveRejectHospitalRequest,
+  CreateLocationFormData,
+  UpdateLocationFormData,
+  CreateDepartmentFormData,
+  UpdateDepartmentFormData,
+  CreateStaffAssignmentFormData,
+  UpdateStaffAssignmentFormData,
+  HospitalFilters,
+  StaffAssignmentFilters,
 } from '@/types'
 
 /**
@@ -970,8 +990,192 @@ export const adminApi = {
     return response.data
   },
 
-  getStats: async (): Promise<Record<string, number>> => {
+  getStats: async (): Promise<PlatformStatsResponse> => {
     const response = await apiClient.get(ENDPOINTS.ADMIN.STATS)
+    return response.data
+  },
+
+  getUserHospitalAssignments: async (id: string): Promise<HospitalStaffAssignment[]> => {
+    const response = await apiClient.get(ENDPOINTS.ADMIN.GET_USER_HOSPITAL_ASSIGNMENTS(id))
+    return response.data
+  },
+}
+
+/**
+ * Hospital Management API
+ * Protected endpoints for managing hospitals, locations, departments, and staff assignments
+ * Requires MANAGE_FACILITY permission (ADMIN role)
+ */
+export const hospitalApi = {
+  // Hospital CRUD
+  create: async (data: CreateHospitalFormData): Promise<Hospital> => {
+    const response = await apiClient.post(ENDPOINTS.HOSPITALS.CREATE, data)
+    return response.data
+  },
+
+  getAll: async (params?: HospitalFilters): Promise<PaginatedResponse<Hospital>> => {
+    const response = await apiClient.get(ENDPOINTS.HOSPITALS.LIST, { params })
+    return mapSpringPageToResponse(response)
+  },
+
+  getActive: async (): Promise<Hospital[]> => {
+    const response = await apiClient.get(ENDPOINTS.HOSPITALS.LIST_ACTIVE)
+    return response.data
+  },
+
+  getById: async (id: string): Promise<Hospital> => {
+    const response = await apiClient.get(ENDPOINTS.HOSPITALS.GET_BY_ID(id))
+    return response.data
+  },
+
+  getDetails: async (id: string): Promise<HospitalDetail> => {
+    const response = await apiClient.get(ENDPOINTS.HOSPITALS.GET_DETAILS(id))
+    return response.data
+  },
+
+  update: async (id: string, data: UpdateHospitalFormData): Promise<Hospital> => {
+    const response = await apiClient.put(ENDPOINTS.HOSPITALS.UPDATE(id), data)
+    return response.data
+  },
+
+  delete: async (id: string): Promise<ApiResponse<void>> => {
+    const response = await apiClient.delete(ENDPOINTS.HOSPITALS.DELETE(id))
+    return response.data
+  },
+
+  // Hospital Approval Workflow
+  /**
+   * Create hospital with admin in one operation (SYSTEM_ADMIN only)
+   * Creates hospital with PENDING status + hospital admin user
+   */
+  createWithAdmin: async (
+    data: CreateHospitalWithAdminRequest
+  ): Promise<CreateHospitalWithAdminResponse> => {
+    const response = await apiClient.post(ENDPOINTS.HOSPITALS.CREATE_WITH_ADMIN, data)
+    return response.data
+  },
+
+  /**
+   * Mark hospital as ready for review (HOSPITAL_ADMIN only)
+   * Changes status from PENDING to READY_FOR_REVIEW
+   */
+  markReadyForReview: async (id: string, data: MarkReadyForReviewRequest): Promise<Hospital> => {
+    const response = await apiClient.post(ENDPOINTS.HOSPITALS.MARK_READY_FOR_REVIEW(id), data)
+    return response.data
+  },
+
+  /**
+   * Get all hospitals pending review (SYSTEM_ADMIN only)
+   * Returns hospitals with READY_FOR_REVIEW status
+   */
+  getPendingReview: async (params?: HospitalFilters): Promise<PaginatedResponse<Hospital>> => {
+    const response = await apiClient.get(ENDPOINTS.HOSPITALS.PENDING_REVIEW, { params })
+    return mapSpringPageToResponse(response)
+  },
+
+  /**
+   * Approve a hospital (SYSTEM_ADMIN only)
+   * Changes status from READY_FOR_REVIEW to ACTIVE and activates hospital admin account
+   */
+  approve: async (id: string): Promise<Hospital> => {
+    const response = await apiClient.post(ENDPOINTS.HOSPITALS.APPROVE(id))
+    return response.data
+  },
+
+  /**
+   * Reject a hospital (SYSTEM_ADMIN only)
+   * Changes status from READY_FOR_REVIEW back to PENDING with rejection reason
+   */
+  reject: async (id: string, data: ApproveRejectHospitalRequest): Promise<Hospital> => {
+    const response = await apiClient.post(ENDPOINTS.HOSPITALS.REJECT(id), data)
+    return response.data
+  },
+}
+
+/**
+ * Location Management API
+ */
+export const locationApi = {
+  create: async (data: CreateLocationFormData): Promise<Location> => {
+    const response = await apiClient.post(ENDPOINTS.HOSPITALS.CREATE_LOCATION, data)
+    return response.data
+  },
+
+  getByHospital: async (hospitalId: string): Promise<Location[]> => {
+    const response = await apiClient.get(ENDPOINTS.HOSPITALS.GET_HOSPITAL_LOCATIONS(hospitalId))
+    return response.data
+  },
+
+  update: async (id: string, data: UpdateLocationFormData): Promise<Location> => {
+    const response = await apiClient.put(ENDPOINTS.HOSPITALS.UPDATE_LOCATION(id), data)
+    return response.data
+  },
+
+  delete: async (id: string): Promise<ApiResponse<void>> => {
+    const response = await apiClient.delete(ENDPOINTS.HOSPITALS.DELETE_LOCATION(id))
+    return response.data
+  },
+}
+
+/**
+ * Department Management API
+ */
+export const departmentApi = {
+  create: async (data: CreateDepartmentFormData): Promise<Department> => {
+    const response = await apiClient.post(ENDPOINTS.HOSPITALS.CREATE_DEPARTMENT, data)
+    return response.data
+  },
+
+  getByHospital: async (hospitalId: string): Promise<Department[]> => {
+    const response = await apiClient.get(ENDPOINTS.HOSPITALS.GET_HOSPITAL_DEPARTMENTS(hospitalId))
+    return response.data
+  },
+
+  update: async (id: string, data: UpdateDepartmentFormData): Promise<Department> => {
+    const response = await apiClient.put(ENDPOINTS.HOSPITALS.UPDATE_DEPARTMENT(id), data)
+    return response.data
+  },
+
+  delete: async (id: string): Promise<ApiResponse<void>> => {
+    const response = await apiClient.delete(ENDPOINTS.HOSPITALS.DELETE_DEPARTMENT(id))
+    return response.data
+  },
+}
+
+/**
+ * Staff Assignment Management API
+ */
+export const staffAssignmentApi = {
+  create: async (data: CreateStaffAssignmentFormData): Promise<HospitalStaffAssignment> => {
+    const response = await apiClient.post(ENDPOINTS.HOSPITALS.CREATE_ASSIGNMENT, data)
+    return response.data
+  },
+
+  getByHospital: async (
+    hospitalId: string,
+    params?: StaffAssignmentFilters
+  ): Promise<HospitalStaffAssignment[]> => {
+    const response = await apiClient.get(ENDPOINTS.HOSPITALS.GET_HOSPITAL_STAFF(hospitalId), {
+      params,
+    })
+    return response.data
+  },
+
+  getByDepartment: async (departmentId: string): Promise<HospitalStaffAssignment[]> => {
+    const response = await apiClient.get(ENDPOINTS.HOSPITALS.GET_DEPARTMENT_STAFF(departmentId))
+    return response.data
+  },
+
+  update: async (
+    id: string,
+    data: UpdateStaffAssignmentFormData
+  ): Promise<HospitalStaffAssignment> => {
+    const response = await apiClient.put(ENDPOINTS.HOSPITALS.UPDATE_ASSIGNMENT(id), data)
+    return response.data
+  },
+
+  delete: async (id: string): Promise<ApiResponse<void>> => {
+    const response = await apiClient.delete(ENDPOINTS.HOSPITALS.DELETE_ASSIGNMENT(id))
     return response.data
   },
 }
