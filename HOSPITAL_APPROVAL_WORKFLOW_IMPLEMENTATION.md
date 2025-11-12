@@ -137,7 +137,7 @@ The codebase now supports both old flat structure and new nested structure:
   addressLine2?: string
   city: string
   state: string
-  zipCode: string
+  pincode: string
 }
 ```
 

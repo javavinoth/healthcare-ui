@@ -388,7 +388,7 @@ export default function HospitalManagement() {
                               {selectedHospital.city && selectedHospital.state && (
                                 <p>
                                   {selectedHospital.city}, {selectedHospital.state}{' '}
-                                  {selectedHospital.zipCode}
+                                  {selectedHospital.pincode}
                                 </p>
                               )}
                             </>
