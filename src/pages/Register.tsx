@@ -392,6 +392,7 @@ export default function Register() {
                       type="tel"
                       autoComplete="tel"
                       placeholder="+1234567890"
+                      maxLength={15}
                       {...patientForm.register('phoneNumber')}
                     />
                     {patientForm.formState.errors.phoneNumber && (
@@ -555,6 +556,7 @@ export default function Register() {
                       <Input
                         id="provider-phoneNumber"
                         type="tel"
+                        maxLength={15}
                         {...providerForm.register('phoneNumber')}
                       />
                       {providerForm.formState.errors.phoneNumber && (
