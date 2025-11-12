@@ -849,25 +849,20 @@ export interface HospitalLocation {
 }
 
 /**
- * Hospital entity
+ * Hospital entity (Indian Format)
  * Represents a healthcare facility/organization
  */
 export interface Hospital {
   id: string
   name: string
-  code?: string
   hospitalType: HospitalType
-  email?: string
-  phone?: string
-  website?: string
-  // New: Geographic location (replaces flat address fields)
-  location: HospitalLocation | null
-  licenseNumber?: string
-  taxId?: string
-  bedCapacity?: number
-  traumaLevel?: TraumaLevel
-  emergencyServices?: boolean
-  accreditationInfo?: string
+  email: string
+  phone: string
+  // Geographic location (required)
+  location: HospitalLocation
+  registrationNumber: string
+  bedCapacity: number
+  emergencyServices: boolean
   metadata?: string
   status: HospitalStatus
   // Approval workflow fields
@@ -878,7 +873,13 @@ export interface Hospital {
   rejectionReason: string | null
   createdAt: string
   updatedAt: string
-  // Deprecated fields (for backward compatibility)
+  // Deprecated fields (for backward compatibility with old US format)
+  code?: string
+  website?: string
+  licenseNumber?: string
+  taxId?: string
+  traumaLevel?: TraumaLevel
+  accreditationInfo?: string
   addressLine1?: string
   addressLine2?: string
   city?: string
@@ -960,34 +961,10 @@ export interface HospitalDetail extends Hospital {
 }
 
 /**
- * Form data types for hospital management
+ * Form data types for hospital management (Indian Format)
+ * Re-exported from validation schemas for consistency
  */
-export interface CreateHospitalFormData {
-  name: string
-  code?: string
-  hospitalType: HospitalType
-  email?: string
-  phone?: string
-  fax?: string
-  website?: string
-  addressLine1: string
-  addressLine2?: string
-  city: string
-  state: string
-  zipCode: string
-  country?: string
-  licenseNumber?: string
-  taxId?: string
-  bedCapacity?: number
-  traumaLevel?: TraumaLevel
-  emergencyServices?: boolean
-  accreditationInfo?: string
-  metadata?: string
-}
-
-export interface UpdateHospitalFormData extends CreateHospitalFormData {
-  status: HospitalStatus
-}
+export type { CreateHospitalFormData, UpdateHospitalFormData } from '@/lib/validations/hospital'
 
 /**
  * Hospital Approval Workflow Request/Response Types

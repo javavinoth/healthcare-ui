@@ -32,6 +32,45 @@ interface CreateHospitalModalProps {
   onClose: () => void
 }
 
+const INDIAN_STATES = [
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+  'Andaman and Nicobar Islands',
+  'Chandigarh',
+  'Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi',
+  'Jammu and Kashmir',
+  'Ladakh',
+  'Lakshadweep',
+  'Puducherry',
+] as const
+
 export default function CreateHospitalModal({ open, onClose }: CreateHospitalModalProps) {
   const { toast } = useToast()
   const queryClient = useQueryClient()
@@ -46,23 +85,21 @@ export default function CreateHospitalModal({ open, onClose }: CreateHospitalMod
     resolver: zodResolver(createHospitalSchema) as any,
     defaultValues: {
       name: '',
-      code: '',
       hospitalType: 'GENERAL' as HospitalType,
       email: '',
       phone: '',
-      website: '',
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      country: 'US',
-      licenseNumber: '',
-      taxId: '',
-      bedCapacity: undefined,
-      traumaLevel: undefined,
+      location: {
+        address: '',
+        district: '',
+        pincode: '',
+        state: 'Maharashtra',
+        countryCode: 'IN',
+        metadata: '',
+      },
+      registrationNumber: '',
+      bedCapacity: 1,
       emergencyServices: true,
-      accreditationInfo: '',
+      status: 'PENDING',
       metadata: '',
     },
   })
@@ -104,7 +141,7 @@ export default function CreateHospitalModal({ open, onClose }: CreateHospitalMod
         <DialogHeader>
           <DialogTitle>Add New Hospital</DialogTitle>
           <DialogDescription>
-            Onboard a new hospital to the platform. Fields marked with * are required.
+            Onboard a new hospital to the platform. All fields are required except metadata.
           </DialogDescription>
         </DialogHeader>
 
@@ -122,70 +159,57 @@ export default function CreateHospitalModal({ open, onClose }: CreateHospitalMod
               </Label>
               <Input
                 id="name"
-                placeholder="e.g., City General Hospital"
+                placeholder="e.g., Apollo Hospital"
                 {...register('name')}
                 className={errors.name ? 'border-destructive' : ''}
               />
               {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              {/* Hospital Code */}
-              <div className="space-y-2">
-                <Label htmlFor="code">Hospital Code</Label>
-                <Input
-                  id="code"
-                  placeholder="e.g., CGH-001"
-                  {...register('code')}
-                  className={errors.code ? 'border-destructive' : ''}
-                />
-                <p className="text-xs text-neutral-blue-gray/60">Optional unique identifier</p>
-                {errors.code && <p className="text-sm text-destructive">{errors.code.message}</p>}
-              </div>
-
-              {/* Hospital Type */}
-              <div className="space-y-2">
-                <Label htmlFor="hospitalType">
-                  Hospital Type <span className="text-destructive">*</span>
-                </Label>
-                <Controller
-                  name="hospitalType"
-                  control={control}
-                  render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className={errors.hospitalType ? 'border-destructive' : ''}>
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="GENERAL">General</SelectItem>
-                        <SelectItem value="SPECIALTY">Specialty</SelectItem>
-                        <SelectItem value="TEACHING">Teaching</SelectItem>
-                        <SelectItem value="RESEARCH">Research</SelectItem>
-                        <SelectItem value="COMMUNITY">Community</SelectItem>
-                        <SelectItem value="CRITICAL_ACCESS">Critical Access</SelectItem>
-                        <SelectItem value="REHABILITATION">Rehabilitation</SelectItem>
-                        <SelectItem value="PSYCHIATRIC">Psychiatric</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                {errors.hospitalType && (
-                  <p className="text-sm text-destructive">{errors.hospitalType.message}</p>
+            {/* Hospital Type */}
+            <div className="space-y-2">
+              <Label htmlFor="hospitalType">
+                Hospital Type <span className="text-destructive">*</span>
+              </Label>
+              <Controller
+                name="hospitalType"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className={errors.hospitalType ? 'border-destructive' : ''}>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="GENERAL">General</SelectItem>
+                      <SelectItem value="SPECIALTY">Specialty</SelectItem>
+                      <SelectItem value="TEACHING">Teaching</SelectItem>
+                      <SelectItem value="RESEARCH">Research</SelectItem>
+                      <SelectItem value="COMMUNITY">Community</SelectItem>
+                      <SelectItem value="CRITICAL_ACCESS">Critical Access</SelectItem>
+                      <SelectItem value="REHABILITATION">Rehabilitation</SelectItem>
+                      <SelectItem value="PSYCHIATRIC">Psychiatric</SelectItem>
+                    </SelectContent>
+                  </Select>
                 )}
-              </div>
+              />
+              {errors.hospitalType && (
+                <p className="text-sm text-destructive">{errors.hospitalType.message}</p>
+              )}
             </div>
           </div>
 
-          {/* Contact Information Section */}
+          {/* Contact & Location Section */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-neutral-blue-gray border-b pb-2">
-              Contact Information
+              Contact & Location
             </h3>
 
             <div className="grid grid-cols-2 gap-4">
               {/* Email */}
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">
+                  Email <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="email"
                   type="email"
@@ -209,106 +233,108 @@ export default function CreateHospitalModal({ open, onClose }: CreateHospitalMod
                   className={errors.phone ? 'border-destructive' : ''}
                 />
                 <p className="text-xs text-neutral-blue-gray/60">
-                  10-digit mobile number starting with 6-9 (required)
+                  10-digit mobile number starting with 6-9
                 </p>
                 {errors.phone && <p className="text-sm text-destructive">{errors.phone.message}</p>}
               </div>
-              {/* Website */}
-              <div className="space-y-2">
-                <Label htmlFor="website">Website</Label>
-                <Input
-                  id="website"
-                  type="url"
-                  placeholder="https://hospital.com"
-                  {...register('website')}
-                  className={errors.website ? 'border-destructive' : ''}
-                />
-                {errors.website && (
-                  <p className="text-sm text-destructive">{errors.website.message}</p>
-                )}
-              </div>
             </div>
-          </div>
 
-          {/* Address Section */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-neutral-blue-gray border-b pb-2">Address</h3>
-
-            {/* Address Line 1 */}
+            {/* Address */}
             <div className="space-y-2">
-              <Label htmlFor="addressLine1">
+              <Label htmlFor="location.address">
                 Street Address <span className="text-destructive">*</span>
               </Label>
               <Input
-                id="addressLine1"
-                placeholder="123 Medical Center Drive"
-                {...register('addressLine1')}
-                className={errors.addressLine1 ? 'border-destructive' : ''}
+                id="location.address"
+                placeholder="123 MG Road, Sector 5"
+                {...register('location.address')}
+                className={errors.location?.address ? 'border-destructive' : ''}
               />
-              {errors.addressLine1 && (
-                <p className="text-sm text-destructive">{errors.addressLine1.message}</p>
-              )}
-            </div>
-
-            {/* Address Line 2 */}
-            <div className="space-y-2">
-              <Label htmlFor="addressLine2">Address Line 2</Label>
-              <Input
-                id="addressLine2"
-                placeholder="Building A, Suite 100"
-                {...register('addressLine2')}
-                className={errors.addressLine2 ? 'border-destructive' : ''}
-              />
-              {errors.addressLine2 && (
-                <p className="text-sm text-destructive">{errors.addressLine2.message}</p>
+              {errors.location?.address && (
+                <p className="text-sm text-destructive">{errors.location.address.message}</p>
               )}
             </div>
 
             <div className="grid grid-cols-3 gap-4">
-              {/* City */}
+              {/* District */}
               <div className="space-y-2">
-                <Label htmlFor="city">
-                  City <span className="text-destructive">*</span>
+                <Label htmlFor="location.district">
+                  District <span className="text-destructive">*</span>
                 </Label>
                 <Input
-                  id="city"
-                  placeholder="New York"
-                  {...register('city')}
-                  className={errors.city ? 'border-destructive' : ''}
+                  id="location.district"
+                  placeholder="Mumbai"
+                  {...register('location.district')}
+                  className={errors.location?.district ? 'border-destructive' : ''}
                 />
-                {errors.city && <p className="text-sm text-destructive">{errors.city.message}</p>}
+                {errors.location?.district && (
+                  <p className="text-sm text-destructive">{errors.location.district.message}</p>
+                )}
+              </div>
+
+              {/* Pincode */}
+              <div className="space-y-2">
+                <Label htmlFor="location.pincode">
+                  Pincode <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="location.pincode"
+                  placeholder="400001"
+                  maxLength={6}
+                  {...register('location.pincode')}
+                  className={errors.location?.pincode ? 'border-destructive' : ''}
+                />
+                {errors.location?.pincode && (
+                  <p className="text-sm text-destructive">{errors.location.pincode.message}</p>
+                )}
               </div>
 
               {/* State */}
               <div className="space-y-2">
-                <Label htmlFor="state">
+                <Label htmlFor="location.state">
                   State <span className="text-destructive">*</span>
                 </Label>
-                <Input
-                  id="state"
-                  placeholder="NY"
-                  maxLength={2}
-                  {...register('state')}
-                  className={errors.state ? 'border-destructive' : ''}
+                <Controller
+                  name="location.state"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className={errors.location?.state ? 'border-destructive' : ''}>
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[300px]">
+                        {INDIAN_STATES.map((state) => (
+                          <SelectItem key={state} value={state}>
+                            {state}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 />
-                {errors.state && <p className="text-sm text-destructive">{errors.state.message}</p>}
-              </div>
-
-              {/* ZIP Code */}
-              <div className="space-y-2">
-                <Label htmlFor="zipCode">
-                  ZIP Code <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="zipCode"
-                  placeholder="10001"
-                  {...register('zipCode')}
-                  className={errors.zipCode ? 'border-destructive' : ''}
-                />
-                {errors.zipCode && (
-                  <p className="text-sm text-destructive">{errors.zipCode.message}</p>
+                {errors.location?.state && (
+                  <p className="text-sm text-destructive">{errors.location.state.message}</p>
                 )}
               </div>
+            </div>
+
+            {/* Country Code */}
+            <div className="space-y-2">
+              <Label htmlFor="location.countryCode">
+                Country Code <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="location.countryCode"
+                placeholder="IN"
+                maxLength={2}
+                {...register('location.countryCode')}
+                className={errors.location?.countryCode ? 'border-destructive' : ''}
+                readOnly
+              />
+              <p className="text-xs text-neutral-blue-gray/60">Defaults to IN (India)</p>
+              {errors.location?.countryCode && (
+                <p className="text-sm text-destructive">{errors.location.countryCode.message}</p>
+              )}
             </div>
           </div>
 
@@ -319,41 +345,32 @@ export default function CreateHospitalModal({ open, onClose }: CreateHospitalMod
             </h3>
 
             <div className="grid grid-cols-2 gap-4">
-              {/* License Number */}
+              {/* Registration Number */}
               <div className="space-y-2">
-                <Label htmlFor="licenseNumber">License Number</Label>
+                <Label htmlFor="registrationNumber">
+                  Registration Number <span className="text-destructive">*</span>
+                </Label>
                 <Input
-                  id="licenseNumber"
-                  placeholder="HL-2024-001"
-                  {...register('licenseNumber')}
-                  className={errors.licenseNumber ? 'border-destructive' : ''}
+                  id="registrationNumber"
+                  placeholder="MH-2024-001"
+                  {...register('registrationNumber')}
+                  className={errors.registrationNumber ? 'border-destructive' : ''}
                 />
-                {errors.licenseNumber && (
-                  <p className="text-sm text-destructive">{errors.licenseNumber.message}</p>
+                {errors.registrationNumber && (
+                  <p className="text-sm text-destructive">{errors.registrationNumber.message}</p>
                 )}
               </div>
 
-              {/* Tax ID */}
-              <div className="space-y-2">
-                <Label htmlFor="taxId">Tax ID / EIN</Label>
-                <Input
-                  id="taxId"
-                  placeholder="12-3456789"
-                  {...register('taxId')}
-                  className={errors.taxId ? 'border-destructive' : ''}
-                />
-                {errors.taxId && <p className="text-sm text-destructive">{errors.taxId.message}</p>}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
               {/* Bed Capacity */}
               <div className="space-y-2">
-                <Label htmlFor="bedCapacity">Bed Capacity</Label>
+                <Label htmlFor="bedCapacity">
+                  Bed Capacity <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="bedCapacity"
                   type="number"
                   min="1"
+                  max="10000"
                   placeholder="500"
                   {...register('bedCapacity', { valueAsNumber: true })}
                   className={errors.bedCapacity ? 'border-destructive' : ''}
@@ -362,77 +379,38 @@ export default function CreateHospitalModal({ open, onClose }: CreateHospitalMod
                   <p className="text-sm text-destructive">{errors.bedCapacity.message}</p>
                 )}
               </div>
-
-              {/* Trauma Level */}
-              <div className="space-y-2">
-                <Label htmlFor="traumaLevel">Trauma Level</Label>
-                <Controller
-                  name="traumaLevel"
-                  control={control}
-                  render={({ field }) => (
-                    <Select value={field.value || ''} onValueChange={field.onChange}>
-                      <SelectTrigger className={errors.traumaLevel ? 'border-destructive' : ''}>
-                        <SelectValue placeholder="Select level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="LEVEL_I">Level I</SelectItem>
-                        <SelectItem value="LEVEL_II">Level II</SelectItem>
-                        <SelectItem value="LEVEL_III">Level III</SelectItem>
-                        <SelectItem value="LEVEL_IV">Level IV</SelectItem>
-                        <SelectItem value="NONE">None</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                {errors.traumaLevel && (
-                  <p className="text-sm text-destructive">{errors.traumaLevel.message}</p>
-                )}
-              </div>
-
-              {/* Emergency Services */}
-              <div className="space-y-2">
-                <Label htmlFor="emergencyServices">Emergency Services</Label>
-                <div className="flex items-center space-x-2 pt-2">
-                  <Controller
-                    name="emergencyServices"
-                    control={control}
-                    render={({ field }) => (
-                      <Checkbox
-                        id="emergencyServices"
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    )}
-                  />
-                  <Label htmlFor="emergencyServices" className="font-normal cursor-pointer">
-                    Has emergency services
-                  </Label>
-                </div>
-              </div>
             </div>
 
-            {/* Accreditation Info */}
+            {/* Emergency Services */}
             <div className="space-y-2">
-              <Label htmlFor="accreditationInfo">Accreditation Information</Label>
-              <Textarea
-                id="accreditationInfo"
-                placeholder="e.g., Joint Commission Accredited - Status: Active"
-                rows={2}
-                {...register('accreditationInfo')}
-                className={errors.accreditationInfo ? 'border-destructive' : ''}
-              />
-              {errors.accreditationInfo && (
-                <p className="text-sm text-destructive">{errors.accreditationInfo.message}</p>
-              )}
+              <Label>
+                Emergency Services <span className="text-destructive">*</span>
+              </Label>
+              <div className="flex items-center space-x-2 pt-2">
+                <Controller
+                  name="emergencyServices"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      id="emergencyServices"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  )}
+                />
+                <Label htmlFor="emergencyServices" className="font-normal cursor-pointer">
+                  Has emergency services
+                </Label>
+              </div>
             </div>
 
             {/* Metadata / Notes */}
             <div className="space-y-2">
-              <Label htmlFor="metadata">Notes / Metadata</Label>
+              <Label htmlFor="metadata">Notes / Metadata (Optional)</Label>
               <Textarea
                 id="metadata"
                 placeholder="Additional information or notes about the hospital"
-                rows={2}
+                rows={3}
                 {...register('metadata')}
                 className={errors.metadata ? 'border-destructive' : ''}
               />

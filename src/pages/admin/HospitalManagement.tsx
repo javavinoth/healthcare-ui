@@ -366,14 +366,32 @@ export default function HospitalManagement() {
                       <div className="flex items-start gap-2">
                         <MapPin className="h-4 w-4 text-neutral-blue-gray/50 mt-0.5" />
                         <div className="text-sm">
-                          <p>{selectedHospital.addressLine1}</p>
-                          {selectedHospital.addressLine2 && <p>{selectedHospital.addressLine2}</p>}
-                          <p>
-                            {selectedHospital.city}, {selectedHospital.state}{' '}
-                            {selectedHospital.zipCode}
-                          </p>
-                          {selectedHospital.country && selectedHospital.country !== 'US' && (
-                            <p>{selectedHospital.country}</p>
+                          {selectedHospital.location ? (
+                            <>
+                              <p>{selectedHospital.location.address}</p>
+                              <p>
+                                {selectedHospital.location.district},{' '}
+                                {selectedHospital.location.state}
+                              </p>
+                              <p>Pincode: {selectedHospital.location.pincode}</p>
+                              <p>Country: {selectedHospital.location.countryCode}</p>
+                            </>
+                          ) : (
+                            // Fallback for old format
+                            <>
+                              {selectedHospital.addressLine1 && (
+                                <p>{selectedHospital.addressLine1}</p>
+                              )}
+                              {selectedHospital.addressLine2 && (
+                                <p>{selectedHospital.addressLine2}</p>
+                              )}
+                              {selectedHospital.city && selectedHospital.state && (
+                                <p>
+                                  {selectedHospital.city}, {selectedHospital.state}{' '}
+                                  {selectedHospital.zipCode}
+                                </p>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>
@@ -385,23 +403,30 @@ export default function HospitalManagement() {
                         Facility Details
                       </h3>
                       <dl className="space-y-2 text-sm">
-                        {selectedHospital.licenseNumber && (
+                        {selectedHospital.registrationNumber && (
+                          <div>
+                            <dt className="text-neutral-blue-gray/60">Registration Number</dt>
+                            <dd className="font-medium">{selectedHospital.registrationNumber}</dd>
+                          </div>
+                        )}
+                        {/* Fallback for old format */}
+                        {!selectedHospital.registrationNumber && selectedHospital.licenseNumber && (
                           <div>
                             <dt className="text-neutral-blue-gray/60">License Number</dt>
                             <dd className="font-medium">{selectedHospital.licenseNumber}</dd>
                           </div>
                         )}
-                        {selectedHospital.taxId && (
+                        {selectedHospital.bedCapacity && (
                           <div>
-                            <dt className="text-neutral-blue-gray/60">Tax ID / EIN</dt>
-                            <dd className="font-medium">{selectedHospital.taxId}</dd>
+                            <dt className="text-neutral-blue-gray/60">Bed Capacity</dt>
+                            <dd className="font-medium">{selectedHospital.bedCapacity} beds</dd>
                           </div>
                         )}
-                        {selectedHospital.accreditationInfo && (
+                        {typeof selectedHospital.emergencyServices !== 'undefined' && (
                           <div>
-                            <dt className="text-neutral-blue-gray/60">Accreditation</dt>
-                            <dd className="font-medium whitespace-pre-wrap">
-                              {selectedHospital.accreditationInfo}
+                            <dt className="text-neutral-blue-gray/60">Emergency Services</dt>
+                            <dd className="font-medium">
+                              {selectedHospital.emergencyServices ? 'Available' : 'Not Available'}
                             </dd>
                           </div>
                         )}
@@ -549,7 +574,7 @@ export default function HospitalManagement() {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-blue-gray/50" />
                 <Input
-                  placeholder="Search by name, code, or city..."
+                  placeholder="Search by name or district..."
                   value={search}
                   onChange={(e) => handleSearch(e.target.value)}
                   className="pl-10"

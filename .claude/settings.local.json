@@ -15,7 +15,8 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(dir /B /AD \"C:\\dev\\back-end\\healthcare-api\\src\\main\\java\\com\\healthcare\\api\")",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []

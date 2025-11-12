@@ -6,26 +6,10 @@ import { z } from 'zod'
  */
 
 /**
- * US State Code validation (2-letter codes)
- */
-const usStateRegex =
-  /^(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY|DC)$/
-
-/**
  * Phone Number validation (Indian 10-digit mobile format)
  * Must start with 6, 7, 8, or 9 and be exactly 10 digits
  */
 const phoneNumberRegex = /^[6-9]\d{9}$/
-
-/**
- * ZIP Code validation (5 or 9 digits)
- */
-const zipCodeRegex = /^\d{5}(-\d{4})?$/
-
-/**
- * URL validation
- */
-const urlRegex = /^https?:\/\/.+\..+/
 
 /**
  * Hospital Type enum
@@ -54,34 +38,85 @@ const hospitalStatusEnum = z.enum([
 ])
 
 /**
- * Trauma Level enum
+ * Pincode validation (6-digit Indian format)
  */
-const traumaLevelEnum = z.enum(['LEVEL_I', 'LEVEL_II', 'LEVEL_III', 'LEVEL_IV', 'NONE'])
+const pincodeRegex = /^\d{6}$/
 
 /**
- * Hospital Creation Schema
+ * Indian State Names enum (for validation)
+ */
+const indianStateEnum = z.enum([
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+  'Andaman and Nicobar Islands',
+  'Chandigarh',
+  'Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi',
+  'Jammu and Kashmir',
+  'Ladakh',
+  'Lakshadweep',
+  'Puducherry',
+])
+
+/**
+ * Hospital Location Schema (Nested object for Indian address format)
+ */
+const hospitalLocationSchema = z.object({
+  address: z.string().min(1, 'Address is required').max(255, 'Address is too long').trim(),
+  district: z.string().min(1, 'District is required').max(100, 'District is too long').trim(),
+  pincode: z
+    .string()
+    .length(6, 'Pincode must be exactly 6 digits')
+    .regex(pincodeRegex, 'Please enter a valid 6-digit pincode'),
+  state: indianStateEnum,
+  countryCode: z
+    .string()
+    .length(2, 'Country code must be a 2-letter code')
+    .trim()
+    .toUpperCase()
+    .default('IN'),
+  metadata: z.string().max(2000, 'Metadata is too long').trim().optional().or(z.literal('')),
+})
+
+/**
+ * Hospital Creation Schema (Indian Format)
  */
 export const createHospitalSchema = z.object({
   name: z.string().min(1, 'Hospital name is required').max(255, 'Hospital name is too long').trim(),
-  code: z
-    .string()
-    .max(50, 'Hospital code is too long')
-    .regex(
-      /^[A-Z0-9_-]+$/,
-      'Hospital code must contain only uppercase letters, numbers, hyphens, and underscores'
-    )
-    .trim()
-    .optional()
-    .or(z.literal('')),
   hospitalType: hospitalTypeEnum,
   email: z
     .string()
+    .min(1, 'Email is required')
     .email('Please enter a valid email address')
     .max(255, 'Email is too long')
     .trim()
-    .toLowerCase()
-    .optional()
-    .or(z.literal('')),
+    .toLowerCase(),
   phone: z
     .string()
     .min(1, 'Phone number is required')
@@ -90,87 +125,38 @@ export const createHospitalSchema = z.object({
       'Please enter a valid 10-digit Indian mobile number (e.g., 9876543210)'
     )
     .trim(),
-  website: z
+  location: hospitalLocationSchema,
+  registrationNumber: z
     .string()
-    .regex(urlRegex, 'Please enter a valid website URL')
-    .max(255, 'Website URL is too long')
-    .trim()
-    .optional()
-    .or(z.literal('')),
-  addressLine1: z.string().min(1, 'Address is required').max(255, 'Address is too long').trim(),
-  addressLine2: z
-    .string()
-    .max(255, 'Address line 2 is too long')
-    .trim()
-    .optional()
-    .or(z.literal('')),
-  city: z.string().min(1, 'City is required').max(100, 'City is too long').trim(),
-  state: z
-    .string()
-    .min(2, 'State is required')
-    .max(2, 'State must be 2 characters')
-    .regex(usStateRegex, 'Please enter a valid US state code')
-    .trim()
-    .toUpperCase(),
-  zipCode: z
-    .string()
-    .min(1, 'ZIP code is required')
-    .regex(zipCodeRegex, 'Please enter a valid ZIP code (e.g., 12345 or 12345-6789)')
+    .min(1, 'Registration number is required')
+    .max(100, 'Registration number is too long')
     .trim(),
-  country: z
-    .string()
-    .length(2, 'Country must be a 2-letter code')
-    .trim()
-    .toUpperCase()
-    .optional()
-    .or(z.literal(''))
-    .default('US'),
-  licenseNumber: z
-    .string()
-    .max(100, 'License number is too long')
-    .trim()
-    .optional()
-    .or(z.literal('')),
-  taxId: z.string().max(50, 'Tax ID is too long').trim().optional().or(z.literal('')),
-  bedCapacity: z.number().int().min(1, 'Bed capacity must be at least 1').optional(),
-  traumaLevel: traumaLevelEnum.optional(),
-  emergencyServices: z.boolean().optional().default(true),
-  accreditationInfo: z
-    .string()
-    .max(1000, 'Accreditation info is too long')
-    .trim()
-    .optional()
-    .or(z.literal('')),
+  bedCapacity: z
+    .number()
+    .int()
+    .min(1, 'Bed capacity must be at least 1')
+    .max(10000, 'Bed capacity is too high'),
+  emergencyServices: z.boolean(),
+  status: hospitalStatusEnum.default('PENDING'),
   metadata: z.string().max(2000, 'Metadata is too long').trim().optional().or(z.literal('')),
 })
 
 export type CreateHospitalFormData = z.infer<typeof createHospitalSchema>
 
 /**
- * Hospital Update Schema
- * Cannot use .extend() due to .or() and .default() transformations
+ * Hospital Update Schema (Indian Format)
+ * Same structure as create schema for consistency
  */
 export const updateHospitalSchema = z.object({
   name: z.string().min(1, 'Hospital name is required').max(255, 'Hospital name is too long').trim(),
-  code: z
-    .string()
-    .max(50, 'Hospital code is too long')
-    .regex(
-      /^[A-Z0-9_-]+$/,
-      'Hospital code must contain only uppercase letters, numbers, hyphens, and underscores'
-    )
-    .trim()
-    .optional()
-    .or(z.literal('')),
   hospitalType: hospitalTypeEnum,
   email: z
     .string()
+    .min(1, 'Email is required')
     .email('Please enter a valid email address')
     .max(255, 'Email is too long')
     .trim()
-    .toLowerCase()
-    .optional()
-    .or(z.literal('')),
+    .toLowerCase(),
   phone: z
     .string()
     .min(1, 'Phone number is required')
@@ -179,59 +165,20 @@ export const updateHospitalSchema = z.object({
       'Please enter a valid 10-digit Indian mobile number (e.g., 9876543210)'
     )
     .trim(),
-  website: z
+  location: hospitalLocationSchema,
+  registrationNumber: z
     .string()
-    .regex(urlRegex, 'Please enter a valid website URL')
-    .max(255, 'Website URL is too long')
-    .trim()
-    .optional()
-    .or(z.literal('')),
-  addressLine1: z.string().min(1, 'Address is required').max(255, 'Address is too long').trim(),
-  addressLine2: z
-    .string()
-    .max(255, 'Address line 2 is too long')
-    .trim()
-    .optional()
-    .or(z.literal('')),
-  city: z.string().min(1, 'City is required').max(100, 'City is too long').trim(),
-  state: z
-    .string()
-    .min(2, 'State is required')
-    .max(2, 'State must be 2 characters')
-    .regex(usStateRegex, 'Please enter a valid US state code')
-    .trim()
-    .toUpperCase(),
-  zipCode: z
-    .string()
-    .min(1, 'ZIP code is required')
-    .regex(zipCodeRegex, 'Please enter a valid ZIP code (e.g., 12345 or 12345-6789)')
+    .min(1, 'Registration number is required')
+    .max(100, 'Registration number is too long')
     .trim(),
-  country: z
-    .string()
-    .length(2, 'Country must be a 2-letter code')
-    .trim()
-    .toUpperCase()
-    .optional()
-    .or(z.literal(''))
-    .default('US'),
-  licenseNumber: z
-    .string()
-    .max(100, 'License number is too long')
-    .trim()
-    .optional()
-    .or(z.literal('')),
-  taxId: z.string().max(50, 'Tax ID is too long').trim().optional().or(z.literal('')),
-  bedCapacity: z.number().int().min(1, 'Bed capacity must be at least 1').optional(),
-  traumaLevel: traumaLevelEnum.optional(),
-  emergencyServices: z.boolean().optional().default(true),
-  accreditationInfo: z
-    .string()
-    .max(1000, 'Accreditation info is too long')
-    .trim()
-    .optional()
-    .or(z.literal('')),
-  metadata: z.string().max(2000, 'Metadata is too long').trim().optional().or(z.literal('')),
+  bedCapacity: z
+    .number()
+    .int()
+    .min(1, 'Bed capacity must be at least 1')
+    .max(10000, 'Bed capacity is too high'),
+  emergencyServices: z.boolean(),
   status: hospitalStatusEnum,
+  metadata: z.string().max(2000, 'Metadata is too long').trim().optional().or(z.literal('')),
 })
 
 export type UpdateHospitalFormData = z.infer<typeof updateHospitalSchema>
@@ -507,12 +454,8 @@ export type StaffAssignmentFilters = z.infer<typeof staffAssignmentFiltersSchema
  */
 
 /**
- * Pincode validation (6-digit Indian format)
- */
-const pincodeRegex = /^\d{6}$/
-
-/**
  * Indian State Names (Full names, not codes)
+ * Using the array format for createHospitalWithAdminSchema refine validation
  */
 const indianStateNames = [
   'Andhra Pradesh',
