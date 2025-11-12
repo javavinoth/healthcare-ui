@@ -149,7 +149,8 @@ export const registrationSchema = z
     lastName: z.string().min(1, 'Last name is required').max(100, 'Last name is too long').trim(),
     phoneNumber: z
       .string()
-      .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number (E.164 format)')
+      .max(15, 'Phone number cannot exceed 15 characters')
+      .regex(/^(\+[1-9]\d{0,13}|[1-9]\d{1,14})$/, 'Please enter a valid phone number (E.164 format, max 15 characters)')
       .optional()
       .or(z.literal('')),
   })
@@ -192,7 +193,8 @@ export const providerRegistrationSchema = z
     lastName: z.string().min(1, 'Last name is required').max(100, 'Last name is too long').trim(),
     phoneNumber: z
       .string()
-      .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number (E.164 format)')
+      .max(15, 'Phone number cannot exceed 15 characters')
+      .regex(/^(\+[1-9]\d{0,13}|[1-9]\d{1,14})$/, 'Please enter a valid phone number (E.164 format, max 15 characters)')
       .optional()
       .or(z.literal('')),
     // Provider-specific fields
