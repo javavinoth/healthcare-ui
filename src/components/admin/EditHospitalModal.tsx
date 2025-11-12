@@ -98,7 +98,7 @@ export default function EditHospitalModal({ open, onClose, hospital }: EditHospi
         location: {
           address: hospital.location?.address || hospital.addressLine1 || '',
           district: hospital.location?.district || hospital.city || '',
-          pincode: hospital.location?.pincode || hospital.zipCode || '',
+          pincode: hospital.location?.pincode || hospital.pincode || '',
           state: (hospital.location?.state || hospital.state || 'Maharashtra') as
             | 'Andhra Pradesh'
             | 'Arunachal Pradesh'

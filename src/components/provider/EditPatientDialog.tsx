@@ -39,9 +39,9 @@ const patientSchema = z.object({
   addressLine2: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
-  zipCode: z
+  pincode: z
     .string()
-    .regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code')
+    .regex(/^\d{6}$/, 'Invalid PIN code')
     .optional()
     .or(z.literal('')),
   insuranceProvider: z.string().optional(),
@@ -86,7 +86,7 @@ export default function EditPatientDialog({ open, onOpenChange, patient }: EditP
       addressLine2: patient.address?.line2 || '',
       city: patient.address?.city || '',
       state: patient.address?.state || '',
-      zipCode: patient.address?.zipCode || '',
+      pincode: patient.address?.pincode || '',
       insuranceProvider: patient.insurance?.provider || '',
       insurancePolicyNumber: patient.insurance?.policyNumber || '',
       insuranceGroupNumber: patient.insurance?.groupNumber || '',
@@ -289,10 +289,10 @@ export default function EditPatientDialog({ open, onOpenChange, patient }: EditP
                   <Input id="state" {...register('state')} />
                 </div>
                 <div>
-                  <Label htmlFor="zipCode">ZIP Code</Label>
-                  <Input id="zipCode" {...register('zipCode')} />
-                  {errors.zipCode && (
-                    <p className="text-sm text-destructive mt-1">{errors.zipCode.message}</p>
+                  <Label htmlFor="pincode">PIN Code</Label>
+                  <Input id="pincode" {...register('pincode')} />
+                  {errors.pincode && (
+                    <p className="text-sm text-destructive mt-1">{errors.pincode.message}</p>
                   )}
                 </div>
               </div>

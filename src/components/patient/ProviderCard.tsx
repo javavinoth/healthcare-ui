@@ -76,7 +76,7 @@ export default function ProviderCard({
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
                   <span>
-                    {location.city}, {location.state} {location.zipCode}
+                    {location.city}, {location.state} {location.pincode}
                   </span>
                 </div>
               )}

@@ -344,7 +344,7 @@ Content-Type: application/json
         "address": "123 Main St",
         "city": "Boston",
         "state": "MA",
-        "zipCode": "02101"
+        "pincode": "02101"
       },
       "phone": "555-0123",
       "email": "provider@example.com"

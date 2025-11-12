@@ -37,7 +37,7 @@ export default function PatientOverview({ patient }: PatientOverviewProps) {
       address.line1,
       address.line2,
       address.city && address.state
-        ? `${address.city}, ${address.state} ${address.zipCode || ''}`.trim()
+        ? `${address.city}, ${address.state} ${address.pincode || ''}`.trim()
         : address.city || address.state,
     ].filter(Boolean)
 

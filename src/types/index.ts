@@ -69,7 +69,7 @@ export interface ProviderSearchResult {
     address: string
     city: string
     state: string
-    zipCode: string
+    pincode: string
   }
   phone?: string
   email?: string
@@ -431,7 +431,7 @@ export interface AddressInfo {
   line2?: string
   city?: string
   state?: string
-  zipCode?: string
+  pincode?: string
 }
 
 export interface EmergencyContactInfo {
@@ -492,7 +492,7 @@ export interface UpdatePatientData {
   addressLine2?: string
   city?: string
   state?: string
-  zipCode?: string
+  pincode?: string
   insuranceProvider?: string
   insurancePolicyNumber?: string
   insuranceGroupNumber?: string
@@ -884,7 +884,7 @@ export interface Hospital {
   addressLine2?: string
   city?: string
   state?: string
-  zipCode?: string
+  pincode?: string
   country?: string
   address?: string
   phoneNumber?: string
